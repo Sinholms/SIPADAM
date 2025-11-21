@@ -1,0 +1,2 @@
+# SIPADAM
+Projek IoT yang terintegrasi dengan website. Website yang pertama yaitu user, user sendiri adalah orang yang memiliki alat IoT nya dengan fitur pelaporan manual dan otomatis. Website kedua yaitu admin, admin sendiri adalah pemadam kebakaran yang mendapat laporan dari user tentang terjadi nya kebakaran
