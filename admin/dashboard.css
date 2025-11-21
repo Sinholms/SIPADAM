@@ -1,0 +1,547 @@
+/* ===========================
+   RESET & GLOBAL STYLE
+=========================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  display: flex;
+  background-color: #f9fafc;
+  color: #333;
+  min-height: 100vh;
+  transition: padding-left 0.3s ease;
+}
+
+/* ===========================
+   SIDEBAR
+=========================== */
+.sidebar {
+  width: 240px;
+  background: #fff;
+  height: 100vh;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+  overflow-y: auto;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  margin-left: -240px; /* Sembunyikan sidebar secara default */
+  transition: margin-left 0.3s ease;
+}
+
+body.sidebar-open .sidebar {
+  margin-left: 0; /* Munculkan sidebar saat kelas sidebar-open aktif */
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+.logo .icon {
+  font-size: 1.5rem;
+  color: #e53935;
+  margin-right: 8px;
+}
+.logo-text h2 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+.logo-text p {
+  font-size: 0.75rem;
+  color: #777;
+}
+.sidebar ul {
+  list-style: none;
+  margin-top: 20px;
+}
+.sidebar ul li {
+  display: flex;
+  align-items: center;
+  transition: 0.2s;
+}
+.sidebar ul li a {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  width: 100%;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+.sidebar ul li:hover a,
+.sidebar ul li.active a {
+  color: #e53935;
+}
+.sidebar ul li:hover,
+.sidebar ul li.active {
+  background: #fdecea;
+  color: #e53935;
+  border-left: 4px solid #e53935;
+}
+.menu-text {
+  margin-left: 15px;
+}
+
+/* ===========================
+   MAIN CONTENT & HEADER
+=========================== */
+.main-content {
+  flex: 1;
+  margin-left: 0;
+  padding: 25px 35px;
+  transition: margin-left 0.3s ease;
+}
+
+body.sidebar-open .main-content {
+  margin-left: 240px; /* Dorong konten saat sidebar terbuka */
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.menu-toggle {
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+.menu-toggle:hover {
+  background: #eee;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.notif {
+  position: relative;
+  font-size: 1.2rem;
+}
+.badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: #e53935;
+  color: #fff;
+  font-size: 0.6rem;
+  border-radius: 50%;
+  padding: 2px 5px;
+}
+.status {
+  color: #43a047;
+  font-weight: 500;
+}
+.user-info .notif,
+.user-info .user {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.user-info .notif:hover,
+.user-info .user:hover {
+  opacity: 0.7;
+}
+
+/* ===========================
+   CARDS (Informasi Umum)
+=========================== */
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.card {
+  background: #fff;
+  flex: 1;
+  min-width: 180px;
+  border-radius: 12px;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+.card-icon {
+  font-size: 1.8rem;
+}
+
+.card-content h3 {
+  font-size: 0.95rem;
+  color: #777;
+}
+
+.card-content .number {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.card.active {
+  border-left: 5px solid #e53935;
+}
+
+.card.process {
+  border-left: 5px solid #f9a825;
+}
+
+/* ===========================
+   CONTENT GRID
+=========================== */
+.content-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+/* ===========================
+   MAP CARD (BENAR)
+=========================== */
+.map-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 15px 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+#map {
+  height: 350px; /* Tinggi map */
+  border-radius: 12px; /* Sudut membulat */
+  overflow: hidden;
+}
+
+.btn-secondary {
+  background: #f3f4f6;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 0.85rem;
+}
+
+.btn-secondary:hover {
+  background: #e5e7eb;
+}
+
+/* ===========================
+   REPORT CARD (STYLE ASLI ANDA DIKEMBALIKAN)
+=========================== */
+.report-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 15px 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.report-header h3 {
+  font-size: 1rem;
+  color: #333;
+}
+
+.report-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.report-item {
+  background: #fafafa;
+  border-radius: 8px;
+  padding: 10px 12px;
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+.report-item:hover {
+  background: #fdecea;
+}
+
+.report-item:active {
+  transform: scale(0.98);
+  background: #fbe6e3;
+}
+
+.report-item h4 {
+  font-size: 0.95rem;
+  color: #333;
+  margin-bottom: 3px;
+}
+
+.report-item p {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.report-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #e53935;
+  margin-top: 4px;
+}
+
+.report-meta.yellow {
+  color: #f9a825;
+}
+
+.report-meta.green {
+  color: #43a047;
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+@media (max-width: 992px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 15px 20px;
+  }
+  .cards {
+    flex-direction: column;
+  }
+  body.sidebar-open .main-content {
+    margin-left: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .user-info {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+/* --- NOTIFIKASI POP-UP BARU --- */
+.notification-area {
+  position: relative; /* Penting untuk positioning dropdown */
+  display: inline-block; /* Agar notif dan profil tidak menumpuk */
+}
+
+.notification-dropdown {
+  display: none; /* Sembunyikan secara default */
+  position: absolute;
+  top: 100%; /* Muncul di bawah bel */
+  right: 0;
+  width: 300px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 200; /* Pastikan di atas konten lain */
+  overflow: hidden; /* Agar konten tidak keluar dari border-radius */
+  margin-top: 10px; /* Jarak dari bel */
+}
+
+.notification-dropdown.show {
+  display: block; /* Tampilkan saat ada kelas .show */
+}
+
+.dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.dropdown-header h3 {
+  font-size: 1rem;
+  color: #333;
+}
+
+.clear-all {
+  font-size: 0.85rem;
+  color: #e53935;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.clear-all:hover {
+  opacity: 0.8;
+}
+
+.dropdown-list {
+  max-height: 300px; /* Batasi tinggi, tambahkan scroll jika perlu */
+  overflow-y: auto;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+
+/* ===== REVISI DROPDOWN ITEM ===== */
+.dropdown-item {
+  display: flex;
+  align-items: center; 
+  padding: 10px 15px;
+  width: 100%; 
+  box-sizing: border-box; 
+  text-decoration: none; /* 1. HAPUS GARIS BAWAH */
+  color: #333; /* 2. SET WARNA TEKS DEFAULT */
+}
+
+.item-icon {
+  font-size: 1.2rem;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.dropdown-item.new .item-icon {
+  color: #e53935; /* Warna untuk ikon notif baru */
+}
+
+.dropdown-item.new .item-content h4 {
+  font-weight: 600; /* Tebal untuk notif baru */
+}
+
+.item-content {
+  flex: 1; 
+  min-width: 0; 
+}
+
+.item-content h4 {
+  font-size: 0.9rem;
+  margin-bottom: 3px;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-all;
+  color: inherit; /* 3. HAPUS WARNA BIRU LINK */
+}
+
+/* 4. TAMBAHKAN INI UNTUK PARAGRAF */
+.item-content p {
+  font-size: 0.75rem;
+  color: #777; /* Pastikan warna p tidak biru */
+}
+/* ===== BATAS REVISI DROPDOWN ===== */
+
+.dropdown-footer {
+  padding: 10px 15px;
+  text-align: center;
+  border-top: 1px solid #eee;
+}
+
+.dropdown-footer a {
+  font-size: 0.85rem;
+  color: #1976d2;
+  text-decoration: none;
+}
+
+.dropdown-footer a:hover {
+  text-decoration: underline;
+}
+
+/* ===== TAMBAHKAN STYLE UNTUK TOAST NOTIFICATION ===== */
+.toast-notification {
+  position: fixed;
+  top: 20px;
+  right: -350px;
+  width: 300px;
+  /* UBAH BARIS INI: */
+  background-color: #fff; /* <-- JADIKAN PUTIH */
+  color: #333; /* <-- DAN UBAH WARNA TEKS JADI LEBIH GELAP AGAR KONTRAST */
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: right 0.5s ease-out, opacity 0.5s ease-out;
+  opacity: 0;
+  border: 1px solid #eee; /* OPSIONAL: Tambah border tipis agar lebih jelas */
+}
+
+.toast-notification.show {
+  right: 20px; /* Masuk ke layar */
+  opacity: 1;
+}
+
+.toast-notification .toast-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.toast-content {
+  flex: 1; /* Biarkan teks mengisi sisa ruang */
+  min-width: 0; /* Hack flexbox agar bisa wrap */
+}
+
+.toast-content h4 {
+  font-size: 0.95rem;
+  margin-bottom: 3px;
+  font-weight: 600;
+  white-space: normal; /* Paksa teks untuk wrap/turun */
+  overflow-wrap: break-word;
+}
+
+.toast-content p {
+  font-size: 0.8rem;
+  color: #ccc;
+}
+/* ===== BATAS TAMBAHAN STYLE TOAST ===== */
+
+/* ===========================
+   STYLE IKON PETA BARU
+=========================== */
+.custom-fire-icon {
+  font-size: 1.8rem; /* Ukuran emoji api */
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.7); /* Bayangan agar terlihat jelas */
+  line-height: 1;
+}

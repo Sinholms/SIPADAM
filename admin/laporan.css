@@ -1,0 +1,228 @@
+/* ============================================================
+   1. STYLE GLOBAL & DASHBOARD (Header, Sidebar, Notifikasi)
+============================================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+
+:root {
+    --primary-color: #e53935; --secondary-color: #4299e1;
+    --text-color-dark: #2d3748; --text-color-light: #718096;
+    --bg-color-light: #f9fafc; --bg-color-card: #ffffff;
+    --border-color: #edf2f7; --active-sidebar-bg: #fdecea; 
+    --status-red: #e53935; --status-orange: #ed8936;
+    --status-yellow: #f9a825; --status-green: #43a047; --status-lightblue: #4299e1;
+}
+
+body { display: flex; background-color: var(--bg-color-light); color: #333; min-height: 100vh; transition: padding-left 0.3s ease; }
+
+/* SIDEBAR */
+.sidebar { width: 240px; background: #fff; height: 100vh; box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05); overflow-y: auto; position: fixed; left: 0; top: 0; z-index: 100; margin-left: -240px; transition: margin-left 0.3s ease; }
+body.sidebar-open .sidebar { margin-left: 0; }
+
+.sidebar-header { display: flex; align-items: center; padding: 1rem; }
+.logo { display: flex; align-items: center; }
+.logo .icon { font-size: 1.5rem; color: var(--primary-color); margin-right: 8px; }
+.logo-text h2 { font-size: 1rem; font-weight: 600; }
+.logo-text p { font-size: 0.75rem; color: #777; }
+
+.sidebar ul { list-style: none; margin-top: 20px; padding: 0; }
+.sidebar ul li { display: flex; align-items: center; transition: 0.2s; }
+.sidebar ul li a { display: flex; align-items: center; padding: 12px 20px; width: 100%; text-decoration: none; color: inherit; cursor: pointer; font-weight: 500; }
+.sidebar ul li:hover, .sidebar ul li.active { background: var(--active-sidebar-bg); color: var(--primary-color); border-left: 4px solid var(--primary-color); }
+.sidebar ul li:hover a, .sidebar ul li.active a { color: var(--primary-color); }
+.menu-text { margin-left: 15px; }
+
+/* HEADER & CONTENT */
+.main-content { flex: 1; margin-left: 0; padding: 25px 35px; transition: margin-left 0.3s ease; }
+body.sidebar-open .main-content { margin-left: 240px; }
+
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+.header-left { display: flex; align-items: center; gap: 15px; }
+.menu-toggle { font-size: 1.5rem; cursor: pointer; padding: 5px; }
+.user-info { display: flex; align-items: center; gap: 10px; }
+.notif { position: relative; font-size: 1.2rem; text-decoration: none; }
+.badge { position: absolute; top: -6px; right: -8px; background: var(--primary-color); color: #fff; font-size: 0.6rem; border-radius: 50%; padding: 2px 5px; }
+.status { color: var(--status-green); font-weight: 500; }
+.user-info .user { text-decoration: none; color: inherit; font-weight: 500; transition: 0.2s; }
+.user-info .user:hover { color: var(--primary-color); }
+
+/* DROPDOWN NOTIF */
+.notification-area { position: relative; }
+.notification-dropdown { display: none; position: absolute; top: 100%; right: 0; width: 300px; background: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 200; margin-top: 10px; border: 1px solid #eee; }
+.notification-dropdown.show { display: block; }
+.dropdown-header { display: flex; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid #eee; background: #fafafa; }
+.dropdown-header h3 { font-size: 1rem; margin: 0; }
+.clear-all { font-size: 0.75rem; color: var(--status-red); cursor: pointer; }
+.dropdown-list { max-height: 300px; overflow-y: auto; }
+.dropdown-item { display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid #f5f5f5; text-decoration: none; color: #333; }
+.dropdown-item:hover { background: #f9f9f9; }
+.dropdown-item.new { background: #fff4f2; }
+.item-icon { font-size: 1.2rem; margin-right: 10px; color: var(--primary-color); }
+.item-content h4 { font-size: 0.9rem; margin: 0 0 3px 0; font-weight: 600; }
+.item-content p { font-size: 0.75rem; color: #777; margin: 0; }
+.dropdown-footer { padding: 10px; text-align: center; border-top: 1px solid #eee; }
+
+/* ============================================================
+   2. STYLE KHUSUS LAPORAN & STATISTIK (YANG HILANG KEMARIN)
+============================================================ */
+
+/* Tab Menu */
+.tab-menu { display: flex; gap: 10px; margin-top: 20px; margin-bottom: 20px; }
+.tab { padding: 8px 16px; border-radius: 8px; border: 1px solid #e6e6e6; background: #fff; cursor: pointer; font-weight: 600; color: var(--text-color-light); transition: 0.2s; }
+.tab.active { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+
+/* Filter Bar (List Laporan) */
+.filter-bar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; align-items: center; }
+.search-input { flex: 1; padding: 8px 12px; border: 1px solid #ccc; border-radius: 8px; min-width: 200px; }
+.filter-select { padding: 8px 10px; border: 1px solid #ccc; border-radius: 8px; }
+
+/* Report List Items */
+.report-list { display: flex; flex-direction: column; gap: 15px; }
+.report-item { background: #fff; border-radius: 12px; padding: 15px 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+.report-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.report-header h2 { font-size: 1rem; color: var(--text-color-dark); }
+.report-item p { font-size: 0.9rem; color: #555; margin-bottom: 5px; }
+.report-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 0.85rem; color: #777; }
+.detail-btn { background: #f3f4f6; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+.detail-btn:hover { background: #e5e7eb; }
+
+/* Status Badges */
+.status-badge { padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 500; }
+.status-badge.red { background: #fdecea; color: var(--status-red); }
+.status-badge.yellow { background: #fff8e1; color: var(--status-yellow); }
+.status-badge.green { background: #e8f5e9; color: var(--status-green); }
+
+/* === STYLE STATISTIK (PENTING) === */
+.filter-period { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; color: #333; font-weight: 500; }
+.time-filters { display: flex; gap: 5px; }
+.filter-btn { padding: 5px 10px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
+.filter-btn.active { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+
+.stat-cards-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+.stat-card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-left: 5px solid transparent; }
+.stat-card.total { border-left-color: var(--secondary-color); }
+.stat-card.active-report { border-left-color: var(--status-red); }
+.stat-card.handling { border-left-color: var(--status-orange); }
+.stat-label { font-size: 0.9rem; color: #777; margin-bottom: 5px; }
+.stat-number { font-size: 2.2em; font-weight: bold; color: #333; }
+
+.charts-section { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 30px; }
+.chart-card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.chart-card h3 { font-size: 1.1rem; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+
+/* Grafik Batang Custom */
+.bar-chart-placeholder { display: flex; flex-direction: column; gap: 10px; }
+.month-row { display: flex; align-items: center; gap: 10px; }
+.month-label { width: 40px; font-size: 0.85rem; color: #555; }
+.bar-wrap { flex: 1; background: #f0f0f0; height: 10px; border-radius: 5px; overflow: hidden; }
+.bar-fill { height: 100%; background: var(--primary-color); transition: width 0.5s ease; }
+.bar-value { width: 30px; font-size: 0.85rem; text-align: right; }
+
+/* Peta Area & Legend */
+.area-list { margin-bottom: 15px; }
+.area-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #eee; font-size: 0.9rem; }
+.area-item i { margin-right: 8px; font-size: 0.8rem; }
+.legend p { font-weight: 600; margin-bottom: 5px; font-size: 0.9rem; }
+.legend-item { margin-right: 10px; font-size: 0.85rem; }
+.legend-item i, .area-item i.red { color: var(--status-red); }
+.legend-item.orange i, .area-item i.orange { color: var(--status-orange); }
+.legend-item.green i, .area-item i.green { color: var(--status-green); }
+
+/* Tabel Data */
+.report-table-section { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.table-header-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.export-excel { background: var(--status-green); color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+.table-responsive { overflow-x: auto; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 600px; }
+.data-table th, .data-table td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+.data-table th { background: #f8f9fa; font-weight: 600; }
+
+/* Responsive Statistik */
+@media (max-width: 768px) {
+    .charts-section { grid-template-columns: 1fr; }
+    .sidebar { width: 80px; }
+}
+/* ===========================
+   STYLE TOAST NOTIFICATION (Agar Pop-up Muncul)
+=========================== */
+.toast-notification {
+  position: fixed;
+  top: 20px;
+  right: -400px; /* Sembunyi di kanan layar */
+  width: 320px;
+  background-color: #fff;
+  padding: 15px 20px;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  /* Animasi Masuk */
+  transition: right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  border-left: 5px solid #e53935; /* Garis merah di kiri */
+}
+
+.toast-notification.show {
+  right: 20px; /* Muncul ke layar */
+}
+
+.toast-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.toast-content h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+.toast-content p {
+  font-size: 0.8rem;
+  color: #666;
+  margin: 0;
+}
+
+/* Animasi Item Baru di List */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===========================
+   STYLE TOMBOL EXPORT
+=========================== */
+.export-btns {
+    display: flex;
+    gap: 10px;
+}
+
+.export-excel {
+    background-color: #43a047; /* Hijau */
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.export-pdf {
+    background-color: #e53935; /* Merah */
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.export-excel:hover { background-color: #2e7d32; }
+.export-pdf:hover { background-color: #c62828; }
+
+.export-excel i, .export-pdf i { margin-right: 5px; }

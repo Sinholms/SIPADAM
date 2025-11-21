@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard SIPADAM</title>
+    
+    <link rel="stylesheet" href="dashboard.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    
+    </head>
+  <body>
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <span class="icon">🔥</span>
+          <div class="logo-text">
+            <h2>SIPADAM</h2>
+            <p>Sistem Peringatan Dini</p>
+          </div>
+        </div>
+      </div>
+      <ul class="menu">
+        <li class="active">
+          <a href="dashboard.html">
+            <span>📊</span><span class="menu-text">Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="laporan.html">
+            <span>📋</span><span class="menu-text">Laporan</span>
+          </a>
+        </li>
+        <li>
+          <a href="profil.html">
+            <span>👤</span><span class="menu-text">Profil</span>
+          </a>
+        </li>
+        <li>
+          <a href="login.html">
+            <span>🚪</span><span class="menu-text">Keluar</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="main-content">
+      <header>
+        <div class="header-left">
+          <div class="menu-toggle" id="menu-toggle-btn">☰</div>
+          <h1>Dashboard</h1>
+        </div>
+        <div class="user-info">
+          
+          <div class="notification-area">
+            <a href="#" class="notif" id="notificationBell">
+              🔔<span class="badge" id="notificationBadge"></span>
+            </a>
+            <div class="notification-dropdown" id="notificationDropdown">
+              <div class="dropdown-header">
+                <h3>Notifikasi Terbaru</h3>
+                <span class="clear-all" id="clearAllNotifications">Bersihkan Semua</span>
+              </div>
+              <div class="dropdown-list" id="notificationList">
+                </div>
+              <div class="dropdown-footer">
+                <a href="laporan.html">Lihat Semua Laporan</a>
+              </div>
+            </div>
+          </div>
+          <a href="profil.html" class="user"> 👩‍🚒 Petugas Pemadam </a>
+          <span class="status">Online</span>
+        </div>
+      </header>
+
+      <div class="cards">
+        <div class="card">
+          <div class="card-icon">📄</div>
+          <div class="card-content">
+            <h3>Total Laporan</h3>
+            <p class="number" id="total-laporan">156</p> </div>
+        </div>
+        <div class="card active">
+          <div class="card-icon">🔥</div>
+          <div class="card-content">
+            <h3>Laporan Aktif</h3>
+            <p class="number" id="laporan-aktif">0</p> </div>
+        </div>
+        <div class="card process">
+          <div class="card-icon">⏳</div>
+          <div class="card-content">
+            <h3>Dalam Penanganan</h3>
+            <p class="number" id="penanganan">0</p> </div>
+        </div>
+      </div>
+
+      <div class="content-grid">
+        <div class="map-card">
+          <div class="map-header">
+            <h3>Peta Lokasi Kebakaran</h3>
+            <button class="btn-secondary" onclick="zoomMap()">Perbesar</button>
+          </div>
+          <div
+            id="map"
+            style="width: 100%; height: 350px; border-radius: 12px"
+          ></div>
+        </div>
+
+        <div class="report-card">
+          <div class="report-header">
+            <h3>Laporan Terbaru</h3>
+            <button
+              class="btn-secondary"
+              onclick="location.href='laporan.html'"
+            >
+              Lihat Semua
+            </button>
+          </div>
+          <div class="report-list" id="report-list-container">
+            <p class="no-reports-message" style="padding: 15px; text-align: center; color: #777;">Belum ada laporan terbaru.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script
+      defer
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    ></script>
+    
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script defer src="dashboard.js"></script>
+    
+    <script defer src="main.js"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', (event) => {
+          
+          const adminSocket = io();
+          adminSocket.emit('admin-bergabung');
+          console.log('Admin Dashboard: Bergabung ke ruangan admin...');
+
+          const reportListContainer = document.getElementById('report-list-container');
+          const laporanAktifCounter = document.getElementById('laporan-aktif');
+          const penangananCounter = document.getElementById('penanganan');
+          
+          // Memuat laporan lama
+          adminSocket.on('muat-laporan-lama', (laporanLama) => {
+            console.log('Menerima daftar laporan lama:', laporanLama);
+            
+            if (laporanLama && laporanLama.length > 0) {
+              const noReports = reportListContainer.querySelector('.no-reports-message');
+              if (noReports) noReports.remove();
+            
+              laporanLama.forEach(dataLaporan => {
+                buatElemenLaporan(dataLaporan, false); // false = jangan taruh di atas
+              });
+
+              // Update kartu-kartu
+              const laporanAktif = laporanLama.filter(l => l.status === 'Aktif').length;
+              const laporanPenanganan = laporanLama.filter(l => l.status === 'Sedang Ditangani').length;
+              
+              laporanAktifCounter.textContent = laporanAktif;
+              penangananCounter.textContent = laporanPenanganan;
+
+              // Update badge notifikasi (hanya untuk yang 'Aktif')
+              if (typeof updateNotificationCount === 'function') {
+                  updateNotificationCount(laporanAktif);
+              } else {
+                  const notifBadge = document.getElementById('notificationBadge');
+                  if (notifBadge) {
+                      notifBadge.textContent = laporanAktif > 0 ? laporanAktif : '';
+                      notifBadge.style.display = laporanAktif > 0 ? 'block' : 'none';
+                  }
+              }
+            }
+          });
+
+          // Menerima laporan baru
+          adminSocket.on('laporan-masuk', (dataLaporan) => {
+              console.log('Dashboard listener: Laporan baru diterima!', dataLaporan);
+
+              // 1. Panggil fungsi notifikasi (dari main.js)
+              const notifData = {
+                id: dataLaporan._id, 
+                location: dataLaporan.lokasi,
+                time: dataLaporan.waktu
+              };
+              if (typeof addNewNotification === 'function') {
+                addNewNotification(notifData);
+              } else {
+                console.warn("Fungsi addNewNotification() tidak ditemukan!");
+              }
+
+              // 2. Perbarui kartu "Laporan Aktif"
+              if (laporanAktifCounter) {
+                  let currentCount = parseInt(laporanAktifCounter.textContent) || 0;
+                  laporanAktifCounter.textContent = currentCount + 1;
+              }
+
+              // 3. Perbarui List "Laporan Terbaru"
+              buatElemenLaporan(dataLaporan, true); // true = taruh di atas
+
+              // 4. Tambahkan Marker ke Peta
+              try {
+                if (typeof addFireMarkerToMap === 'function') {
+                  const coordArray = dataLaporan.lokasi.split(",").map(Number);
+                  
+                  if (coordArray.length === 2 && !isNaN(coordArray[0]) && !isNaN(coordArray[1])) {
+                    const popupContent = `
+                      <div style="font-family: 'Poppins', sans-serif; font-size: 0.9rem;">
+                        <h4 style="color: #e53935; margin: 0 0 5px 0;">Laporan Baru!</h4>
+                        <p style="margin: 0;"><strong>Lokasi:</strong> ${dataLaporan.lokasi}</p>
+                        <p style="margin: 5px 0 0 0;"><strong>Catatan:</strong> ${dataLaporan.catatan || 'Tidak ada'}</p>
+                        <a href="detail-laporan.html?id=${dataLaporan._id}" target="_blank" style="margin-top: 8px; display: inline-block;">Lihat Detail</a>
+                      </div>
+                    `;
+                    addFireMarkerToMap(coordArray, popupContent);
+                  } else {
+                    console.warn("Koordinat laporan tidak valid:", dataLaporan.lokasi);
+                  }
+                } else {
+                  console.warn("Fungsi addFireMarkerToMap() tidak ditemukan!");
+                }
+              } catch (e) {
+                console.error("Gagal menambahkan marker ke peta:", e);
+              }
+          });
+
+          // ==========================================================
+          // ===== INI ADALAH KODE "LANGKAH 3" YANG SAYA MAKSUD =====
+          // ==========================================================
+          adminSocket.on('laporan-diperbarui', (laporanDiperbarui) => {
+            console.log('Dashboard: Menerima update status!', laporanDiperbarui);
+            
+            // 1. Perbarui daftar "Laporan Terbaru"
+            if (reportListContainer) {
+              // Cari item laporan di daftar
+              const itemToUpdate = reportListContainer.querySelector(`#laporan-${laporanDiperbarui._id}`);
+              
+              if (itemToUpdate) {
+                // Hapus yang lama dan buat yang baru
+                itemToUpdate.remove();
+                buatElemenLaporan(laporanDiperbarui, true); // (true = taruh di atas)
+              }
+            }
+
+            // 2. Muat ulang SEMUA laporan untuk update counter (Cara termudah)
+            // Ini akan mengambil data baru dan menghitung ulang 'Aktif' dan 'Penanganan'
+            // dengan memicu event 'muat-laporan-lama' lagi
+            adminSocket.emit('admin-bergabung'); 
+          });
+          // ==========================================================
+          // ===== BATAS KODE "LANGKAH 3" =====
+          // ==========================================================
+
+
+          // Fungsi bantu untuk membuat elemen laporan
+          function buatElemenLaporan(data, taruhDiAtas) {
+            if (reportListContainer) {
+                const noReports = reportListContainer.querySelector('.no-reports-message');
+                if (noReports) noReports.remove();
+
+                const newItem = document.createElement('div');
+                newItem.className = 'report-item';
+                
+                // ===== PERBAIKAN KECIL DI SINI =====
+                // Tambahkan ID unik ke elemen
+                newItem.id = `laporan-${data._id}`; 
+                // ===================================
+                
+                let statusLabel = '';
+                if (data.status === 'Aktif') {
+                  statusLabel = `<span style="color: #e53935; font-weight: 600;">🔥 ${data.status}</span>`;
+                } else if (data.status === 'Sedang Ditangani') {
+                   statusLabel = `<span style="color: #f9a825; font-weight: 600;">🟡 ${data.status}</span>`;
+                } else {
+                  statusLabel = `<span style="color: #43a047; font-weight: 600;">🟢 ${data.status}</span>`;
+                }
+
+                newItem.innerHTML = `
+                    <h4>${data.lokasi}</h4>
+                    <p>${data.catatan || 'Tidak ada catatan.'}</p>
+                    <div class="report-meta">
+                        <span>${data.waktu}</span>
+                        ${statusLabel}
+                    </div>
+                `;
+                
+                newItem.onclick = () => {
+                  window.location.href = `detail-laporan.html?id=${data._id}`;
+                };
+                
+                if (taruhDiAtas) {
+                  reportListContainer.prepend(newItem);
+                } else {
+                  reportListContainer.append(newItem);
+                }
+            }
+          }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,690 @@
+/* ===========================
+   RESET & GLOBAL STYLE
+=========================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  display: flex;
+  background-color: #f9fafc;
+  color: #333;
+  min-height: 100vh;
+  transition: padding-left 0.3s ease;
+}
+
+/* ===========================
+   SIDEBAR (BARU)
+=========================== */
+.sidebar {
+  width: 240px;
+  background: #fff;
+  height: 100vh;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+  overflow-y: auto;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  margin-left: -240px; /* Sembunyikan sidebar */
+  transition: margin-left 0.3s ease;
+}
+
+body.sidebar-open .sidebar {
+  margin-left: 0; /* Munculkan sidebar */
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+.logo .icon {
+  font-size: 1.5rem;
+  color: #e53935;
+  margin-right: 8px;
+}
+.logo-text h2 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+.logo-text p {
+  font-size: 0.75rem;
+  color: #777;
+}
+.sidebar ul {
+  list-style: none;
+  margin-top: 20px;
+}
+/* Style baru untuk link <a> */
+.sidebar ul li {
+  display: flex;
+  align-items: center;
+  transition: 0.2s;
+}
+.sidebar ul li a {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  width: 100%;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+.sidebar ul li:hover a,
+.sidebar ul li.active a {
+  color: #e53935;
+}
+.sidebar ul li:hover,
+.sidebar ul li.active {
+  background: #fdecea;
+  color: #e53935;
+  border-left: 4px solid #e53935;
+}
+.menu-text {
+  margin-left: 15px;
+}
+
+/* ===========================
+   MAIN CONTENT & HEADER (BARU)
+=========================== */
+.main-content {
+  flex: 1;
+  margin-left: 0;
+  padding: 25px 35px;
+  transition: margin-left 0.3s ease;
+}
+
+body.sidebar-open .main-content {
+  margin-left: 240px; /* Dorong konten */
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.menu-toggle {
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+.menu-toggle:hover {
+  background: #eee;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.notif {
+  position: relative;
+  font-size: 1.2rem;
+}
+.badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: #e53935;
+  color: #fff;
+  font-size: 0.6rem;
+  border-radius: 50%;
+  padding: 2px 5px;
+}
+.status.online {
+  color: #43a047;
+}
+.user-info .notif,
+.user-info .user {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.user-info .notif:hover,
+.user-info .user:hover {
+  opacity: 0.7;
+}
+
+/* ===========================
+   KONTEN ASLI (DARI detail-laporan.css)
+=========================== */
+.back-btn {
+  margin: 15px 0 25px;
+  background: #f3f4f6;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.back-btn:hover {
+  background: #e5e7eb;
+}
+
+.content-wrapper {
+  display: flex;
+  gap: 25px;
+  flex-wrap: wrap;
+}
+
+.left-section {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.right-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.report-summary,
+.info-card,
+.action-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 22px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  line-height: 1.6;
+  
+  /* ===== TAMBAHKAN 3 BARIS INI ===== */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.report-header h2 {
+  font-size: 1.15rem;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* Style untuk 'Aktif' (Anda mungkin sudah punya ini) */
+.status-badge.red {
+  background: #fdecea;
+  color: #e53935;
+}
+
+/* Style BARU untuk 'Sedang Ditangani' */
+.status-badge.yellow {
+  background-color: #fff8e1;
+  color: #ffa000;
+}
+
+/* Style BARU untuk 'Selesai' */
+.status-badge.green {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.time {
+  font-size: 0.88rem;
+  color: #666;
+  margin-top: 6px;
+  margin-bottom: 10px;
+}
+
+.metrics {
+  display: flex;
+  gap: 15px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+
+.metric {
+  flex: 1;
+  min-width: 100px;
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+}
+
+.metric p {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+.metric h3 {
+  font-size: 1.3rem;
+  margin-top: 4px;
+}
+
+.metric.red {
+  background: #fdecea;
+  color: #e53935;
+}
+
+.metric.blue {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.metric.orange {
+  background: #f5f5f5; /* Latar abu-abu muda */
+  color: #555;      /* Teks abu-abu tua */
+}
+
+.info-card h3 {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.info-card p {
+  margin-bottom: 10px;
+  font-size: 0.92rem;
+}
+
+.info-card span {
+  display: inline-block;
+  margin-top: 4px;
+}
+
+.map-btn,
+.add-note-btn,
+.status-btn {
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.map-btn {
+  background: #f3f4f6;
+  padding: 6px 12px;
+  margin: 8px 0;
+}
+
+.map-btn:hover {
+  background: #e5e7eb;
+}
+
+.add-note-btn {
+  background: #e53935;
+  color: #fff;
+  padding: 10px 16px;
+  margin-top: 14px;
+  font-size: 0.9rem;
+}
+
+.add-note-btn:hover {
+  background: #d32f2f;
+}
+
+/* ===================================
+   STYLE TOMBOL AKSI (PERBAIKAN)
+=================================== */
+
+/* Style dasar untuk SEMUA tombol status */
+.status-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+/* Style untuk tombol Kuning (Handle) */
+.status-btn.yellow {
+  background-color: #fff8e1;
+  border-color: #ffecb3;
+  color: #ffa000;
+}
+.status-btn.yellow:hover:not(:disabled) {
+  background-color: #ffecb3;
+}
+
+/* Style untuk tombol Hijau (Done) */
+.status-btn.green {
+  background-color: #e8f5e9;
+  border-color: #c8e6c9;
+  color: #388e3c;
+}
+.status-btn.green:hover:not(:disabled) {
+  background-color: #c8e6c9;
+}
+
+/* Style untuk tombol Merah (Activate) */
+.status-btn.red {
+  background-color: #ffebee;
+  border-color: #ffcdd2;
+  color: #d32f2f;
+}
+.status-btn.red:hover:not(:disabled) {
+  background-color: #ffcdd2;
+}
+
+/* Style saat tombol di-disable (status sedang aktif) */
+.status-btn:disabled {
+  background-color: #f5f5f5;
+  border-color: #eeeeee;
+  color: #9e9e9e;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.note {
+  background: #f9fafc;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.note p {
+  margin-bottom: 6px;
+}
+
+.note .time {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.quick-info p {
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.priority.high {
+  color: #e53935;
+  font-weight: bold;
+}
+
+/* ===========================
+   RESPONSIVE (BARU)
+=========================== */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 15px 20px;
+  }
+  body.sidebar-open .main-content {
+    margin-left: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .user-info {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+/* --- NOTIFIKASI POP-UP BARU --- */
+.notification-area {
+  position: relative;
+  display: inline-block;
+}
+
+.notification-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 300px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 200;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.notification-dropdown.show {
+  display: block;
+}
+
+.dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.dropdown-header h3 {
+  font-size: 1rem;
+  color: #333;
+}
+
+.clear-all {
+  font-size: 0.85rem;
+  color: #e53935;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.clear-all:hover {
+  opacity: 0.8;
+}
+
+.dropdown-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  width: 100%;
+  box-sizing: border-box;
+  text-decoration: none; /* Hapus garis bawah */
+  color: #333; /* Set warna teks default */
+  border-bottom: 1px solid #f9f9f9;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+
+.item-icon {
+  font-size: 1.2rem;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.dropdown-item.new .item-icon {
+  color: #e53935;
+}
+
+.dropdown-item.new .item-content h4 {
+  font-weight: 600;
+}
+
+.item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-content h4 {
+  font-size: 0.9rem;
+  margin-bottom: 3px;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-all;
+  color: inherit; /* Hapus warna biru link */
+}
+
+.item-content p {
+  font-size: 0.75rem;
+  color: #777; /* Pastikan warna p tidak biru */
+}
+
+.dropdown-footer {
+  padding: 10px 15px;
+  text-align: center;
+  border-top: 1px solid #eee;
+}
+
+.dropdown-footer a {
+  font-size: 0.85rem;
+  color: #1976d2;
+  text-decoration: none;
+}
+
+.dropdown-footer a:hover {
+  text-decoration: underline;
+}
+
+/* --- TOAST NOTIFIKASI (WARNA PUTIH) --- */
+.toast-notification {
+  position: fixed;
+  top: 20px;
+  right: -350px;
+  width: 300px;
+  background-color: #fff; /* Latar belakang putih */
+  color: #333; /* Teks gelap */
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: right 0.5s ease-out, opacity 0.5s ease-out;
+  opacity: 0;
+  border: 1px solid #eee; /* Border tipis */
+}
+
+.toast-notification.show {
+  right: 20px;
+  opacity: 1;
+}
+
+.toast-notification .toast-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.toast-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.toast-content h4 {
+  font-size: 0.95rem;
+  margin-bottom: 3px;
+  font-weight: 600;
+  white-space: normal;
+  overflow-wrap: break-word;
+  color: #333; /* Teks judul gelap */
+}
+
+.toast-content p {
+  font-size: 0.8rem;
+  color: #666; /* Teks paragraf gelap */
+}
+/* ===========================
+   STYLE GALERI FOTO KEJADIAN
+=========================== */
+
+
+
+
+.gallery-container {
+  margin-top: 10px;
+}
+
+/* ===========================
+   STYLE FOTO KEJADIAN (REVISI)
+=========================== */
+
+.single-photo-container {
+  width: 100%; /* Lebar tetap 100% */
+  /* HAPUS 'max-height: 400px;' DARI SINI */
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid #eee;
+  transition: opacity 0.2s ease;
+}
+
+.single-photo-container:hover {
+  opacity: 0.85;
+}
+
+.single-photo-container img {
+  width: 100%;
+  height: auto; /* <-- KUNCINYA: Tinggi sekarang otomatis menyesuaikan */
+  /* HAPUS 'object-fit: cover;' */
+  display: block;
+}
+
+/* ===========================
+   STYLE LINK MAPS (Supaya mirip WhatsApp)
+=========================== */
+.maps-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #1976d2; /* Warna Biru Google Maps */
+  text-decoration: none;
+  font-weight: 600;
+  background-color: #e3f2fd; /* Background biru muda tipis */
+  padding: 8px 12px;
+  border-radius: 20px; /* Dibuat lonjong seperti tombol chip */
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.maps-link:hover {
+  background-color: #bbdefb;
+  border-color: #1976d2;
+  transform: translateY(-2px); /* Efek naik sedikit saat disentuh */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.maps-link i {
+  font-size: 1.1rem;
+}

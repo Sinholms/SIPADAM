@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login SIPADAM</title>
+    <link rel="stylesheet" href="loginstyle.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="login-box">
+        <div class="logo">
+          <div class="icon">🔥</div>
+          <h2>SIPADAM</h2>
+          <p>Sistem Informasi Peringatan Dini Api Terintegrasi Pemadam</p>
+        </div>
+
+        <form id="loginForm">
+          <label for="username">Username</label>
+          <div class="input-group">
+            <span class="icon">👤</span>
+            <input
+              type="text"
+              id="username"
+              placeholder="Masukkan username"
+              required
+            />
+          </div>
+
+          <label for="password">Password</label>
+          <div class="input-group">
+            <span class="icon">🔒</span>
+            <input
+              type="password"
+              id="password"
+              placeholder="Masukkan password"
+              required
+            />
+          </div>
+
+          <button type="submit" class="btn-login">Masuk</button>
+          <p class="forgot">Lupa password? <a href="#">Hubungi Admin</a></p>
+        </form>
+      </div>
+
+      <footer>© 2024 Dinas Pemadam Kebakaran. Semua hak dilindungi.</footer>
+    </div>
+
+    <script>
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const user = document.getElementById("username").value;
+          const pass = document.getElementById("password").value;
+
+          if (user === "pemadam" && pass === "12345") {
+            window.location.href = "dashboard.html";
+          } else {
+            alert("Username atau password salah!");
+          }
+        });
+    </script>
+  </body>
+</html>

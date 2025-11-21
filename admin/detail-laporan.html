@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detail Laporan - SIPADAM</title>
+    
+    <link rel="stylesheet" href="detail-laporan.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <span class="icon">🔥</span>
+          <div class="logo-text">
+            <h2>SIPADAM</h2>
+            <p>Sistem Peringatan Dini</p>
+          </div>
+        </div>
+      </div>
+      <ul class="menu">
+        <li>
+          <a href="dashboard.html">
+            <span>📊</span><span class="menu-text">Dashboard</span>
+          </a>
+        </li>
+        <li class="active">
+          <a href="laporan.html">
+            <span>📋</span><span class="menu-text">Laporan</span>
+          </a>
+        </li>
+        <li>
+          <a href="profil.html">
+            <span>👤</span><span class="menu-text">Profil</span>
+          </a>
+        </li>
+        <li>
+          <a href="login.html">
+            <span>🚪</span><span class="menu-text">Keluar</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="main-content">
+      <header>
+        <div class="header-left">
+          <div class="menu-toggle" id="menu-toggle-btn">☰</div>
+          <h1>Detail Laporan</h1>
+        </div>
+        
+        <div class="user-info">
+          <div class="notification-area">
+            <a href="#" class="notif" id="notificationBell">
+              🔔<span class="badge" id="notificationBadge"></span>
+            </a>
+            <div class="notification-dropdown" id="notificationDropdown">
+              <div class="dropdown-header">
+                <h3>Notifikasi Terbaru</h3>
+                <span class="clear-all" id="clearAllNotifications">Bersihkan Semua</span>
+              </div>
+              <div class="dropdown-list" id="notificationList">
+                </div>
+              <div class="dropdown-footer">
+                <a href="laporan.html">Lihat Semua Laporan</a>
+              </div>
+            </div>
+          </div>
+          <a href="profil.html" class="user"> 👩‍🚒 Petugas Pemadam </a>
+          <span class="status online">Online</span>
+        </div>
+      </header>
+
+      <button class="back-btn" onclick="window.location.href='laporan.html'">
+        ⬅ Kembali ke Daftar Laporan
+      </button>
+
+      <div class="content-wrapper">
+        
+        <div class="left-section">
+          <div class="report-summary">
+            <div class="report-header">
+              <h2 id="judulLaporan">Memuat Laporan...</h2>
+              <span class="status-badge" id="statusLaporan">...</span>
+            </div>
+            <p class="time" id="waktuLaporan">--</p>
+
+            <div class="metrics" id="metrics-box"> 
+              <div class="metric red">
+                <p>🔥 Suhu</p>
+                <h3 id="suhu">--°C</h3>
+              </div>
+              <div class="metric blue">
+                <p>💧 Kelembaban</p>
+                <h3 id="kelembaban">--%</h3>
+              </div>
+              <div class="metric orange">
+                <p>💨 Smoke</p>
+                <h3 id="intensitas">--</h3>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <h3>Informasi Lokasi</h3>
+            <p><b>Alamat:</b><br /><span id="alamat">Memuat...</span></p>
+            
+            <p><b>Koordinat GPS:</b><br /><span id="koordinat">--</span></p>
+            
+            <iframe
+              id="mapFrame"
+              width="100%"
+              height="250"
+              style="border: 0; border-radius: 8px; margin-top: 10px"
+              loading="lazy"
+            ></iframe>
+
+            <p style="margin-top:15px;"><b>Deskripsi Kejadian:</b><br /><span id="deskripsi">--</span></p>
+            <p><b>Pelapor:</b> <span id="pelapor">--</span></p>
+          </div>
+
+          <div class="info-card">
+            <h3>Dokumentasi Kejadian</h3>
+            <div class="gallery-container" id="galleryContainer"></div>
+          </div>
+        </div>
+
+        <div class="right-section">
+          <div class="action-card" id="action-card">
+            <h3>Aksi Status</h3>
+            <button class="status-btn yellow" id="btn-handle">🟡 Tandai Sedang Ditangani</button>
+            <button class="status-btn green" id="btn-done">🟢 Tandai Selesai</button>
+            <button class="status-btn red" id="btn-activate">🔥 Aktifkan Kembali Laporan</button>
+          </div>
+          
+          <div class="info-card quick-info">
+            <h3>Informasi Cepat</h3>
+            <p><b>ID Laporan:</b> <span id="idLaporan">--</span></p>
+            <p><b>Waktu Laporan:</b> <span id="jamLaporan">--</span></p>
+            <p><b>Prioritas:</b> <span class="priority high" id="prioritas">Tinggi</span></p>
+          </div>
+        </div>
+      </div>
+    </div> 
+    
+   <script src="main.js"></script>
+
+   <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        
+        // Inisialisasi
+        const socket = io();
+        const params = new URLSearchParams(window.location.search);
+        const laporanId = params.get("id");
+
+        // Elemen UI
+        const statusBadge = document.getElementById("statusLaporan");
+        const btnHandle = document.getElementById('btn-handle');
+        const btnDone = document.getElementById('btn-done');
+        const btnActivate = document.getElementById('btn-activate');
+
+        // Cek ID
+        if (!laporanId) {
+            document.querySelector('.main-content').innerHTML = "<h1>Error: ID Laporan tidak ditemukan di URL.</h1>";
+            return;
+        }
+
+        // =========================================================
+        // FUNGSI: Ubah ID MongoDB jadi Tanggal (Kamis, 21 Nov...)
+        // =========================================================
+        function formatTanggalDariID(hexId) {
+            try {
+                const timestamp = parseInt(hexId.substring(0, 8), 16) * 1000;
+                const date = new Date(timestamp);
+                const options = { 
+                    weekday: 'long', year: 'numeric', month: 'long', 
+                    day: 'numeric', hour: '2-digit', minute: '2-digit', 
+                    timeZoneName: 'short' 
+                };
+                return date.toLocaleDateString('id-ID', options);
+            } catch (e) {
+                return "Tanggal tidak valid";
+            }
+        }
+
+        // =========================================================
+        // FUNGSI: Fetch Data dari API
+        // =========================================================
+        function fetchDetail() {
+            fetch(`/api/laporan/${laporanId}`)
+              .then(res => {
+                  if(!res.ok) throw new Error("Laporan tidak ditemukan");
+                  return res.json();
+              })
+              .then(data => {
+                  updateUI(data);
+              })
+              .catch(err => {
+                  console.error(err);
+                  alert("Gagal memuat data laporan.");
+              });
+        }
+
+        // =========================================================
+        // FUNGSI: Update Tampilan HTML
+        // =========================================================
+        function updateUI(data) {
+            // 1. Header & Status
+            document.getElementById("judulLaporan").textContent = `Laporan #${data._id.slice(-4)} - ${data.lokasi}`;
+            document.getElementById("statusLaporan").textContent = data.status;
+            document.getElementById("statusLaporan").className = `status-badge ${getStatusColor(data.status)}`;
+            
+            // 2. Tanggal Lengkap (Dari Fungsi Ajaib)
+            const tanggalLengkap = formatTanggalDariID(data._id);
+            document.getElementById("waktuLaporan").textContent = tanggalLengkap;
+            document.getElementById("jamLaporan").textContent = tanggalLengkap;
+            document.getElementById("idLaporan").textContent = `#${data._id}`;
+
+            // 3. Data Sensor
+            document.getElementById("suhu").textContent = data.suhu || '--°C';
+            document.getElementById("kelembaban").textContent = data.kelembaban || '--%';
+            document.getElementById("intensitas").textContent = data.intensitas || '--';
+
+            // 4. Info Lokasi & Deskripsi
+            document.getElementById("alamat").textContent = data.lokasi;
+            document.getElementById("deskripsi").textContent = data.catatan || 'Tidak ada deskripsi.';
+            document.getElementById("pelapor").textContent = data.tipeLaporan === 'Sensor' ? 'Sensor IoT Otomatis' : 'Warga';
+
+            // 5. Link Google Maps (Deep Linking)
+            const cleanLoc = data.lokasi.replace(/\s/g, ''); 
+            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${cleanLoc}`;
+            
+            document.getElementById("koordinat").innerHTML = `
+              <a href="${mapsUrl}" target="_blank" class="maps-link" style="
+                  display: inline-flex; align-items: center; gap: 8px; 
+                  color: #1976d2; text-decoration: none; font-weight: 600; 
+                  background-color: #e3f2fd; padding: 8px 12px; 
+                  border-radius: 20px; margin-top: 5px;">
+                <i class="fa-solid fa-location-arrow"></i> ${data.lokasi} 
+                <span style="font-size: 0.8em; color: #666;">(Buka Peta)</span>
+              </a>
+            `;
+
+            // 6. Peta Embed
+            const mapFrame = document.getElementById("mapFrame");
+            if (data.lokasi && data.lokasi.includes(',')) {
+                mapFrame.src = `https://maps.google.com/maps?q=${data.lokasi}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+                mapFrame.style.display = 'block';
+            } else {
+                mapFrame.style.display = 'none';
+            }
+
+            // 7. Gambar Kejadian
+            const galleryContainer = document.getElementById('galleryContainer');
+            galleryContainer.innerHTML = ""; 
+            if (data.image) { 
+              galleryContainer.innerHTML = `<div class="single-photo-container"><img src="${data.image}" alt="Foto Kejadian"></div>`;
+            } else {
+              galleryContainer.innerHTML = '<p style="color: #777; font-size: 0.9rem;">Tidak ada dokumentasi foto.</p>';
+            }
+
+            // 8. Update Status Tombol
+            updateButtons(data.status);
+        }
+
+        function getStatusColor(status) {
+            if (status === 'Aktif') return 'red';
+            if (status === 'Sedang Ditangani') return 'yellow';
+            return 'green';
+        }
+
+        function updateButtons(currentStatus) {
+            btnHandle.disabled = (currentStatus === 'Sedang Ditangani');
+            btnDone.disabled = (currentStatus === 'Selesai');
+            btnActivate.disabled = (currentStatus === 'Aktif');
+        }
+
+        // =========================================================
+        // FUNGSI: Ganti Status (Klik Tombol)
+        // =========================================================
+        async function changeStatus(newStatus) {
+            try {
+                const response = await fetch(`/api/laporan/${laporanId}/status`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus }),
+                });
+                if(!response.ok) alert("Gagal update status");
+                // Data akan terupdate otomatis lewat socket
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        btnHandle.onclick = () => changeStatus('Sedang Ditangani');
+        btnDone.onclick = () => changeStatus('Selesai');
+        btnActivate.onclick = () => changeStatus('Aktif');
+
+        // =========================================================
+        // SOCKET LISTENER (REAL-TIME)
+        // =========================================================
+        
+        // Jika laporan INI statusnya berubah
+        socket.on('laporan-diperbarui', (updatedData) => {
+            if (updatedData._id === laporanId) {
+                updateUI(updatedData);
+                // Panggil Toast dari main.js
+                if(typeof showToastNotification === 'function') {
+                    showToastNotification({ title: 'Status Diperbarui', time: 'Baru saja', icon: '📝' });
+                }
+            }
+        });
+
+        // Jika ada laporan BARU (untuk notif lonceng)
+        socket.on('laporan-masuk', (laporanBaru) => {
+             if(typeof addNewNotification === 'function') {
+                 addNewNotification({ id: laporanBaru._id, location: laporanBaru.lokasi, time: laporanBaru.waktu });
+             }
+        });
+
+        // Load awal
+        fetchDetail();
+      });
+   </script>
+  </body>
+</html>

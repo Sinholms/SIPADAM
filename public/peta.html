@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Peta Lokasi Sensor - SIPADAM</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+      .sensor-marker {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        border: 3px solid white;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+        cursor: pointer;
+      }
+
+      .sensor-normal {
+        background: #2e7d32;
+      }
+
+      .sensor-warning {
+        background: #ff9800;
+        animation: pulse 2s ease infinite;
+      }
+
+      .sensor-danger {
+        background: #e63946;
+        animation: pulse 1s ease infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          transform: scale(1);
+          box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+        }
+        50% {
+          transform: scale(1.1);
+          box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+      }
+
+      .sensor-info {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        max-width: 250px;
+      }
+
+      .sensor-info h4 {
+        margin: 0 0 10px 0;
+        color: #e63946;
+        font-size: 1rem;
+      }
+
+      .sensor-info p {
+        margin: 5px 0;
+        font-size: 0.85rem;
+        color: #555;
+      }
+
+      .sensor-info .status {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-top: 8px;
+      }
+
+      .status-normal {
+        background: #e8f5e9;
+        color: #2e7d32;
+      }
+
+      .status-warning {
+        background: #fff3cd;
+        color: #856404;
+      }
+
+      .status-danger {
+        background: #ffe0e0;
+        color: #e63946;
+      }
+
+      .legend {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        border: 2px solid #eee;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      }
+
+      .legend h4 {
+        margin-bottom: 15px;
+        color: #111;
+        font-size: 1rem;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+        font-size: 0.9rem;
+      }
+
+      .legend-item .marker-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 2px solid white;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      }
+
+      .marker-sensor-normal { background: #2e7d32; }
+      .marker-sensor-warning { background: #ff9800; }
+      .marker-sensor-danger { background: #e63946; }
+      .marker-user { background: #2962ff; }
+
+      .sensor-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .stat-box {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      }
+
+      .stat-box h3 {
+        font-size: 2rem;
+        margin: 0 0 5px 0;
+      }
+
+      .stat-box p {
+        margin: 0;
+        font-size: 0.85rem;
+        color: #666;
+      }
+
+      .stat-box.normal h3 { color: #2e7d32; }
+      .stat-box.warning h3 { color: #ff9800; }
+      .stat-box.danger h3 { color: #e63946; }
+
+      @media (max-width: 768px) {
+        .sensor-stats {
+          grid-template-columns: 1fr;
+        }
+
+        .map-controls {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <header class="navbar">
+      <div class="container">
+        <div class="logo">
+          <a href="index.html">🚒 SIPADAM</a>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="index.html">Beranda</a></li>
+            <li><a href="peta.html" class="active">Peta</a></li>
+            <li><a href="laporan.html">Laporan</a></li>
+            <li><a href="edukasi.html">Edukasi</a></li>
+            <li><a href="login.html">Login</a></li>
+            <li><a href="profil.html">Profil</a></li>
+          </ul>
+        </nav>
+        <div class="mobile-toggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="map-container">
+      <h2>🗺️ Peta Lokasi Sensor SIPADAM</h2>
+      
+      <!-- Statistik Sensor -->
+      <div class="sensor-stats">
+        <div class="stat-box normal">
+          <h3 id="statNormal">0</h3>
+          <p>Sensor Normal</p>
+        </div>
+        <div class="stat-box warning">
+          <h3 id="statWarning">0</h3>
+          <p>Sensor Peringatan</p>
+        </div>
+        <div class="stat-box danger">
+          <h3 id="statDanger">0</h3>
+          <p>Sensor Bahaya</p>
+        </div>
+      </div>
+
+      <div class="map-controls">
+        <button id="btnLokasi" class="btn-location">📍 Tampilkan Lokasi Saya</button>
+        <div class="legend">
+          <h4>Legenda Sensor:</h4>
+          <div class="legend-item">
+            <div class="marker-icon marker-sensor-danger"></div>
+            <span>🔥 Bahaya (Suhu Tinggi/Asap Terdeteksi)</span>
+          </div>
+          <div class="legend-item">
+            <div class="marker-icon marker-sensor-warning"></div>
+            <span>⚠️ Peringatan (Suhu Meningkat)</span>
+          </div>
+          <div class="legend-item">
+            <div class="marker-icon marker-sensor-normal"></div>
+            <span>✅ Normal (Aman)</span>
+          </div>
+          <div class="legend-item">
+            <div class="marker-icon marker-user"></div>
+            <span>📍 Lokasi Anda</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="map" style="height: 600px; border-radius: 10px; margin-top: 20px;"></div>
+
+      <div class="map-info">
+        <p>💡 <strong>Info:</strong> Klik marker sensor untuk melihat detail sensor. Data sensor diperbarui secara real-time setiap 5 detik.</p>
+      </div>
+    </div>
+
+    <script src="main.js"></script>
+    <script src="notification.js"></script>
+    <script>
+      let map;
+      let userMarker;
+      let sensorMarkers = [];
+
+      // Data sensor IoT (dalam implementasi nyata, ini dari API/socket.io)
+      const sensorLocations = [
+        {
+          id: 'sensor-001',
+          name: 'Sensor #1 - Ruang Tamu',
+          lat: -6.9667,
+          lng: 110.4167,
+          temperature: 28,
+          smoke: 0.15,
+          status: 'normal',
+          lastUpdate: new Date()
+        },
+        {
+          id: 'sensor-002',
+          name: 'Sensor #2 - Dapur',
+          lat: -6.9847,
+          lng: 110.4092,
+          temperature: 45,
+          smoke: 0.45,
+          status: 'warning',
+          lastUpdate: new Date()
+        },
+        {
+          id: 'sensor-003',
+          name: 'Sensor #3 - Kamar Tidur',
+          lat: -7.0051,
+          lng: 110.4381,
+          temperature: 25,
+          smoke: 0.12,
+          status: 'normal',
+          lastUpdate: new Date()
+        },
+        {
+          id: 'sensor-004',
+          name: 'Sensor #4 - Garasi',
+          lat: -6.9578,
+          lng: 110.4631,
+          temperature: 85,
+          smoke: 0.89,
+          status: 'danger',
+          lastUpdate: new Date()
+        },
+        {
+          id: 'sensor-005',
+          name: 'Sensor #5 - Gudang',
+          lat: -6.9812,
+          lng: 110.3891,
+          temperature: 32,
+          smoke: 0.22,
+          status: 'normal',
+          lastUpdate: new Date()
+        }
+      ];
+
+      // Inisialisasi Peta (Default: Semarang)
+      map = L.map('map').setView([-6.9667, 110.4167], 12);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+
+      // Fungsi untuk mendapatkan class status
+      function getStatusClass(status) {
+        const classes = {
+          'normal': 'sensor-normal',
+          'warning': 'sensor-warning',
+          'danger': 'sensor-danger'
+        };
+        return classes[status] || 'sensor-normal';
+      }
+
+      function getStatusText(status) {
+        const texts = {
+          'normal': '✅ Aman',
+          'warning': '⚠️ Peringatan',
+          'danger': '🔥 Bahaya'
+        };
+        return texts[status] || 'Unknown';
+      }
+
+      // Tambahkan marker untuk setiap sensor
+      function addSensorMarkers() {
+        // Hapus marker lama
+        sensorMarkers.forEach(marker => map.removeLayer(marker));
+        sensorMarkers = [];
+
+        sensorLocations.forEach(sensor => {
+          // Buat custom icon menggunakan divIcon
+          const icon = L.divIcon({
+            className: 'custom-sensor-icon',
+            html: `<div class="sensor-marker ${getStatusClass(sensor.status)}">🔥</div>`,
+            iconSize: [40, 40],
+            iconAnchor: [20, 20],
+            popupAnchor: [0, -20]
+          });
+
+          const marker = L.marker([sensor.lat, sensor.lng], {
+            icon: icon
+          }).addTo(map);
+
+          // Buat konten popup
+          const popupContent = `
+            <div class="sensor-info">
+              <h4>${sensor.name}</h4>
+              <p><strong>🆔 ID:</strong> ${sensor.id}</p>
+              <p><strong>🌡️ Suhu:</strong> ${sensor.temperature}°C</p>
+              <p><strong>💨 Asap (Rs/Ro):</strong> ${sensor.smoke.toFixed(2)}</p>
+              <p><strong>⏰ Update:</strong> ${sensor.lastUpdate.toLocaleTimeString('id-ID')}</p>
+              <span class="status status-${sensor.status}">${getStatusText(sensor.status)}</span>
+            </div>
+          `;
+
+          marker.bindPopup(popupContent);
+
+          // Auto open popup untuk sensor bahaya
+          if (sensor.status === 'danger') {
+            marker.openPopup();
+          }
+
+          sensorMarkers.push(marker);
+        });
+
+        updateStats();
+      }
+
+      // Update statistik
+      function updateStats() {
+        const normal = sensorLocations.filter(s => s.status === 'normal').length;
+        const warning = sensorLocations.filter(s => s.status === 'warning').length;
+        const danger = sensorLocations.filter(s => s.status === 'danger').length;
+
+        document.getElementById('statNormal').textContent = normal;
+        document.getElementById('statWarning').textContent = warning;
+        document.getElementById('statDanger').textContent = danger;
+      }
+
+      // Simulasi update data sensor real-time
+      function simulateSensorUpdates() {
+        setInterval(() => {
+          sensorLocations.forEach(sensor => {
+            // Simulasi perubahan suhu dan asap
+            const tempChange = (Math.random() - 0.5) * 5;
+            const smokeChange = (Math.random() - 0.5) * 0.1;
+
+            sensor.temperature = Math.max(20, Math.min(100, sensor.temperature + tempChange));
+            sensor.smoke = Math.max(0, Math.min(1, sensor.smoke + smokeChange));
+            sensor.lastUpdate = new Date();
+
+            // Update status berdasarkan kondisi
+            if (sensor.temperature > 60 || sensor.smoke > 0.7) {
+              sensor.status = 'danger';
+            } else if (sensor.temperature > 40 || sensor.smoke > 0.4) {
+              sensor.status = 'warning';
+            } else {
+              sensor.status = 'normal';
+            }
+          });
+
+          // Update marker di peta
+          addSensorMarkers();
+        }, 5000); // Update setiap 5 detik
+      }
+
+      // Tambahkan marker sensor saat halaman dimuat
+      addSensorMarkers();
+      simulateSensorUpdates();
+
+      // Tombol Aktifkan Lokasi
+      document.getElementById('btnLokasi').addEventListener('click', function() {
+        if (navigator.geolocation) {
+          this.textContent = '⏳ Mendeteksi lokasi...';
+          this.disabled = true;
+
+          navigator.geolocation.getCurrentPosition(
+            function(position) {
+              const lat = position.coords.latitude;
+              const lng = position.coords.longitude;
+
+              // Pindahkan peta ke lokasi user
+              map.setView([lat, lng], 15);
+
+              // Hapus marker user lama jika ada
+              if (userMarker) {
+                map.removeLayer(userMarker);
+              }
+
+              // Tambah marker baru untuk lokasi user
+              const userIcon = L.divIcon({
+                className: 'custom-user-icon',
+                html: `<div class="sensor-marker" style="background: #2962ff;">📍</div>`,
+                iconSize: [40, 40],
+                iconAnchor: [20, 20],
+                popupAnchor: [0, -20]
+              });
+
+              userMarker = L.marker([lat, lng], {
+                icon: userIcon
+              }).addTo(map);
+
+              userMarker.bindPopup('📍 Lokasi Anda').openPopup();
+
+              document.getElementById('btnLokasi').textContent = '✅ Lokasi Terdeteksi';
+              document.getElementById('btnLokasi').style.background = '#2e7d32';
+              
+              if (window.SipadamUtils) {
+                window.SipadamUtils.showToast('✅ Lokasi Anda berhasil terdeteksi', 'success');
+              }
+            },
+            function(error) {
+              console.error('Error GPS:', error);
+              document.getElementById('btnLokasi').textContent = '📍 Tampilkan Lokasi Saya';
+              document.getElementById('btnLokasi').disabled = false;
+              
+              if (window.SipadamUtils) {
+                window.SipadamUtils.showToast('⚠️ Gagal mendeteksi lokasi. Pastikan GPS aktif.', 'error');
+              }
+            }
+          );
+        } else {
+          if (window.SipadamUtils) {
+            window.SipadamUtils.showToast('❌ Browser tidak mendukung geolocation', 'error');
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profil Petugas - SIPADAM</title>
+    <link rel="stylesheet" href="profil.css" />
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script defer src="main.js"></script>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <span class="icon">🔥</span>
+          <div class="logo-text">
+            <h2>SIPADAM</h2>
+            <p>Sistem Peringatan Dini</p>
+          </div>
+        </div>
+      </div>
+      <ul class="menu">
+        <li>
+          <a href="dashboard.html">
+            <span>📊</span><span class="menu-text">Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="laporan.html">
+            <span>📋</span><span class="menu-text">Laporan</span>
+          </a>
+        </li>
+        <li class="active">
+          <a href="profil.html">
+            <span>👤</span><span class="menu-text">Profil</span>
+          </a>
+        </li>
+        <li>
+          <a href="login.html" id="logoutLink">
+            <span>🚪</span><span class="menu-text">Keluar</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="main-content">
+     <header>
+        <div class="header-left">
+          <div class="menu-toggle" id="menu-toggle-btn">☰</div>
+          <h1>Profil Petugas</h1>
+        </div>
+        <div class="user-info">
+          
+          <div class="notification-area">
+            <a href="#" class="notif" id="notificationBell">
+              🔔<span class="badge" id="notificationBadge"></span>
+            </a>
+            <div class="notification-dropdown" id="notificationDropdown">
+              <div class="dropdown-header">
+                <h3>Notifikasi Terbaru</h3>
+                <span class="clear-all" id="clearAllNotifications">Bersihkan Semua</span>
+              </div>
+              <div class="dropdown-list" id="notificationList">
+                </div>
+              <div class="dropdown-footer">
+                <a href="laporan.html">Lihat Semua Laporan</a>
+              </div>
+            </div>
+          </div>
+          <a href="profil.html" class="user"> 👩‍🚒 Petugas Pemadam </a>
+          <span class="status online">Online</span>
+        </div>
+      </header>
+      
+      <div class="profile-section">
+        <div class="profile-header">
+          <div class="profile-left">
+            <div class="profile-avatar">
+              <img src="Screenshot 2025-11-13 040453.png" alt="Avatar Petugas" />
+            </div>
+            <div class="profile-info">
+              <h2 id="namaPetugas">Nasihuy</h2>
+              <p>Kepala Regu Pemadam</p>
+              <p class="subtext">Pos Pemadam Jakarta Pusat</p>
+            </div>
+          </div>
+          <button class="edit-btn" id="editProfileBtn">Edit Profil</button>
+        </div>
+
+        <div class="profile-details">
+          <div class="card">
+            <h3>Informasi Pribadi</h3>
+            <p class="info-item"><b>Nama Lengkap:</b> Nasihuy Mpruy</p>
+            <p class="info-item">
+              <b>Email:</b> nasihuy.mpruy@pemadam.jakarta.go.id
+            </p>
+            <p class="info-item"><b>Nomor Telepon:</b> +62 812-3456-7890</p>
+          </div>
+
+          <div class="card">
+            <h3>Informasi Kepegawaian</h3>
+            <p class="info-item"><b>ID Pegawai:</b> PD-2024-001</p>
+            <p class="info-item"><b>Jabatan:</b> Kepala Regu Pemadam</p>
+            <p class="info-item">
+              <b>Unit Kerja:</b> Pos Pemadam Jakarta Pusat
+            </p>
+            <p class="info-item"><b>Tanggal Bergabung:</b> 15 Maret 2020</p>
+          </div>
+        </div>
+
+        <div class="summary">
+          <div class="summary-item blue">
+            <h2>47</h2>
+            <p>Laporan Ditangani</p>
+          </div>
+          <div class="summary-item green">
+            <h2>42</h2>
+            <p>Berhasil Diselesaikan</p>
+          </div>
+          <div class="summary-item yellow">
+            <h2>7.2</h2>
+            <p>Rata-rata Respon (menit)</p>
+          </div>
+        </div>
+
+        <div class="security-section">
+          <h3>Keamanan Akun</h3>
+          <div class="security-card">
+            <div>
+              <p><b>Ubah Password</b></p>
+              <p class="desc">Terakhir diubah 30 hari yang lalu</p>
+            </div>
+            <button class="action-btn" onclick="openModal('passwordModal')">
+              Ubah Password
+            </button>
+          </div>
+
+          <div class="security-card">
+            <div>
+              <p><b>Autentikasi Dua Faktor</b></p>
+              <p class="desc">Tambahkan keamanan untuk akun Anda</p>
+            </div>
+            <button class="action-btn" onclick="openModal('twoFAModal')">
+              Aktifkan 2FA
+            </button>
+          </div>
+
+          <div class="security-card">
+            <div>
+              <p><b>Riwayat Login</b></p>
+              <p class="desc">Lihat aktivitas login terbaru</p>
+            </div>
+            <button class="action-btn" onclick="openModal('riwayatModal')">
+              Lihat Riwayat
+            </button>
+          </div>
+        </div>
+      </div>
+      </div>
+
+    <div class="modal" id="editProfileModal">
+      <div class="modal-content">
+        <h3>Edit Profil</h3>
+        <input type="text" id="editNama" placeholder="Nama Lengkap" />
+        <input type="email" id="editEmail" placeholder="Email" />
+        <input type="text" id="editTelepon" placeholder="Nomor Telepon" />
+        <div class="modal-actions">
+          <button class="cancel-btn" onclick="closeModal('editProfileModal')">
+            Batal
+          </button>
+          <button class="save-btn" id="saveProfileBtn">Simpan</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="passwordModal">
+      <div class="modal-content">
+        <h3>Ubah Password</h3>
+        <input type="password" placeholder="Password Baru" />
+        <input type="password" placeholder="Konfirmasi Password" />
+        <div class="modal-actions">
+          <button class="cancel-btn" onclick="closeModal('passwordModal')">
+            Batal
+          </button>
+          <button class="save-btn">Simpan</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="twoFAModal">
+      <div class="modal-content">
+        <h3>Aktifkan 2FA</h3>
+        <p>Kirim kode ke email Anda untuk verifikasi keamanan.</p>
+        <div class="modal-actions">
+          <button class="cancel-btn" onclick="closeModal('twoFAModal')">
+            Tutup
+          </button>
+          <button class="save-btn">Kirim Kode</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="riwayatModal">
+      <div class="modal-content">
+        <h3>Riwayat Login</h3>
+        <p>Terakhir login: 12 Nov 2025, 10:15 WIB</p>
+        <p>Perangkat: Chrome di Windows</p>
+        <div class="modal-actions">
+          <button class="save-btn" onclick="closeModal('riwayatModal')">
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      if (typeof io !== 'undefined') {
+          // 2. Hubungkan ke Socket.IO
+          const adminSocket = io();
+          adminSocket.emit('admin-bergabung');
+          console.log('Admin Profil: Bergabung ke ruangan admin...');
+
+          // 3. Dengarkan siaran 'laporan-masuk'
+          adminSocket.on('laporan-masuk', (dataLaporan) => {
+            console.log('Halaman Profil: Laporan baru diterima!', dataLaporan);
+
+            // 4. Panggil fungsi notifikasi global (dari main.js)
+            const notifData = {
+              id: dataLaporan._id, 
+              location: dataLaporan.lokasi,
+              time: dataLaporan.waktu
+            };
+            // Cek apakah fungsi addNewNotification ada sebelum memanggilnya
+            if (typeof addNewNotification === 'function') {
+              addNewNotification(notifData);
+            } else {
+              console.warn("Fungsi addNewNotification() tidak ditemukan!");
+            }
+          });
+        } else {
+          console.error("Socket.IO tidak dimuat! Notifikasi real-time di halaman ini tidak akan berfungsi.");
+        }
+      // Navigasi Logout (dengan konfirmasi)
+      document
+        .getElementById("logoutLink")
+        .addEventListener("click", (event) => {
+          event.preventDefault();
+          if (confirm("Yakin ingin keluar dari akun?")) {
+            window.location.href = "login.html";
+          }
+        
+      });
+
+      // Modal Control (Tetap sama)
+      function openModal(id) {
+        document.getElementById(id).style.display = "flex";
+      }
+
+      function closeModal(id) {
+        document.getElementById(id).style.display = "none";
+      }
+
+      // Edit Profile (Tetap sama)
+      document
+        .getElementById("editProfileBtn")
+        .addEventListener("click", () => {
+          openModal("editProfileModal");
+        });
+
+      document
+        .getElementById("saveProfileBtn")
+        .addEventListener("click", () => {
+          const nama = document.getElementById("editNama").value;
+          const email = document.getElementById("editEmail").value;
+          const telepon = document.getElementById("editTelepon").value;
+
+          if (nama) document.getElementById("namaPetugas").textContent = nama;
+          if (email)
+            document.querySelector(
+              ".card .info-item:nth-child(2)"
+            ).innerHTML = `<b>Email:</b> ${email}`;
+          if (telepon)
+            document.querySelector(
+              ".card .info-item:nth-child(3)"
+            ).innerHTML = `<b>Nomor Telepon:</b> ${telepon}`;
+
+          closeModal("editProfileModal");
+          alert("Profil berhasil diperbarui!");
+        });
+    </script>
+  </body>
+</html>

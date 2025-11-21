@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Laporan Kebakaran - SIPADAM</title>
+  <link rel="stylesheet" href="laporan.css" /> 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+  
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="icon">🔥</span>
+        <div class="logo-text">
+          <h2>SIPADAM</h2>
+          <p>Sistem Peringatan Dini</p>
+        </div>
+      </div>
+    </div>
+    <ul class="menu">
+      <li id="menu-dashboard">
+        <a href="dashboard.html"><span class="icon">📊</span><span class="menu-text">Dashboard</span></a>
+      </li>
+      <li class="active">
+        <a href="#"><span class="icon">📋</span><span class="menu-text">Laporan</span></a>
+      </li>
+      <li id="menu-profil">
+        <a href="profil.html"><span class="icon">👤</span><span class="menu-text">Profil</span></a>
+      </li>
+      <li id="menu-logout">
+        <a href="login.html"><span class="icon">🚪</span><span class="menu-text">Keluar</span></a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <header>
+      <div class="header-left">
+        <div class="menu-toggle" id="menu-toggle-btn">☰</div>
+        <h1>Laporan Kebakaran</h1>
+      </div>
+
+      <div class="user-info">
+        <div class="notification-area">
+          <a href="#" class="notif" id="notificationBell">
+            🔔<span class="badge" id="notificationBadge"></span>
+          </a>
+          <div class="notification-dropdown" id="notificationDropdown">
+            <div class="dropdown-header">
+              <h3>Notifikasi Terbaru</h3>
+              <span class="clear-all" id="clearAllNotifications">Bersihkan Semua</span>
+            </div>
+            <div class="dropdown-list" id="notificationList"></div>
+            <div class="dropdown-footer">
+              <a href="laporan.html">Lihat Semua Laporan</a>
+            </div>
+          </div>
+        </div>
+        
+        <a href="profil.html" class="user"> 👩‍🚒 Petugas Pemadam </a>
+        <span class="status online">Online</span>
+      </div>
+    </header>
+
+    <div class="tab-menu">
+      <button id="tab-laporan" class="tab active">Daftar Laporan</button>
+      <button id="tab-statistik" class="tab">Statistik & Analisis</button>
+    </div>
+
+    <div id="page-laporan" class="tab-pane active">
+      <div class="filter-bar">
+        <input type="text" placeholder="Cari lokasi atau catatan..." class="search-input" id="searchInput">
+        <select class="filter-select" id="statusFilter">
+          <option value="Semua">Semua Status</option>
+          <option value="Aktif">Aktif</option>
+          <option value="Sedang Ditangani">Sedang Ditangani</option>
+          <option value="Selesai">Selesai</option>
+        </select>
+        <p class="info" id="infoText">Memuat data...</p>
+      </div>
+
+      <div class="report-list" id="reportList"></div>
+    </div>
+
+    <div id="page-statistik" class="tab-pane" style="display:none;">
+      <div class="filter-period">
+          Filter Periode
+          <div class="time-filters">
+          <span class="filter-btn active" data-period="7">7 Hari</span>
+          <span class="filter-btn" data-period="30">30 Hari</span>
+          <span class="filter-btn" data-period="90">3 Bulan</span>
+          <span class="filter-btn" data-period="365">1 Tahun</span>
+      </div>
+      </div>
+
+      <div class="stat-cards-container">
+          <div class="stat-card total">
+              <p class="stat-label">Total Laporan</p>
+              <p class="stat-number" id="statTotal">0</p>
+          </div>
+          <div class="stat-card active-report">
+              <p class="stat-label">Laporan Aktif</p>
+              <p class="stat-number" id="statActive">0</p>
+          </div>
+          <div class="stat-card handling">
+              <p class="stat-label">Dalam Penanganan</p>
+              <p class="stat-number" id="statHandling">0</p>
+          </div>
+      </div>
+      
+      <div class="charts-section">
+          <div class="chart-card laporan-bulanan">
+              <h3>Laporan Bulanan</h3>
+              <div class="bar-chart-placeholder" id="monthlyBars"></div>
+          </div>
+           <div class="chart-card peta-area">
+              <h3>Peta Panas Area Rawan</h3>
+              <div class="area-list" id="heatList"></div>
+          </div>
+      </div>
+
+      <div class="report-table-section">
+    <div class="table-header-controls">
+        <h3 style="flex-grow: 1;">Tabel Data Terkini</h3>
+        
+        <select id="statTableFilter" class="filter-select" style="margin-right: 10px; padding: 6px 10px; font-size: 0.9rem;">
+            <option value="Semua">Semua Status</option>
+            <option value="Aktif">Aktif</option>
+            <option value="Sedang Ditangani">Sedang Ditangani</option>
+            <option value="Selesai">Selesai</option>
+        </select>
+
+        <div class="export-btns">
+            <button id="btnExportExcel" class="export-excel">
+                <i class="fa-solid fa-file-excel"></i> Export Excel
+            </button>
+            
+            <button id="btnExportPdf" class="export-pdf">
+                <i class="fa-solid fa-file-pdf"></i> Export PDF
+            </button>
+          </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="data-table" id="dataTable">
+            <thead>
+                <tr><th>No</th><th>Lokasi</th><th>Status</th><th>Waktu</th></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        </div>
+    </div>
+      </div>
+    </div> 
+  </div> 
+  
+  <script src="main.js"></script>
+
+  <script src="laporan.js"></script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+      
+      // Inisialisasi Socket
+      const socket = io();
+      
+      // [PENTING] Bergabung sebagai Admin
+      socket.emit('admin-bergabung');
+      console.log('📡 Laporan Page: Bergabung ke ruangan admin...');
+
+      // A. LAPORAN MASUK (REAL-TIME)
+      socket.on('laporan-masuk', (laporanBaru) => {
+          console.log('⚡ Laporan Masuk:', laporanBaru);
+
+          // 1. Panggil Notifikasi Header & Toast (Main.js)
+          if (typeof addNewNotification === 'function') {
+              addNewNotification({
+                  id: laporanBaru._id,
+                  location: laporanBaru.lokasi,
+                  time: laporanBaru.waktu
+              });
+          }
+
+          // 2. UPDATE DATA LOKAL & STATISTIK (INSTANT)
+          if (typeof addLocalReport === 'function') {
+              addLocalReport(laporanBaru); 
+          }
+      });
+
+      // B. LAPORAN DIPERBARUI (STATUS UBAH)
+      socket.on('laporan-diperbarui', (laporanUpdate) => {
+           console.log('📝 Status Update:', laporanUpdate);
+           
+           // UPDATE DATA LOKAL & HITUNG ULANG STATISTIK (INSTANT)
+           if (typeof updateLocalReport === 'function') {
+              updateLocalReport(laporanUpdate);
+          }
+      });
+
+  });
+</script>
+</body>
+</html>
