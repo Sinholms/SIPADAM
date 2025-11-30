@@ -4,12 +4,21 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Laporan Kebakaran - SIPADAM</title>
+  
   <link rel="stylesheet" href="laporan.css" /> 
+  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
   <script src="/socket.io/socket.io.js"></script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
 </head>
 <body>
   
@@ -89,79 +98,89 @@
     </div>
 
     <div id="page-statistik" class="tab-pane" style="display:none;">
-      <div class="filter-period">
-          Filter Periode
-          <div class="time-filters">
-          <span class="filter-btn active" data-period="7">7 Hari</span>
-          <span class="filter-btn" data-period="30">30 Hari</span>
-          <span class="filter-btn" data-period="90">3 Bulan</span>
-          <span class="filter-btn" data-period="365">1 Tahun</span>
-      </div>
-      </div>
-
-      <div class="stat-cards-container">
-          <div class="stat-card total">
-              <p class="stat-label">Total Laporan</p>
-              <p class="stat-number" id="statTotal">0</p>
-          </div>
-          <div class="stat-card active-report">
-              <p class="stat-label">Laporan Aktif</p>
-              <p class="stat-number" id="statActive">0</p>
-          </div>
-          <div class="stat-card handling">
-              <p class="stat-label">Dalam Penanganan</p>
-              <p class="stat-number" id="statHandling">0</p>
-          </div>
-      </div>
       
-      <div class="charts-section">
-          <div class="chart-card laporan-bulanan">
-              <h3>Laporan Bulanan</h3>
-              <div class="bar-chart-placeholder" id="monthlyBars"></div>
+      <div id="exportTarget" style="background: #fff; padding: 10px; border-radius: 8px;">
+          
+          <div class="filter-period">
+              <strong>Analisis Data Laporan</strong>
+              <div class="time-filters">
+                  <span class="filter-btn active" data-period="7">7 Hari</span>
+                  <span class="filter-btn" data-period="30">30 Hari</span>
+                  <span class="filter-btn" data-period="90">3 Bulan</span>
+                  <span class="filter-btn" data-period="365">1 Tahun</span>
+              </div>
           </div>
-           <div class="chart-card peta-area">
-              <h3>Peta Panas Area Rawan</h3>
-              <div class="area-list" id="heatList"></div>
+
+          <div id="pdfHeader" style="display: none; text-align: center; margin-bottom: 20px;">
+              <h2 style="color: #d32f2f;">LAPORAN STATISTIK KEBAKARAN</h2>
+              <hr>
           </div>
-      </div>
 
-      <div class="report-table-section">
-    <div class="table-header-controls">
-        <h3 style="flex-grow: 1;">Tabel Data Terkini</h3>
-        
-        <select id="statTableFilter" class="filter-select" style="margin-right: 10px; padding: 6px 10px; font-size: 0.9rem;">
-            <option value="Semua">Semua Status</option>
-            <option value="Aktif">Aktif</option>
-            <option value="Sedang Ditangani">Sedang Ditangani</option>
-            <option value="Selesai">Selesai</option>
-        </select>
+          <div class="stat-cards-container">
+              <div class="stat-card total">
+                  <p class="stat-label">Total Laporan</p>
+                  <p class="stat-number" id="statTotal">0</p>
+              </div>
+              <div class="stat-card active-report">
+                  <p class="stat-label">Laporan Aktif</p>
+                  <p class="stat-number" id="statActive">0</p>
+              </div>
+              <div class="stat-card handling">
+                  <p class="stat-label">Dalam Penanganan</p>
+                  <p class="stat-number" id="statHandling">0</p>
+              </div>
+          </div>
+          
+          <div class="charts-section">
+              <div class="chart-card laporan-bulanan">
+                  <h3>Laporan Bulanan</h3>
+                  <div class="bar-chart-placeholder" id="monthlyBars"></div>
+              </div>
+              
+              <div class="chart-card peta-area">
+                  <h3>Sumber Laporan</h3>
+                  <div style="position: relative; height: 250px; width: 100%;">
+                      <canvas id="sourceChart"></canvas>
+                  </div>
+              </div>
+          </div>
 
-        <div class="export-btns">
-            <button id="btnExportExcel" class="export-excel">
-                <i class="fa-solid fa-file-excel"></i> Export Excel
-            </button>
+          <div class="report-table-section">
+            <div class="table-header-controls">
+                <h3 style="flex-grow: 1;">Tabel Data Terkini</h3>
+                
+                <select id="statTableFilter" class="filter-select" style="margin-right: 10px; padding: 6px 10px; font-size: 0.9rem;">
+                    <option value="Semua">Semua Status</option>
+                    <option value="Aktif">Aktif</option>
+                    <option value="Sedang Ditangani">Sedang Ditangani</option>
+                    <option value="Selesai">Selesai</option>
+                </select>
+
+                <div class="export-btns">
+                    <button id="btnExportExcel" onclick="window.exportToExcel()" class="export-excel">
+                        <i class="fa-solid fa-file-excel"></i> Export Excel
+                    </button>
+                    
+                    <button id="btnExportPdf" onclick="window.exportToPDF()" class="export-pdf">
+                        <i class="fa-solid fa-file-pdf"></i> Export PDF
+                    </button>
+                </div>
+            </div>
             
-            <button id="btnExportPdf" class="export-pdf">
-                <i class="fa-solid fa-file-pdf"></i> Export PDF
-            </button>
+            <div class="table-responsive">
+                <table class="data-table" id="dataTable">
+                    <thead>
+                        <tr><th>No</th><th>Lokasi</th><th>Status</th><th>Waktu</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
           </div>
-    </div>
-    
-    <div class="table-responsive">
-        <table class="data-table" id="dataTable">
-            <thead>
-                <tr><th>No</th><th>Lokasi</th><th>Status</th><th>Waktu</th></tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-        </div>
-    </div>
-      </div>
-    </div> 
+
+      </div> </div> 
   </div> 
   
   <script src="main.js"></script>
-
   <script src="laporan.js"></script>
 
   <script>
@@ -178,7 +197,7 @@
       socket.on('laporan-masuk', (laporanBaru) => {
           console.log('⚡ Laporan Masuk:', laporanBaru);
 
-          // 1. Panggil Notifikasi Header & Toast (Main.js)
+          // 1. Panggil Notifikasi Header & Toast
           if (typeof addNewNotification === 'function') {
               addNewNotification({
                   id: laporanBaru._id,
@@ -187,7 +206,7 @@
               });
           }
 
-          // 2. UPDATE DATA LOKAL & STATISTIK (INSTANT)
+          // 2. UPDATE DATA LOKAL & STATISTIK
           if (typeof addLocalReport === 'function') {
               addLocalReport(laporanBaru); 
           }
@@ -197,13 +216,13 @@
       socket.on('laporan-diperbarui', (laporanUpdate) => {
            console.log('📝 Status Update:', laporanUpdate);
            
-           // UPDATE DATA LOKAL & HITUNG ULANG STATISTIK (INSTANT)
+           // UPDATE DATA LOKAL
            if (typeof updateLocalReport === 'function') {
               updateLocalReport(laporanUpdate);
           }
       });
 
   });
-</script>
+  </script>
 </body>
 </html>

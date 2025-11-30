@@ -8,10 +8,23 @@ const { spawn } = require('child_process');
 
 const app = express();
 const server = http.createServer(app); 
-const io = new Server(server);
 
-app.use(express.json()); 
-app.use(express.urlencoded({ extended: true }));
+// ==========================================================
+// == PERBAIKAN 1: SETTING LIMIT SOCKET.IO ==
+// ==========================================================
+const io = new Server(server, {
+  maxHttpBufferSize: 1e8, // Izinkan data hingga 100MB (supaya gambar Base64 masuk)
+  cors: {
+    origin: "*", // Izinkan koneksi dari mana saja
+    methods: ["GET", "POST"]
+  }
+});
+
+// ==========================================================
+// == PERBAIKAN 2: SETTING LIMIT EXPRESS ==
+// ==========================================================
+app.use(express.json({ limit: '50mb' })); 
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // ==========================================================
 // == PYTHON PROCESS MANAGEMENT ==
@@ -27,6 +40,7 @@ function startPythonScript() {
 
   console.log('🐍 Starting Python fire detection script...');
   
+  // Pastikan path python benar. Di beberapa sistem gunakan 'python3'
   pythonProcess = spawn('python', ['test.py'], {
     cwd: __dirname,
     stdio: ['pipe', 'pipe', 'pipe']
@@ -90,7 +104,7 @@ const LaporanSchema = new mongoose.Schema({
   catatan: String,
   waktu: String,
   status: { type: String, default: 'Aktif' },
-  image: String,
+  image: String, // String Base64 gambar
   tipeLaporan: { type: String, default: 'Warga' },
   suhu: String,
   kelembaban: String, 
@@ -115,66 +129,34 @@ console.log("   Public: " + path.join(__dirname, "public"));
 console.log("   Admin: " + path.join(__dirname, "admin"));
 
 // ==========================================================
-// == ADMIN ROUTES ==
+// == ROUTES ==
 // ==========================================================
-app.get("/admin", (req, res) => {
-  res.sendFile(path.join(__dirname, "admin/login.html"));
-});
-app.get("/admin/login", (req, res) => {
-  res.sendFile(path.join(__dirname, "admin/login.html"));
-});
-app.get("/admin/dashboard", (req, res) => {
-  res.sendFile(path.join(__dirname, "admin/dashboard.html"));
-});
-app.get("/admin/laporan", (req, res) => {
-  res.sendFile(path.join(__dirname, "admin/laporan.html"));
-});
-app.get("/admin/statistik", (req, res) => {
-  res.sendFile(path.join(__dirname, "admin/statistik.html"));
-});
-app.get("/admin/detail-laporan", (req, res) => {
-  res.sendFile(path.join(__dirname, "admin/detail-laporan.html"));
-});
-app.get("/admin/profil", (req, res) => {
-  res.sendFile(path.join(__dirname, "admin/profil.html"));
+
+// Route Root (Redirect ke Login Warga)
+app.get("/", (req, res) => {
+  res.redirect("/public/login");
 });
 
-// ==========================================================
-// == USER PAGE ROUTES - EXPLICIT ==
-// ==========================================================
-app.get("/public", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/index.html"));
-});
+// Admin Routes
+app.get("/admin", (req, res) => res.sendFile(path.join(__dirname, "admin/login.html")));
+app.get("/admin/login", (req, res) => res.sendFile(path.join(__dirname, "admin/login.html")));
+app.get("/admin/dashboard", (req, res) => res.sendFile(path.join(__dirname, "admin/dashboard.html")));
+app.get("/admin/laporan", (req, res) => res.sendFile(path.join(__dirname, "admin/laporan.html")));
+app.get("/admin/statistik", (req, res) => res.sendFile(path.join(__dirname, "admin/statistik.html")));
+app.get("/admin/detail-laporan", (req, res) => res.sendFile(path.join(__dirname, "admin/detail-laporan.html")));
+app.get("/admin/profil", (req, res) => res.sendFile(path.join(__dirname, "admin/profil.html")));
 
-app.get("/public/index", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/index.html"));
-});
+// User Routes
+app.get("/public", (req, res) => res.sendFile(path.join(__dirname, "public/index.html")));
+app.get("/public/index", (req, res) => res.sendFile(path.join(__dirname, "public/index.html")));
+app.get("/public/login", (req, res) => res.sendFile(path.join(__dirname, "public/login.html")));
+app.get("/public/daftar", (req, res) => res.sendFile(path.join(__dirname, "public/daftar.html")));
+app.get("/public/dashboard", (req, res) => res.sendFile(path.join(__dirname, "public/dashboard.html")));
+app.get("/public/friendlist", (req, res) => res.sendFile(path.join(__dirname, "public/friendlist.html")));
+app.get("/public/laporan", (req, res) => res.sendFile(path.join(__dirname, "public/laporan.html")));
+app.get("/public/profil", (req, res) => res.sendFile(path.join(__dirname, "public/profil.html")));
 
-app.get("/public/login", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/login.html"));
-});
-
-app.get("/public/daftar", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/daftar.html"));
-});
-
-app.get("/public/dashboard", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/dashboard.html"));
-});
-
-app.get("/public/friendlist", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/friendlist.html"));
-});
-
-app.get("/public/laporan", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/laporan.html"));
-});
-
-app.get("/public/profil", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/profil.html"));
-});
-
-console.log("✅ User page routes configured");
+console.log("✅ Routes configured");
 
 // ==========================================================
 // == API ENDPOINTS ==
@@ -249,7 +231,8 @@ server.listen(PORT, () => {
 // ==========================================================
 // == ESP32 SENSOR BRIDGE ==
 // ==========================================================
-const ESP32_IP_ADDRESS = "http://10.196.39.96"; 
+// Sesuaikan IP ini dengan IP ESP32 kamu yang muncul di Serial Monitor Arduino
+const ESP32_IP_ADDRESS = "http://192.168.90.96"; 
 
 async function ambilDataSensor() {
   try {
@@ -285,11 +268,13 @@ async function ambilDataSensor() {
     }
 
   } catch (error) {
-    console.error("Gagal terhubung ke ESP32:", error.message);
+    // console.error("Gagal terhubung ke ESP32:", error.message);
+    // Silent error biar terminal gak penuh kalau ESP mati
     io.emit("data-error", { message: "ESP32 tidak terhubung." });
   }
 }
 
+// Ambil data setiap 2 detik
 setInterval(ambilDataSensor, 2000);
 
 // ==========================================================
@@ -310,7 +295,8 @@ io.on("connection", (socket) => {
     console.log(`Socket ${socket.id} (ADMIN) joined room`);
 
     try {
-      const laporanLama = await Laporan.find().sort({_id: -1}).limit(10);
+      // Muat 20 laporan terakhir biar admin gak kosong pas refresh
+      const laporanLama = await Laporan.find().sort({_id: -1}).limit(20);
       socket.emit('muat-laporan-lama', laporanLama); 
     } catch (err) {
       console.error('Failed to load old reports:', err);
@@ -327,7 +313,7 @@ io.on("connection", (socket) => {
         lokasi: dataLaporan.lokasi,
         catatan: dataLaporan.catatan,
         waktu: dataLaporan.waktu,
-        image: dataLaporan.image,
+        image: dataLaporan.image, // Ini data Base64 panjang
         tipeLaporan: tipe,
         suhu: dataLaporan.suhu,
         kelembaban: dataLaporan.kelembaban,
@@ -342,10 +328,12 @@ io.on("connection", (socket) => {
       const laporanTersimpan = await laporanBaru.save(); 
       io.to('ruangan-admin').emit('laporan-masuk', laporanTersimpan); 
       
-      console.log(`✅ Report saved and broadcasted to admin`);
+      console.log(`✅ Report saved and broadcasted to admin (ID: ${laporanTersimpan._id})`);
       
     } catch (err) {
       console.error('❌ Failed to save report:', err);
+      // Opsional: Beritahu pengirim kalau gagal
+      // socket.emit('error-laporan', { message: 'Gagal menyimpan laporan' });
     }
   });
   
@@ -380,7 +368,7 @@ io.on("connection", (socket) => {
   
   // Camera status from Python
   socket.on('camera-status', (data) => {
-    console.log(`📷 Camera status update:`, data);
+    // console.log(`📷 Camera status update:`, data); // Uncomment kalo mau debug
     io.emit('camera-status-update', data);
   });
   

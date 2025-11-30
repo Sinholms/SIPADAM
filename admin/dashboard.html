@@ -81,7 +81,8 @@
           <div class="card-icon">📄</div>
           <div class="card-content">
             <h3>Total Laporan</h3>
-            <p class="number" id="total-laporan">156</p> </div>
+            <p class="number" id="total-laporan">0</p> 
+          </div>
         </div>
         <div class="card active">
           <div class="card-icon">🔥</div>
@@ -147,8 +148,24 @@
           const reportListContainer = document.getElementById('report-list-container');
           const laporanAktifCounter = document.getElementById('laporan-aktif');
           const penangananCounter = document.getElementById('penanganan');
-          
-          // Memuat laporan lama
+          const totalLaporanCounter = document.getElementById('total-laporan'); // Target baru
+
+          // =========================================================
+          // 1. UPDATE TOTAL LAPORAN AWAL (Fetch API)
+          // =========================================================
+          // Kita fetch API karena socket 'muat-laporan-lama' biasanya 
+          // cuma kirim 20 data terakhir, jadi totalnya tidak akurat.
+          fetch('/api/laporan')
+            .then(res => res.json())
+            .then(data => {
+                // Update angka Total Laporan dengan jumlah semua data di DB
+                if(totalLaporanCounter) totalLaporanCounter.textContent = data.length;
+            })
+            .catch(err => console.error("Gagal memuat total laporan:", err));
+
+          // =========================================================
+          // 2. SOCKET: MUAT LAPORAN LAMA (List & Status Aktif)
+          // =========================================================
           adminSocket.on('muat-laporan-lama', (laporanLama) => {
             console.log('Menerima daftar laporan lama:', laporanLama);
             
@@ -160,14 +177,14 @@
                 buatElemenLaporan(dataLaporan, false); // false = jangan taruh di atas
               });
 
-              // Update kartu-kartu
+              // Update kartu Aktif & Penanganan
               const laporanAktif = laporanLama.filter(l => l.status === 'Aktif').length;
               const laporanPenanganan = laporanLama.filter(l => l.status === 'Sedang Ditangani').length;
               
               laporanAktifCounter.textContent = laporanAktif;
               penangananCounter.textContent = laporanPenanganan;
 
-              // Update badge notifikasi (hanya untuk yang 'Aktif')
+              // Update badge notifikasi
               if (typeof updateNotificationCount === 'function') {
                   updateNotificationCount(laporanAktif);
               } else {
@@ -180,11 +197,13 @@
             }
           });
 
-          // Menerima laporan baru
+          // =========================================================
+          // 3. SOCKET: LAPORAN BARU MASUK (Real-time)
+          // =========================================================
           adminSocket.on('laporan-masuk', (dataLaporan) => {
               console.log('Dashboard listener: Laporan baru diterima!', dataLaporan);
 
-              // 1. Panggil fungsi notifikasi (dari main.js)
+              // 1. Panggil notifikasi
               const notifData = {
                 id: dataLaporan._id, 
                 location: dataLaporan.lokasi,
@@ -192,8 +211,6 @@
               };
               if (typeof addNewNotification === 'function') {
                 addNewNotification(notifData);
-              } else {
-                console.warn("Fungsi addNewNotification() tidak ditemukan!");
               }
 
               // 2. Perbarui kartu "Laporan Aktif"
@@ -202,10 +219,20 @@
                   laporanAktifCounter.textContent = currentCount + 1;
               }
 
-              // 3. Perbarui List "Laporan Terbaru"
+              // 3. FITUR BARU: Perbarui "Total Laporan" Real-time
+              if (totalLaporanCounter) {
+                  let currentTotal = parseInt(totalLaporanCounter.textContent) || 0;
+                  totalLaporanCounter.textContent = currentTotal + 1;
+                  
+                  // Efek animasi kedip dikit biar kelihatan update
+                  totalLaporanCounter.style.color = '#e53935';
+                  setTimeout(() => totalLaporanCounter.style.color = '', 500);
+              }
+
+              // 4. Perbarui List "Laporan Terbaru"
               buatElemenLaporan(dataLaporan, true); // true = taruh di atas
 
-              // 4. Tambahkan Marker ke Peta
+              // 5. Tambahkan Marker ke Peta
               try {
                 if (typeof addFireMarkerToMap === 'function') {
                   const coordArray = dataLaporan.lokasi.split(",").map(Number);
@@ -220,46 +247,34 @@
                       </div>
                     `;
                     addFireMarkerToMap(coordArray, popupContent);
-                  } else {
-                    console.warn("Koordinat laporan tidak valid:", dataLaporan.lokasi);
                   }
-                } else {
-                  console.warn("Fungsi addFireMarkerToMap() tidak ditemukan!");
                 }
               } catch (e) {
                 console.error("Gagal menambahkan marker ke peta:", e);
               }
           });
 
-          // ==========================================================
-          // ===== INI ADALAH KODE "LANGKAH 3" YANG SAYA MAKSUD =====
-          // ==========================================================
+          // =========================================================
+          // 4. SOCKET: UPDATE STATUS
+          // =========================================================
           adminSocket.on('laporan-diperbarui', (laporanDiperbarui) => {
             console.log('Dashboard: Menerima update status!', laporanDiperbarui);
             
-            // 1. Perbarui daftar "Laporan Terbaru"
+            // Perbarui list
             if (reportListContainer) {
-              // Cari item laporan di daftar
               const itemToUpdate = reportListContainer.querySelector(`#laporan-${laporanDiperbarui._id}`);
-              
               if (itemToUpdate) {
-                // Hapus yang lama dan buat yang baru
                 itemToUpdate.remove();
-                buatElemenLaporan(laporanDiperbarui, true); // (true = taruh di atas)
+                buatElemenLaporan(laporanDiperbarui, true); 
               }
             }
 
-            // 2. Muat ulang SEMUA laporan untuk update counter (Cara termudah)
-            // Ini akan mengambil data baru dan menghitung ulang 'Aktif' dan 'Penanganan'
-            // dengan memicu event 'muat-laporan-lama' lagi
+            // Muat ulang counter agar sinkron
             adminSocket.emit('admin-bergabung'); 
           });
-          // ==========================================================
-          // ===== BATAS KODE "LANGKAH 3" =====
-          // ==========================================================
 
 
-          // Fungsi bantu untuk membuat elemen laporan
+          // Fungsi bantu buat elemen HTML laporan
           function buatElemenLaporan(data, taruhDiAtas) {
             if (reportListContainer) {
                 const noReports = reportListContainer.querySelector('.no-reports-message');
@@ -267,11 +282,7 @@
 
                 const newItem = document.createElement('div');
                 newItem.className = 'report-item';
-                
-                // ===== PERBAIKAN KECIL DI SINI =====
-                // Tambahkan ID unik ke elemen
                 newItem.id = `laporan-${data._id}`; 
-                // ===================================
                 
                 let statusLabel = '';
                 if (data.status === 'Aktif') {
