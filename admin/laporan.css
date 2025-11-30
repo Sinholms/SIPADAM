@@ -226,3 +226,45 @@ header { display: flex; justify-content: space-between; align-items: center; mar
 .export-pdf:hover { background-color: #c62828; }
 
 .export-excel i, .export-pdf i { margin-right: 5px; }
+
+/* =========================================
+   STYLE TAMBAHAN UNTUK GRAFIK BATANG MANUAL
+   (Wajib ada agar grafik tidak hancur)
+========================================= */
+
+.bar-row {
+    display: flex;           /* Agar menyamping (Label - Batang - Angka) */
+    align-items: center;     /* Rata tengah vertikal */
+    margin-bottom: 12px;     /* Jarak antar baris */
+    font-size: 0.9rem;
+}
+
+.bar-label {
+    width: 60px;             /* Lebar kolom tanggal */
+    color: #666;
+    font-weight: 500;
+    white-space: nowrap;     /* Jangan turun baris */
+}
+
+.bar-track {
+    flex: 1;                 /* Mengisi sisa ruang */
+    background: #f0f0f0;     /* Warna abu-abu background batang */
+    height: 10px;            /* Ketebalan batang */
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 0 15px;          /* Jarak kiri kanan batang */
+}
+
+.bar-fill {
+    height: 100%;
+    background: #e53935;     /* Warna Merah Batang */
+    border-radius: 5px;
+    /* Width diatur oleh JS */
+}
+
+.bar-value {
+    width: 30px;             /* Lebar kolom angka */
+    text-align: right;
+    font-weight: bold;
+    color: #333;
+}
