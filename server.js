@@ -249,7 +249,7 @@ server.listen(PORT, () => {
 // ==========================================================
 // == ESP32 SENSOR BRIDGE ==
 // ==========================================================
-const ESP32_IP_ADDRESS = "http://192.168.10.96"; 
+const ESP32_IP_ADDRESS = "http://10.196.39.96"; 
 
 async function ambilDataSensor() {
   try {

@@ -1,12 +1,11 @@
 // =========================================================
-// FILE: laporan.js (FULL VERSION)
-// Fitur: Filter, Realtime, Grafik, Peta, Export PDF/Excel
+// FILE: laporan.js (FINAL PRODUCTION VERSION)
 // =========================================================
 
-let allReports = [];       // Data mentah dari database
-let currentFilteredData = []; // Data yang sedang aktif (hasil filter tanggal)
+let allReports = [];          // Menyimpan semua data dari database
+let currentFilteredData = []; // Menyimpan data yang sedang aktif (hasil filter)
 
-// Expose fungsi agar bisa dipanggil dari HTML/Console jika perlu
+// Membuka akses fungsi agar bisa dipanggil dari HTML jika perlu
 window.renderReportList = renderReportList;
 window.updateStatistics = updateStatistics;
 window.fillDataTable = fillDataTable;
@@ -14,7 +13,7 @@ window.addLocalReport = addLocalReport;
 window.updateLocalReport = updateLocalReport;
 
 // ==========================================
-// 1. HELPER: AMBIL TANGGAL DARI ID MONGODB
+// 1. HELPER: KONVERSI ID MONGODB KE TANGGAL
 // ==========================================
 function getDateFromId(hexId) {
     try {
@@ -26,7 +25,7 @@ function getDateFromId(hexId) {
 }
 
 // ==========================================
-// 2. FETCH DATA API (LOAD AWAL)
+// 2. FETCH DATA DARI SERVER
 // ==========================================
 async function fetchAllReports() {
   try {
@@ -36,7 +35,7 @@ async function fetchAllReports() {
     
     allReports = await response.json(); 
     
-    // Jalankan filter default (biasanya 7 hari terakhir)
+    // Jalankan filter default saat pertama kali load
     applyFilters();
     
   } catch (err) {
@@ -46,10 +45,10 @@ async function fetchAllReports() {
 }
 
 // ==========================================
-// 3. LOGIKA FILTER UTAMA (PERIODE + STATUS)
+// 3. LOGIKA FILTER UTAMA (GABUNGAN PERIODE & STATUS)
 // ==========================================
 function applyFilters() {
-    // A. Ambil Periode Waktu (Hari) dari tombol
+    // A. Ambil Periode Waktu (Hari) dari tombol yang aktif
     const activeBtn = document.querySelector('.filter-btn.active');
     const days = activeBtn ? parseInt(activeBtn.dataset.period) : 7; 
 
@@ -62,25 +61,26 @@ function applyFilters() {
     const cutoffDate = new Date();
     cutoffDate.setDate(now.getDate() - days);
 
-    // D. Lakukan Filtering
-    // 1. Filter Tanggal (Untuk Statistik Global)
+    // D. Lakukan Filtering Data
+    
+    // 1. Filter Tanggal (Digunakan untuk Statistik Global: Grafik, Peta, Kartu)
     currentFilteredData = allReports.filter(report => {
         const reportDate = getDateFromId(report._id);
         return reportDate >= cutoffDate;
     });
 
-    // 2. Filter Tambahan Status (Khusus List Laporan Tab 1)
+    // 2. Filter Tambahan Status (Khusus untuk List Laporan di Tab 1)
     const listData = currentFilteredData.filter(r => 
         selectedStatus === "Semua" || r.status === selectedStatus
     );
 
-    // E. Render Semua Komponen
-    // Kirim 'days' agar grafik tahu harus tampil Harian atau Bulanan
+    // E. Render Ulang Semua Komponen
+    // Kita kirim 'days' agar grafik tahu harus tampil mode Harian atau Bulanan
     renderAll(currentFilteredData, listData, days);
 }
 
 // ==========================================
-// 4. RENDER SEMUA KOMPONEN
+// 4. RENDER SEMUA KOMPONEN UI
 // ==========================================
 function renderAll(statData, listData, days) {
   renderReportList(listData);       // Tab 1: List Kartu (Kena filter status)
@@ -88,7 +88,7 @@ function renderAll(statData, listData, days) {
   renderCharts(allReports, days);   // Tab 2: Grafik Tren (Pakai allReports agar tren terlihat utuh)
   renderHeatList(statData);         // Tab 2: Peta Area
   
-  // Tab 2: Tabel (Punya filter dropdown sendiri, jadi panggil ini)
+  // Tab 2: Tabel (Punya filter dropdown sendiri, jadi panggil fungsi tabel)
   fillDataTable(statData); 
   
   const infoText = document.getElementById("infoText");
@@ -117,6 +117,15 @@ function renderReportList(data) {
     const item = document.createElement("div");
     item.className = "report-item";
     item.style.animation = "fadeIn 0.5s ease";
+
+    // Format Tanggal Readable (Contoh: 21 Nov 2025)
+    const dateObj = getDateFromId(d._id);
+    const dateStr = dateObj.toLocaleDateString('id-ID', {
+        day: 'numeric', 
+        month: 'short', 
+        year: 'numeric'
+    });
+
     item.innerHTML = `
       <div class="report-header">
         <h2>${d.lokasi}</h2>
@@ -124,7 +133,7 @@ function renderReportList(data) {
       </div>
       <p>${d.catatan || "Tidak ada keterangan."}</p>
       <div class="report-footer">
-        <span>🕓 ${d.waktu}</span>
+        <span>🕓 ${dateStr} • ${d.waktu} WIB</span>
         <button class="detail-btn" onclick="window.location.href='detail-laporan.html?id=${d._id}'">Detail</button>
       </div>
     `;
@@ -182,7 +191,7 @@ function fillDataTable(data) {
   });
 }
 
-// --- D. GRAFIK BATANG DINAMIS ---
+// --- D. GRAFIK BATANG DINAMIS (HARIAN/BULANAN) ---
 function renderCharts(rawData, days) {
   const container = document.getElementById("monthlyBars");
   if (!container) return;
@@ -192,7 +201,7 @@ function renderCharts(rawData, days) {
   let counts = [];
   const now = new Date();
 
-  // MODE 1: HARIAN (<= 30 Hari)
+  // MODE 1: HARIAN (Jika filter <= 30 Hari)
   if (days <= 30) {
       for (let i = 0; i < days; i++) {
           const d = new Date();
@@ -211,7 +220,7 @@ function renderCharts(rawData, days) {
           counts.unshift(count);
       }
   } 
-  // MODE 2: BULANAN (> 30 Hari)
+  // MODE 2: BULANAN (Jika filter > 30 Hari)
   else {
       const monthsToShow = (days === 90) ? 3 : 12; 
       for (let i = 0; i < monthsToShow; i++) {
@@ -255,7 +264,7 @@ function renderCharts(rawData, days) {
   });
 }
 
-// --- E. PETA PANAS KECAMATAN (SEMARANG) ---
+// --- E. PETA KECAMATAN (SEMARANG) ---
 function renderHeatList(data) {
   const container = document.getElementById("heatList");
   if(!container) return;
@@ -307,7 +316,7 @@ function renderHeatList(data) {
 }
 
 // ==========================================
-// 5. FITUR EXPORT (PDF & EXCEL)
+// 5. FITUR EXPORT DATA
 // ==========================================
 
 // --- EXPORT PDF ---
@@ -344,20 +353,16 @@ async function exportToPDF() {
     doc.save('Laporan_SIPADAM.pdf');
 }
 
-// --- EXPORT EXCEL (REVISI RAPI INDONESIA) ---
+// --- EXPORT EXCEL (RAPIIH - TITIK KOMA) ---
 function exportToExcel() {
-    // 1. Tambahkan \uFEFF (BOM) agar Excel mengenali encoding teks dengan benar
-    let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-    
-    // 2. Gunakan TITIK KOMA (;) sebagai pemisah Header
+    let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; // BOM
     csvContent += "No;Lokasi Kejadian;Status;Waktu;Sumber\n";
 
     currentFilteredData.forEach((item, index) => {
         const dateObj = getDateFromId(item._id);
         const dateStr = dateObj.toLocaleDateString('id-ID');
         
-        // Bersihkan jika ada titik koma di dalam teks lokasi agar format tidak rusak
-        // Kita juga ganti koma dengan spasi biar aman
+        // Bersihkan titik koma dan koma agar format tidak rusak
         const cleanLokasi = item.lokasi.replace(/;/g, " ").replace(/,/g, " "); 
         
         const row = [
@@ -367,8 +372,6 @@ function exportToExcel() {
             `${dateStr} ${item.waktu}`,
             item.tipeLaporan || 'Warga'
         ];
-        
-        // 3. Gabungkan data dengan TITIK KOMA (;)
         csvContent += row.join(";") + "\n";
     });
 
@@ -380,28 +383,29 @@ function exportToExcel() {
     link.click();
     link.remove();
 }
+
 // ==========================================
-// 6. UPDATE REALTIME
+// 6. UPDATE REALTIME (DIPANGGIL DARI SOCKET)
 // ==========================================
 function addLocalReport(laporanBaru) {
     allReports.unshift(laporanBaru);
-    applyFilters(); 
+    applyFilters(); // Refresh otomatis
 }
 
 function updateLocalReport(laporanUpdate) {
     const index = allReports.findIndex(r => r._id === laporanUpdate._id);
     if (index !== -1) {
         allReports[index] = laporanUpdate;
-        applyFilters(); 
+        applyFilters(); // Refresh otomatis
     }
 }
 
 // ==========================================
-// 7. EVENT LISTENERS
+// 7. EVENT LISTENERS (UTAMA)
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
   
-  // A. Filter Periode
+  // A. Tombol Periode
   const filterBtns = document.querySelectorAll('.filter-btn');
   filterBtns.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -423,6 +427,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const tableStatusDropdown = document.getElementById("statTableFilter");
   if (tableStatusDropdown) {
       tableStatusDropdown.addEventListener('change', () => {
+          // Panggil fillDataTable dengan data yang sudah difilter tanggal
           fillDataTable(currentFilteredData);
       });
   }
@@ -453,10 +458,11 @@ document.addEventListener("DOMContentLoaded", () => {
         tabLaporan.classList.remove("active");
         pageLaporan.style.display = "none";
         pageStatistik.style.display = "block";
+        // Trigger render ulang saat pindah tab
         applyFilters();
       });
   }
 
-  // Load awal
+  // Load data awal
   fetchAllReports();
 });
