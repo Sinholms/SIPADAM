@@ -5,360 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Laporan Kebakaran - SIPADAM</title>
   
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+        crossorigin=""/>
   
-  <script src="/socket.io/socket.io.js"></script>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="navbar.css">
+  <link rel="stylesheet" href="components.css">
+  <link rel="stylesheet" href="laporan.css">
   
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
-    }
-
-    body {
-      background: #f5f5f5;
-      padding-top: 70px;
-      color: #111;
-    }
-
-    /* Navbar - Smooth & Consistent */
-    .navbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: rgba(255, 255, 255, 0.98);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid #eee;
-      z-index: 2000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      transition: all 0.3s ease;
-    }
-
-    .navbar.scrolled {
-      background: rgba(255, 255, 255, 1);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-
-    .navbar .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 14px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .logo a {
-      font-size: 1.7rem;
-      font-weight: 700;
-      color: #e63946;
-      text-decoration: none;
-      transition: 0.3s;
-    }
-
-    .logo a:hover {
-      color: #c92a2a;
-    }
-
-    .navbar nav ul {
-      list-style: none;
-      display: flex;
-      gap: 28px;
-      align-items: center;
-    }
-
-    .navbar nav ul li a {
-      text-decoration: none;
-      color: #1e1e1e;
-      font-weight: 500;
-      transition: 0.3s;
-      position: relative;
-      padding: 5px 0;
-    }
-
-    .navbar nav ul li a::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: #e63946;
-      transition: width 0.3s ease;
-    }
-
-    .navbar nav ul li a:hover::after,
-    .navbar nav ul li a.active::after {
-      width: 100%;
-    }
-
-    .navbar nav ul li a:hover,
-    .navbar nav ul li a.active {
-      color: #e63946;
-    }
-
-    /* Mobile Toggle */
-    .mobile-toggle {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-    }
-
-    .mobile-toggle span {
-      width: 25px;
-      height: 3px;
-      background: #e63946;
-      border-radius: 2px;
-      transition: 0.3s;
-    }
-
-    .laporan-container {
-      max-width: 900px;
-      margin: 40px auto 60px;
-      padding: 0 20px;
-    }
-
-    .page-header {
-      background: linear-gradient(135deg, #e63946, #c92a2a);
-      color: white;
-      padding: 40px;
-      border-radius: 15px;
-      text-align: center;
-      margin-bottom: 30px;
-      box-shadow: 0 5px 20px rgba(230, 57, 70, 0.3);
-    }
-
-    .page-header h1 {
-      font-size: 2.2rem;
-      margin-bottom: 10px;
-    }
-
-    .form-container {
-      background: white;
-      border-radius: 15px;
-      padding: 40px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    }
-
-    .alert-info {
-      background: #e3f2fd;
-      border-left: 4px solid #2962ff;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-    }
-
-    .alert-info p {
-      margin: 0;
-      color: #1565c0;
-      font-size: 0.9rem;
-    }
-
+    /* Fix untuk Leaflet map */
     #map {
+      width: 100%;
       height: 400px;
-      border-radius: 12px;
-      margin-bottom: 25px;
-      border: 2px solid #eee;
+      border-radius: var(--radius-lg);
+      z-index: 1;
     }
-
-    .form-group {
-      margin-bottom: 25px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      color: #333;
-      font-weight: 600;
-    }
-
-    .form-group input,
-    .form-group textarea {
-      width: 100%;
-      padding: 14px;
-      border: 2px solid #ddd;
-      border-radius: 10px;
-      font-size: 1rem;
-      transition: 0.3s;
-    }
-
-    .form-group input:focus,
-    .form-group textarea:focus {
-      border-color: #e63946;
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
-    }
-
-    .form-group textarea {
-      resize: vertical;
-      min-height: 100px;
-    }
-
-    .form-group small {
-      display: block;
-      color: #666;
-      font-size: 0.85rem;
-      margin-top: 5px;
-    }
-
-    .custom-file-upload {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 15px;
-      border: 2px dashed #ddd;
-      border-radius: 10px;
-      background: #f8f8f8;
-      cursor: pointer;
-      transition: 0.3s;
-      color: #666;
-      font-weight: 500;
-    }
-
-    .custom-file-upload:hover {
-      border-color: #e63946;
-      background: #fff5f5;
-      color: #e63946;
-    }
-
-    .custom-file-upload.has-file {
-      border-color: #2e7d32;
-      background: #e8f5e9;
-      color: #2e7d32;
-    }
-
-    input[type="file"] {
-      display: none;
-    }
-
-    .photo-preview {
-      margin-top: 15px;
-      border-radius: 10px;
-      overflow: hidden;
-      display: none;
-      position: relative;
-    }
-
-    .photo-preview.show {
-      display: block;
-    }
-
-    .photo-preview img {
-      width: 100%;
-      max-height: 300px;
-      object-fit: cover;
-    }
-
-    .remove-photo {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(230, 57, 70, 0.9);
-      color: white;
-      border: none;
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 1.2rem;
-      transition: 0.3s;
-    }
-
-    .remove-photo:hover {
-      background: #c92a2a;
-      transform: rotate(90deg);
-    }
-
-    .btn-submit {
-      width: 100%;
-      background: linear-gradient(135deg, #e63946, #c92a2a);
-      color: white;
-      padding: 18px;
-      border: none;
-      border-radius: 12px;
-      font-size: 1.2rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: 0.3s;
-      box-shadow: 0 5px 15px rgba(230, 57, 70, 0.3);
-      margin-top: 10px;
-    }
-
-    .btn-submit:hover {
-      background: linear-gradient(135deg, #c92a2a, #a61e2a);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(230, 57, 70, 0.4);
-    }
-
-    .btn-submit:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .page-header h1 {
-        font-size: 1.8rem;
-      }
-
-      .form-container {
-        padding: 25px;
-      }
-
-      .mobile-toggle {
-        display: flex;
-      }
-
-      .navbar nav {
-        display: none;
-      }
-
-      .navbar nav.active {
-        display: block;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      }
-
-      .navbar ul {
-        flex-direction: column;
-        gap: 0;
-        padding: 20px;
-      }
-
-      .navbar ul li a {
-        display: block;
-        padding: 12px;
-      }
-    }
-  /* ... (style Anda yang lain) ... */
     
-    /* ===== TAMBAHKAN STYLE INI ===== */
-    .sensor-input-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr); /* 3 kolom */
-      gap: 15px;
-      margin-bottom: 25px;
+    .leaflet-container {
+      height: 100%;
+      width: 100%;
     }
-
-    /* Responsive untuk layar kecil */
-    @media (max-width: 500px) {
-      .sensor-input-grid {
-        grid-template-columns: 1fr; /* 1 kolom */
-      }
-    }
-    /* =============================== */
-
   </style>
 </head>
 <body>
@@ -372,7 +41,7 @@
         <ul>
           <li><a href="dashboard.html">Dashboard</a></li>
           <li><a href="friendlist.html">👥 Teman</a></li>
-          <li><a href="laporan.html" class="active">📝 Laporan</a></li>
+          <li><a href="laporan.html" class="active">📋 Laporan</a></li>
           <li><a href="profil.html">👤 Profil</a></li>
           <li><a href="#" onclick="handleLogout()">🚪 Keluar</a></li>
         </ul>
@@ -387,73 +56,636 @@
 
   <!-- Content -->
   <div class="laporan-container">
+    <!-- Page Header -->
     <div class="page-header">
       <h1>🔥 Laporkan Kebakaran</h1>
-      <p>Bantu kami merespons lebih cepat dengan memberikan informasi lokasi yang akurat</p>
+      <p>Bantu kami merespons lebih cepat dengan informasi yang akurat</p>
     </div>
 
-    <div class="form-container">
-      <div class="alert-info">
-        <p>📍 Klik atau seret marker pada peta untuk menandai lokasi kebakaran</p>
-      </div>
-
-      <!-- Map -->
-      <div id="map"></div>
-
-      <!-- Form -->
-      <form id="formLaporan">
-        <div class="form-group">
-          <label for="inputLokasi">📍 Koordinat Lokasi</label>
-          <input type="text" id="inputLokasi" readonly placeholder="Klik peta untuk menandai lokasi">
-          <small id="statusGPS">Mendeteksi lokasi Anda...</small>
-        </div>
-
-        <div class="form-group">
-          <label for="catatan">📝 Deskripsi Kejadian (opsional)</label>
-          <textarea id="catatan" placeholder="Contoh: Api berasal dari dapur lantai 2, asap tebal, belum ada korban"></textarea>
-        </div>
-
-        <div class="form-group">
-          <label>🔥 Indikasi Sensor (Opsional)</label>
-          <div class="sensor-input-grid">
-            
-            <div>
-              <label for="suhu" style="font-size: 0.8rem; color: #555;">Suhu</label>
-              <input type="text" inputmode="decimal" id="suhu" placeholder="--°C">
+    <!-- Grid Layout -->
+    <div class="laporan-grid">
+      
+      <!-- Main Content (Left Side) -->
+      <div class="laporan-main">
+        
+        <!-- Map Card -->
+        <div class="laporan-card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>🗺️</span>
+              <span>Lokasi Kebakaran</span>
             </div>
-            
-            <div>
-              <label for="kelembaban" style="font-size: 0.8rem; color: #555;">Kelembaban</label>
-              <input type="text" inputmode="decimal" id="kelembaban" placeholder="--%">
+          </div>
+          
+          <div class="info-box">
+            <div class="info-box-icon">💡</div>
+            <div class="info-box-text">
+              Lokasi diambil dari modul GPS IoT (fixed). Anda tetap bisa menggeser marker atau klik peta untuk ubah lokasi manual.
             </div>
+          </div>
 
-            <div>
-              <label for="intensitas" style="font-size: 0.8rem; color: #555;">Smoke</label>
-              <input type="text" id="intensitas" placeholder="--">
-            </div>
-
+          <div class="map-container">
+            <div id="map"></div>
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="fotoKebakaran">📸 Foto Kejadian (opsional, maks 2MB)</label>
-          <input type="file" id="fotoKebakaran" accept="image/*" onchange="handleFileSelect(event)">
-          <label for="fotoKebakaran" class="custom-file-upload" id="fileLabel">
-            <span>📷</span>
-            <span>Pilih foto dari perangkat Anda</span>
+        <!-- Location Input Card -->
+        <div class="location-card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>📍</span>
+              <span>Koordinat</span>
+            </div>
+          </div>
+          
+          <div class="location-input-group">
+            <input type="text" id="inputLokasi" readonly placeholder="Menunggu GPS IoT...">
+            <button class="btn-detect-location" onclick="detectLocation()">
+              📱 Fallback GPS
+            </button>
+          </div>
+          <div class="gps-status" id="statusGPS">
+            ⏳ Menunggu GPS dari modul IoT...
+          </div>
+        </div>
+
+        <!-- Description Card -->
+        <div class="description-card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>📝</span>
+              <span>Deskripsi Kejadian</span>
+            </div>
+          </div>
+          <textarea id="catatan" placeholder="Contoh: Api berasal dari dapur lantai 2, asap tebal, belum ada korban jiwa. Tolong segera datang!" rows="5"></textarea>
+        </div>
+
+        <!-- Photo Upload Card -->
+        <div class="photo-card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>📸</span>
+              <span>Foto Kejadian (Opsional)</span>
+            </div>
+          </div>
+
+          <label for="fotoKebakaran">
+            <div class="photo-upload-area">
+              <div class="photo-upload-icon">📷</div>
+              <div class="photo-upload-text">Klik untuk memilih foto</div>
+              <div class="photo-upload-hint">Format: JPG, PNG (Maks 2MB)</div>
+            </div>
           </label>
-          <small id="photoInfo"></small>
+          <input type="file" id="fotoKebakaran" accept="image/*" onchange="handleFileSelect(event)">
+          
           <div class="photo-preview" id="previewContainer">
             <img id="previewImage" src="" alt="Preview">
             <button type="button" class="remove-photo" onclick="removePhoto()">×</button>
           </div>
         </div>
 
-        <button type="submit" class="btn-submit">🚨 Kirim Laporan Darurat</button>
-      </form>
+      </div>
+
+      <!-- Sidebar (Right Side) -->
+      <div class="laporan-sidebar">
+        
+        <!-- Sensor Data Card -->
+        <div class="sensor-card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>📊</span>
+              <span>Data Sensor</span>
+            </div>
+          </div>
+          
+          <div class="sensor-grid">
+            <div class="sensor-field">
+              <label>🌡️ Suhu</label>
+              <input type="text" id="suhu" readonly placeholder="--°C">
+            </div>
+            
+            <div class="sensor-field">
+              <label>💧 Kelembaban</label>
+              <input type="text" id="kelembaban" readonly placeholder="--%">
+            </div>
+
+            <div class="sensor-field">
+              <label>💨 Asap</label>
+              <input type="text" id="intensitas" readonly placeholder="-- ppm">
+            </div>
+
+            <div class="sensor-field">
+              <label>☠️ CO</label>
+              <input type="text" id="co" readonly placeholder="-- ppm">
+            </div>
+
+            <div class="sensor-field">
+              <label>🌡️📈 Temp Rate</label>
+              <input type="text" id="tempRate" readonly placeholder="--°C/s">
+            </div>
+
+            <div class="sensor-field">
+              <label>💨📈 Smoke Rate</label>
+              <input type="text" id="smokeRate" readonly placeholder="-- ppm/s">
+            </div>
+
+            <div class="sensor-field">
+              <label>☠️📈 CO Rate</label>
+              <input type="text" id="coRate" readonly placeholder="-- ppm/s">
+            </div>
+
+            <div class="sensor-field">
+              <label>⚠️ Level Bahaya</label>
+              <input type="text" id="riskLevel" readonly placeholder="NORMAL">
+            </div>
+          </div>
+        </div>
+
+        <!-- Emergency Contacts -->
+        <div class="emergency-card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>🚨</span>
+              <span>Kontak Darurat</span>
+            </div>
+          </div>
+
+          <div class="emergency-grid">
+            <a href="tel:113" class="emergency-item">
+              <div class="emergency-icon">🚒</div>
+              <div class="emergency-info">
+                <div class="emergency-name">Pemadam Kebakaran</div>
+                <div class="emergency-number">113</div>
+              </div>
+            </a>
+
+            <a href="tel:110" class="emergency-item">
+              <div class="emergency-icon">👮</div>
+              <div class="emergency-info">
+                <div class="emergency-name">Polisi</div>
+                <div class="emergency-number">110</div>
+              </div>
+            </a>
+
+            <a href="tel:118" class="emergency-item">
+              <div class="emergency-icon">🚑</div>
+              <div class="emergency-info">
+                <div class="emergency-name">Ambulans</div>
+                <div class="emergency-number">118</div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Safety Tips -->
+        <div class="tips-card">
+          <div class="tips-title">
+            <span>💡</span>
+            <span>Tips Keselamatan</span>
+          </div>
+          <ul class="tips-list">
+            <li>Tetap tenang dan jangan panik</li>
+            <li>Evakuasi segera ke tempat aman</li>
+            <li>Jangan kembali ke lokasi kebakaran</li>
+            <li>Hubungi pemadam kebakaran (113)</li>
+            <li>Bantu orang lain yang membutuhkan</li>
+          </ul>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="submit-section">
+          <button type="button" class="btn-submit" onclick="submitLaporan()">
+            <span>🚨</span>
+            <span>Kirim Laporan Darurat</span>
+          </button>
+        </div>
+
+      </div>
+
     </div>
   </div>
-  <script src="main.js"></script> 
-  <script src="laporan.js" defer></script>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+          crossorigin=""></script>
+  <script src="/socket.io/socket.io.js"></script>
+  
+  <script>
+    // ============================================
+    // LAPORAN.HTML - GPS dari IoT Module NEO-6M
+    // ============================================
+
+    // Socket.IO connection
+    let socket;
+    try {
+      socket = io();
+      console.log('✅ Socket.IO connected');
+    } catch (e) {
+      console.warn('⚠️ Socket.IO not available');
+    }
+
+    // ===== VARIABLES =====
+    let map, marker;
+    let selectedLat = -6.9820; // Semarang default
+    let selectedLng = 110.4153;
+    let photoBase64 = null;
+    
+    // GPS Source Tracking
+    let gpsSource = 'none';
+    let iotGpsValid = false;
+    let lastIotGpsUpdate = 0;
+    const GPS_TIMEOUT = 10000;
+    
+    // Auto Report Tracking
+    let lastAutoReportTime = 0;
+    let hasAutoReported = false;
+    const AUTO_REPORT_COOLDOWN = 300000;
+    let userHasInteracted = false;
+
+    // ===== GPS STATUS UPDATE =====
+    function updateGPSStatus(source, isValid, message) {
+      gpsSource = source;
+      const statusEl = document.getElementById('statusGPS');
+      
+      if (source === 'iot' && isValid) {
+        statusEl.innerHTML = `
+          <span style="color: #2e7d32; font-weight: 600;">🛰️ GPS IoT Module Active</span><br>
+          <span style="color: #666; font-size: 0.85em;">Koordinat dari modul NEO-6M</span>
+        `;
+        statusEl.style.backgroundColor = '#e8f5e9';
+        statusEl.style.padding = '12px';
+        statusEl.style.borderRadius = '8px';
+      } else if (source === 'device' && isValid) {
+        statusEl.innerHTML = `
+          <span style="color: #ff9800; font-weight: 600;">📱 GPS Device (Fallback)</span><br>
+          <span style="color: #666; font-size: 0.85em;">Menggunakan GPS perangkat</span>
+        `;
+        statusEl.style.backgroundColor = '#fff3e0';
+      } else if (source === 'manual') {
+        statusEl.innerHTML = `
+          <span style="color: #2196f3; font-weight: 600;">📍 Manual Location</span><br>
+          <span style="color: #666; font-size: 0.85em;">Lokasi dipilih dari peta</span>
+        `;
+        statusEl.style.backgroundColor = '#e3f2fd';
+      } else {
+        statusEl.innerHTML = `
+          <span style="color: #e63946; font-weight: 600;">❌ GPS Tidak Tersedia</span><br>
+          <span style="color: #666; font-size: 0.85em;">Klik peta untuk menandai lokasi manual</span>
+        `;
+        statusEl.style.backgroundColor = '#ffebee';
+      }
+    }
+
+    // ===== TRACK USER INTERACTIONS =====
+    function markUserInteraction() {
+      userHasInteracted = true;
+      hasAutoReported = false;
+    }
+
+    // ===== MAP INITIALIZATION =====
+    function initMap() {
+      console.log('🗺️ Initializing map...');
+      
+      try {
+        // Create map
+        map = L.map('map', {
+          center: [selectedLat, selectedLng],
+          zoom: 13,
+          zoomControl: true,
+          attributionControl: true
+        });
+        
+        console.log('✅ Map created');
+
+        // Add tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors',
+          maxZoom: 19
+        }).addTo(map);
+        
+        console.log('✅ Tile layer added');
+
+        // Add marker
+        marker = L.marker([selectedLat, selectedLng], { 
+          draggable: true 
+        }).addTo(map);
+        
+        console.log('✅ Marker added');
+        
+        // Update input
+        document.getElementById('inputLokasi').value = `${selectedLat.toFixed(6)}, ${selectedLng.toFixed(6)}`;
+
+        // Force map to render
+        setTimeout(() => {
+          map.invalidateSize();
+          console.log('✅ Map size invalidated');
+        }, 250);
+
+        // ===== EVENT LISTENERS =====
+        
+        // Zoom
+        map.on('zoomstart', function() {
+          markUserInteraction();
+        });
+        
+        // Pan/Drag map
+        map.on('dragstart', function() {
+          markUserInteraction();
+        });
+        
+        // Click on map
+        map.on('click', function(e) {
+          selectedLat = e.latlng.lat;
+          selectedLng = e.latlng.lng;
+          marker.setLatLng([selectedLat, selectedLng]);
+          document.getElementById('inputLokasi').value = `${selectedLat.toFixed(6)}, ${selectedLng.toFixed(6)}`;
+          updateGPSStatus('manual', true);
+          markUserInteraction();
+        });
+
+        // Drag marker
+        marker.on('dragstart', function() {
+          markUserInteraction();
+        });
+        
+        marker.on('dragend', function(e) {
+          selectedLat = e.target.getLatLng().lat;
+          selectedLng = e.target.getLatLng().lng;
+          document.getElementById('inputLokasi').value = `${selectedLat.toFixed(6)}, ${selectedLng.toFixed(6)}`;
+          updateGPSStatus('manual', true);
+        });
+
+        console.log('✅ Map fully initialized');
+        
+      } catch (error) {
+        console.error('❌ Map initialization error:', error);
+      }
+    }
+
+    // ===== DETECT DEVICE LOCATION (FALLBACK) =====
+    function detectLocation() {
+      const statusEl = document.getElementById('statusGPS');
+      statusEl.textContent = '⏳ Mendeteksi lokasi dari device...';
+
+      if (!navigator.geolocation) {
+        updateGPSStatus('none', false);
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          selectedLat = position.coords.latitude;
+          selectedLng = position.coords.longitude;
+          
+          marker.setLatLng([selectedLat, selectedLng]);
+          map.setView([selectedLat, selectedLng], 15);
+          
+          document.getElementById('inputLokasi').value = `${selectedLat.toFixed(6)}, ${selectedLng.toFixed(6)}`;
+          updateGPSStatus('device', true);
+          markUserInteraction();
+        },
+        (error) => {
+          updateGPSStatus('none', false);
+          console.error('GPS Error:', error);
+        }
+      );
+    }
+
+    // ===== RECEIVE DATA FROM IoT =====
+    if (socket) {
+      socket.on('data-sensor', (data) => {
+        console.log('📡 Data sensor:', data);
+
+        // ===== GPS dari IoT Module =====
+        if (data.gpsValid && data.latitude !== 0 && data.longitude !== 0 && !userHasInteracted) {
+          const latDiff = Math.abs(selectedLat - data.latitude);
+          const lngDiff = Math.abs(selectedLng - data.longitude);
+                
+          if (latDiff > 0.0001 || lngDiff > 0.0001 || gpsSource === 'none') {
+            selectedLat = data.latitude;
+            selectedLng = data.longitude;
+            document.getElementById('inputLokasi').value = `${selectedLat.toFixed(6)}, ${selectedLng.toFixed(6)}`;
+            
+            iotGpsValid = true;
+            lastIotGpsUpdate = Date.now();
+            updateGPSStatus('iot', true);
+            
+            if (marker) {
+              marker.setLatLng([selectedLat, selectedLng]);
+              map.setView([selectedLat, selectedLng], 16);
+            }
+            
+            console.log('🛰️ GPS IoT Fixed Location:', selectedLat, selectedLng);
+          }
+        }
+
+        // Update sensor readings
+        document.getElementById('suhu').value = data.temperature ? `${data.temperature.toFixed(1)}°C` : '--°C';
+        document.getElementById('kelembaban').value = data.humidity ? `${data.humidity.toFixed(1)}%` : '--%';
+        document.getElementById('intensitas').value = data.smoke_ppm ? `${data.smoke_ppm.toFixed(2)} ppm` : '-- ppm';
+        document.getElementById('co').value = data.co_ppm ? `${data.co_ppm.toFixed(2)} ppm` : '-- ppm';
+        document.getElementById('tempRate').value = data.tempRate ? `${data.tempRate.toFixed(2)}°C/s` : '--°C/s';
+        document.getElementById('smokeRate').value = data.smokeRate ? `${data.smokeRate.toFixed(2)} ppm/s` : '-- ppm/s';
+        document.getElementById('coRate').value = data.coRate ? `${data.coRate.toFixed(2)} ppm/s` : '-- ppm/s';
+        
+        const riskLevelInput = document.getElementById('riskLevel');
+        riskLevelInput.value = data.riskLevel || 'NORMAL';
+        
+        // Styling risk level
+        if (data.riskLevel === 'CRITICAL') {
+          riskLevelInput.style.backgroundColor = '#ffe0e0';
+          riskLevelInput.style.color = '#e63946';
+          riskLevelInput.style.fontWeight = 'bold';
+        } else if (data.riskLevel === 'HIGH') {
+          riskLevelInput.style.backgroundColor = '#fff3cd';
+          riskLevelInput.style.color = '#ff9800';
+          riskLevelInput.style.fontWeight = 'bold';
+        } else if (data.riskLevel === 'MEDIUM') {
+          riskLevelInput.style.backgroundColor = '#fff8e1';
+          riskLevelInput.style.color = '#f57c00';
+          riskLevelInput.style.fontWeight = '600';
+        } else {
+          riskLevelInput.style.backgroundColor = '#e8f5e9';
+          riskLevelInput.style.color = '#2e7d32';
+          riskLevelInput.style.fontWeight = 'normal';
+          hasAutoReported = false;
+        }
+
+        // Auto Report Trigger
+        if (shouldTriggerAutoReport(data.riskLevel) && !hasAutoReported && !userHasInteracted) {
+          sendAutoReport(data);
+        }
+      });
+    }
+
+    // ===== AUTO REPORT FUNCTIONS =====
+    function shouldTriggerAutoReport(riskLevel) {
+      if (riskLevel !== 'HIGH' && riskLevel !== 'CRITICAL') {
+        return false;
+      }
+      
+      const now = Date.now();
+      if (now - lastAutoReportTime < AUTO_REPORT_COOLDOWN) {
+        console.log('⏳ Auto-report cooldown active...');
+        return false;
+      }
+      
+      return true;
+    }
+
+    function sendAutoReport(data) {
+      console.log('🚨 TRIGGERING AUTO REPORT!');
+      
+      if (!selectedLat || !selectedLng) {
+        console.warn('❌ No GPS coordinates, auto-report cancelled');
+        return;
+      }
+      
+      const lokasi = `${selectedLat.toFixed(6)}, ${selectedLng.toFixed(6)}`;
+      const waktu = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      
+      const laporan = {
+        lokasi: lokasi,
+        catatan: `⚠️ LAPORAN OTOMATIS (GPS: ${gpsSource.toUpperCase()}) - Level bahaya ${data.riskLevel} terdeteksi!`,
+        waktu: waktu,
+        image: null,
+        tipeLaporan: 'Auto',
+        suhu: data.temperature ? `${data.temperature.toFixed(1)}°C` : '--°C',
+        kelembaban: data.humidity ? `${data.humidity.toFixed(1)}%` : '--%',
+        intensitas: data.smoke_ppm ? `${data.smoke_ppm.toFixed(2)} ppm` : '-- ppm',
+        co: data.co_ppm ? `${data.co_ppm.toFixed(2)} ppm` : '-- ppm',
+        tempRate: data.tempRate ? `${data.tempRate.toFixed(2)}°C/s` : '--°C/s',
+        smokeRate: data.smokeRate ? `${data.smokeRate.toFixed(2)} ppm/s` : '-- ppm/s',
+        coRate: data.coRate ? `${data.coRate.toFixed(2)} ppm/s` : '-- ppm/s',
+        riskLevel: data.riskLevel
+      };
+      
+      if (socket) {
+        socket.emit('laporan-baru', laporan);
+      }
+      
+      lastAutoReportTime = Date.now();
+      hasAutoReported = true;
+      
+      alert(`🚨 Laporan otomatis terkirim!\nGPS: ${gpsSource.toUpperCase()}\nLevel: ${data.riskLevel}`);
+    }
+
+    // ===== PHOTO UPLOAD =====
+    function handleFileSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        alert('❌ File harus berupa gambar!');
+        event.target.value = '';
+        return;
+      }
+
+      if (file.size > 2 * 1024 * 1024) {
+        alert('❌ Ukuran file maksimal 2MB!');
+        event.target.value = '';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        photoBase64 = e.target.result;
+        document.getElementById('previewImage').src = photoBase64;
+        document.getElementById('previewContainer').classList.add('active');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removePhoto() {
+      photoBase64 = null;
+      document.getElementById('fotoKebakaran').value = '';
+      document.getElementById('previewContainer').classList.remove('active');
+    }
+
+    // ===== SUBMIT REPORT =====
+    function submitLaporan() {
+      const lokasi = document.getElementById('inputLokasi').value;
+      const catatan = document.getElementById('catatan').value;
+
+      if (!lokasi) {
+        alert('⚠️ Pilih lokasi kebakaran terlebih dahulu!');
+        return;
+      }
+
+      const laporan = {
+        lokasi: lokasi,
+        catatan: catatan || `Laporan dari GPS ${gpsSource.toUpperCase()}`,
+        waktu: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+        image: photoBase64 || null,
+        tipeLaporan: 'Warga',
+        suhu: document.getElementById('suhu').value,
+        kelembaban: document.getElementById('kelembaban').value,
+        intensitas: document.getElementById('intensitas').value,
+        co: document.getElementById('co').value,
+        tempRate: document.getElementById('tempRate').value,
+        smokeRate: document.getElementById('smokeRate').value,
+        coRate: document.getElementById('coRate').value,
+        riskLevel: document.getElementById('riskLevel').value
+      };
+
+      if (socket) {
+        socket.emit('laporan-baru', laporan);
+      }
+
+      // Save to localStorage
+      const riwayat = JSON.parse(localStorage.getItem('sipadam_riwayat') || '[]');
+      riwayat.unshift({
+        ...laporan,
+        tanggal: new Date().toLocaleDateString('id-ID'),
+        status: 'Diterima'
+      });
+      localStorage.setItem('sipadam_riwayat', JSON.stringify(riwayat));
+
+      alert(`✅ Laporan berhasil dikirim!\nGPS Source: ${gpsSource.toUpperCase()}\n\nPertugas akan segera menuju lokasi.`);
+      
+      // Reset form
+      document.getElementById('catatan').value = '';
+      removePhoto();
+    }
+
+    // ===== LOGOUT =====
+    function handleLogout() {
+      if (confirm('Apakah Anda yakin ingin keluar?')) {
+        localStorage.removeItem('sipadam_user');
+        window.location.href = 'index.html';
+      }
+    }
+
+    // ===== MOBILE MENU =====
+    const mobileToggle = document.querySelector('.mobile-toggle');
+    const navMenu = document.querySelector('.navbar nav');
+
+    if (mobileToggle && navMenu) {
+      mobileToggle.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
+      });
+    }
+
+    // ===== NAVBAR SCROLL =====
+    window.addEventListener('scroll', () => {
+      const navbar = document.querySelector('.navbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // ===== INITIALIZE =====
+    window.addEventListener('load', () => {
+      console.log('🚀 Page loaded, initializing...');
+      
+      // Wait for DOM to be ready
+      setTimeout(() => {
+        initMap();
+        updateGPSStatus('none', false);
+      }, 100);
+    });
+  </script>
 </body>
 </html>

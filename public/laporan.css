@@ -1,0 +1,606 @@
+/* =====================================================
+   SIPADAM - LAPORAN PAGE STYLES
+   Modern Box Layout - Consistent with Dashboard
+   ===================================================== */
+
+/* ==================== LAPORAN CONTAINER ==================== */
+.laporan-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: calc(70px + var(--spacing-xl)) var(--spacing-lg) var(--spacing-xl);
+}
+
+/* ==================== WELCOME BANNER ==================== */
+.page-header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-xl);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.page-header h1 {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  margin-bottom: var(--spacing-xs);
+  position: relative;
+  z-index: 1;
+}
+
+.page-header p {
+  font-size: 1rem;
+  opacity: 0.9;
+  position: relative;
+  z-index: 1;
+  margin: 0;
+}
+
+/* ==================== GRID LAYOUT ==================== */
+.laporan-grid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: var(--spacing-lg);
+}
+
+.laporan-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.laporan-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* ==================== CARD BASE ==================== */
+.laporan-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+  border: 2px solid var(--neutral-200);
+  transition: all var(--transition-base);
+}
+
+.laporan-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* ==================== CARD HEADER ==================== */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--neutral-200);
+}
+
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.card-title span:first-child {
+  font-size: 1.5rem;
+}
+
+/* ==================== MAP CONTAINER ==================== */
+.map-container {
+  background: white;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 2px solid var(--neutral-200);
+}
+
+#map {
+  width: 100%;
+  height: 400px;
+  border-radius: var(--radius-lg);
+}
+
+.map-overlay {
+  position: absolute;
+  top: var(--spacing-md);
+  left: var(--spacing-md);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--neutral-700);
+  z-index: 1000;
+}
+
+/* ==================== LOCATION INPUT CARD ==================== */
+.location-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+  border: 2px solid var(--neutral-200);
+}
+
+.location-input-group {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.location-input-group input {
+  flex: 1;
+  padding: var(--spacing-md);
+  border: 2px solid var(--neutral-200);
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-weight: 500;
+  background: var(--neutral-100);
+  color: var(--neutral-900);
+  transition: all var(--transition-fast);
+}
+
+.location-input-group input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.08);
+}
+
+.btn-detect-location {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: 0 4px 12px rgba(255, 59, 48, 0.3);
+  white-space: nowrap;
+}
+
+.btn-detect-location:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 59, 48, 0.4);
+}
+
+.gps-status {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-sm);
+  font-size: 0.85rem;
+  color: var(--neutral-600);
+}
+
+.gps-status.active {
+  color: #10B981;
+}
+
+.gps-status.error {
+  color: var(--primary);
+}
+
+/* ==================== SENSOR DATA CARD ==================== */
+.sensor-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+  border: 2px solid var(--neutral-200);
+}
+
+.sensor-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+}
+
+.sensor-field {
+  background: var(--neutral-100);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+}
+
+.sensor-field:hover {
+  background: var(--neutral-200);
+  transform: scale(1.02);
+}
+
+.sensor-field label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--neutral-600);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--spacing-xs);
+}
+
+.sensor-field input {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: none;
+  background: transparent;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  text-align: center;
+}
+
+.sensor-field input:focus {
+  outline: none;
+}
+
+/* ==================== DESCRIPTION CARD ==================== */
+.description-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+  border: 2px solid var(--neutral-200);
+}
+
+.description-card textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: var(--spacing-md);
+  border: 2px solid var(--neutral-200);
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-family: 'Poppins', sans-serif;
+  resize: vertical;
+  transition: all var(--transition-fast);
+  background: var(--neutral-100);
+}
+
+.description-card textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.08);
+}
+
+/* ==================== PHOTO UPLOAD CARD ==================== */
+.photo-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+  border: 2px solid var(--neutral-200);
+}
+
+.photo-upload-area {
+  border: 2px dashed var(--neutral-300);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-xl);
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  background: var(--neutral-100);
+}
+
+.photo-upload-area:hover {
+  border-color: var(--primary);
+  background: rgba(255, 59, 48, 0.05);
+}
+
+.photo-upload-icon {
+  font-size: 3rem;
+  margin-bottom: var(--spacing-md);
+  color: var(--neutral-400);
+}
+
+.photo-upload-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--neutral-600);
+  margin-bottom: var(--spacing-xs);
+}
+
+.photo-upload-hint {
+  font-size: 0.8rem;
+  color: var(--neutral-500);
+}
+
+#fotoKebakaran {
+  display: none;
+}
+
+.photo-preview {
+  display: none;
+  position: relative;
+  margin-top: var(--spacing-md);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.photo-preview.active {
+  display: block;
+}
+
+.photo-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.remove-photo {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-md);
+}
+
+.remove-photo:hover {
+  transform: scale(1.1) rotate(90deg);
+  background: var(--primary-dark);
+}
+
+/* ==================== INFO BOX ==================== */
+.info-box {
+  background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+  border-left: 4px solid #3B82F6;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  align-items: start;
+  gap: var(--spacing-sm);
+}
+
+.info-box-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.info-box-text {
+  font-size: 0.9rem;
+  color: #1E40AF;
+  line-height: 1.5;
+}
+
+/* ==================== SUBMIT BUTTON ==================== */
+.submit-section {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+  border: 2px solid var(--neutral-200);
+}
+
+.btn-submit {
+  width: 100%;
+  padding: var(--spacing-lg) var(--spacing-xl);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: 0 4px 16px rgba(255, 59, 48, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+}
+
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255, 59, 48, 0.4);
+}
+
+.btn-submit:active {
+  transform: translateY(0);
+}
+
+.btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ==================== EMERGENCY CONTACTS ==================== */
+.emergency-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+  border: 2px solid var(--neutral-200);
+}
+
+.emergency-grid {
+  display: grid;
+  gap: var(--spacing-md);
+}
+
+.emergency-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--neutral-100);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+  text-decoration: none;
+  color: inherit;
+}
+
+.emergency-item:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateX(4px);
+  box-shadow: var(--shadow-sm);
+}
+
+.emergency-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  transition: all var(--transition-base);
+}
+
+.emergency-item:hover .emergency-icon {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-md);
+}
+
+.emergency-info {
+  flex: 1;
+}
+
+.emergency-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.emergency-number {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.emergency-item:hover .emergency-number {
+  color: white;
+}
+
+/* ==================== TIPS CARD ==================== */
+.tips-card {
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+  border: 2px solid #F59E0B;
+}
+
+.tips-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #92400E;
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.tips-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tips-list li {
+  padding: var(--spacing-sm) 0;
+  padding-left: var(--spacing-lg);
+  position: relative;
+  font-size: 0.85rem;
+  color: #78350F;
+  line-height: 1.5;
+}
+
+.tips-list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  font-weight: 700;
+  color: #F59E0B;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 1024px) {
+  .laporan-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .laporan-sidebar {
+    order: -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .laporan-container {
+    padding: calc(70px + var(--spacing-lg)) var(--spacing-md) var(--spacing-lg);
+  }
+
+  #map {
+    height: 300px;
+  }
+
+  .sensor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .location-input-group {
+    flex-direction: column;
+  }
+
+  .btn-detect-location {
+    width: 100%;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .page-header p {
+    font-size: 0.9rem;
+  }
+
+  .laporan-card {
+    padding: var(--spacing-lg);
+  }
+}

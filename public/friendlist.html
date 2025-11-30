@@ -5,453 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Status Teman - SIPADAM</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
-    }
-
-    body {
-      background: #f5f5f5;
-      color: #111;
-      padding-top: 70px;
-    }
-
-    /* Navbar */
-    .navbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: rgba(255, 255, 255, 0.98);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid #eee;
-      z-index: 100;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      transition: all 0.3s ease;
-    }
-
-    .navbar.scrolled {
-      background: rgba(255, 255, 255, 1);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-
-    .navbar .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 14px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .logo a {
-      font-size: 1.7rem;
-      font-weight: 700;
-      color: #e63946;
-      text-decoration: none;
-      transition: 0.3s;
-    }
-
-    .logo a:hover {
-      color: #c92a2a;
-    }
-
-    .navbar nav ul {
-      list-style: none;
-      display: flex;
-      gap: 28px;
-      align-items: center;
-    }
-
-    .navbar nav ul li a {
-      text-decoration: none;
-      color: #1e1e1e;
-      font-weight: 500;
-      transition: 0.3s;
-      position: relative;
-      padding: 5px 0;
-    }
-
-    .navbar nav ul li a::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: #e63946;
-      transition: width 0.3s ease;
-    }
-
-    .navbar nav ul li a:hover::after,
-    .navbar nav ul li a.active::after {
-      width: 100%;
-    }
-
-    .navbar nav ul li a:hover,
-    .navbar nav ul li a.active {
-      color: #e63946;
-    }
-
-    /* Mobile Toggle */
-    .mobile-toggle {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-    }
-
-    .mobile-toggle span {
-      width: 25px;
-      height: 3px;
-      background: #e63946;
-      border-radius: 2px;
-      transition: 0.3s;
-    }
-
-    /* Container */
-    .friendlist-container {
-      max-width: 1200px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
-
-    /* Page Header */
-    .page-header {
-      background: linear-gradient(135deg, #e63946, #c92a2a);
-      color: white;
-      padding: 50px 40px;
-      border-radius: 20px;
-      text-align: center;
-      margin-bottom: 40px;
-      box-shadow: 0 10px 40px rgba(230, 57, 70, 0.3);
-    }
-
-    .page-header h1 {
-      font-size: 2.5rem;
-      margin-bottom: 15px;
-    }
-
-    .page-header p {
-      font-size: 1.1rem;
-      opacity: 0.95;
-    }
-
-    /* Filter Buttons */
-    .filter-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      margin-bottom: 40px;
-      flex-wrap: wrap;
-    }
-
-    .filter-btn {
-      padding: 12px 30px;
-      border: 2px solid #ddd;
-      border-radius: 25px;
-      background: white;
-      color: #555;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-size: 1rem;
-    }
-
-    .filter-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-
-    .filter-btn.active {
-      background: #e63946;
-      color: white;
-      border-color: #e63946;
-    }
-
-    .filter-btn.safe.active {
-      background: #2e7d32;
-      border-color: #2e7d32;
-    }
-
-    .filter-btn.warning.active {
-      background: #ff9800;
-      border-color: #ff9800;
-    }
-
-    .filter-btn.danger.active {
-      background: #e63946;
-      border-color: #e63946;
-    }
-
-    /* Friends Grid */
-    .friends-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 25px;
-      margin-bottom: 40px;
-    }
-
-    .friend-card {
-      background: white;
-      padding: 30px;
-      border-radius: 15px;
-      text-align: center;
-      border-left: 6px solid #ccc;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      transition: all 0.3s;
-      cursor: pointer;
-    }
-
-    .friend-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-    }
-
-    .friend-card.safe {
-      border-left-color: #2e7d32;
-      background: linear-gradient(135deg, #ffffff, #f1f8f4);
-    }
-
-    .friend-card.warning {
-      border-left-color: #ff9800;
-      background: linear-gradient(135deg, #ffffff, #fff8f0);
-    }
-
-    .friend-card.danger {
-      border-left-color: #e63946;
-      background: linear-gradient(135deg, #ffffff, #fff5f5);
-      animation: pulse 2s ease infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.02); }
-    }
-
-    .friend-avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #e63946, #ff6b6b);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 15px;
-      color: white;
-      font-size: 2.2rem;
-      font-weight: 700;
-      box-shadow: 0 5px 20px rgba(230, 57, 70, 0.3);
-    }
-
-    .friend-card.safe .friend-avatar {
-      background: linear-gradient(135deg, #2e7d32, #66bb6a);
-    }
-
-    .friend-card.warning .friend-avatar {
-      background: linear-gradient(135deg, #ff9800, #ffa726);
-    }
-
-    .friend-card h3 {
-      margin: 15px 0 10px;
-      color: #111;
-      font-size: 1.2rem;
-    }
-
-    .friend-location {
-      color: #666;
-      font-size: 0.9rem;
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-    }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 20px;
-      border-radius: 25px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      margin-top: 10px;
-    }
-
-    .status-badge.safe {
-      background: #e8f5e9;
-      color: #2e7d32;
-    }
-
-    .status-badge.warning {
-      background: #fff3cd;
-      color: #856404;
-    }
-
-    .status-badge.danger {
-      background: #ffe0e0;
-      color: #e63946;
-    }
-
-    .sensor-data {
-      margin-top: 15px;
-      padding-top: 15px;
-      border-top: 1px solid #eee;
-      display: flex;
-      justify-content: space-around;
-      font-size: 0.85rem;
-    }
-
-    .sensor-item {
-      text-align: center;
-    }
-
-    .sensor-item strong {
-      display: block;
-      font-size: 1.1rem;
-      margin-bottom: 5px;
-    }
-
-    .sensor-item.temp strong {
-      color: #e63946;
-    }
-
-    .sensor-item.smoke strong {
-      color: #666;
-    }
-
-    /* Stats Summary */
-    .stats-summary {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-bottom: 40px;
-    }
-
-    .stat-box {
-      background: white;
-      padding: 30px;
-      border-radius: 15px;
-      text-align: center;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    }
-
-    .stat-box h2 {
-      font-size: 3rem;
-      margin-bottom: 10px;
-    }
-
-    .stat-box.safe h2 {
-      color: #2e7d32;
-    }
-
-    .stat-box.warning h2 {
-      color: #ff9800;
-    }
-
-    .stat-box.danger h2 {
-      color: #e63946;
-    }
-
-    .stat-box p {
-      color: #666;
-      font-weight: 500;
-    }
-
-    /* Empty State */
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: #666;
-    }
-
-    .empty-state .icon {
-      font-size: 5rem;
-      margin-bottom: 20px;
-      opacity: 0.5;
-    }
-
-    .empty-state h3 {
-      font-size: 1.5rem;
-      margin-bottom: 10px;
-      color: #111;
-    }
-
-    /* Add Friend Button */
-    .btn-add-friend {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(135deg, #e63946, #c92a2a);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      font-size: 2rem;
-      cursor: pointer;
-      box-shadow: 0 5px 20px rgba(230, 57, 70, 0.4);
-      transition: all 0.3s;
-      z-index: 50;
-    }
-
-    .btn-add-friend:hover {
-      transform: scale(1.1) rotate(90deg);
-      box-shadow: 0 8px 30px rgba(230, 57, 70, 0.6);
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .page-header h1 {
-        font-size: 2rem;
-      }
-
-      .friends-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .filter-buttons {
-        flex-direction: column;
-      }
-
-      .filter-btn {
-        width: 100%;
-      }
-
-      .mobile-toggle {
-        display: flex;
-      }
-
-      .navbar nav {
-        display: none;
-      }
-
-      .navbar nav.active {
-        display: block;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      }
-
-      .navbar ul {
-        flex-direction: column;
-        gap: 0;
-        padding: 20px;
-      }
-
-      .navbar ul li a {
-        display: block;
-        padding: 12px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="navbar.css">
+  <link rel="stylesheet" href="components.css">
+  <link rel="stylesheet" href="friendlist.css">
 </head>
 <body>
   <!-- Navbar -->
@@ -464,7 +21,7 @@
         <ul>
           <li><a href="dashboard.html">Dashboard</a></li>
           <li><a href="friendlist.html" class="active">👥 Teman</a></li>
-          <li><a href="laporan.html">📝 Laporan</a></li>
+          <li><a href="laporan.html">📋 Laporan</a></li>
           <li><a href="profil.html">👤 Profil</a></li>
           <li><a href="#" onclick="handleLogout()">🚪 Keluar</a></li>
         </ul>
@@ -479,38 +36,54 @@
 
   <!-- Main Content -->
   <div class="friendlist-container">
-    <!-- Page Header -->
-    <div class="page-header">
+    <!-- Welcome Banner -->
+    <div class="welcome-banner">
       <h1>👥 Status Keamanan Teman</h1>
       <p>Pantau kondisi teman dan keluarga Anda secara real-time</p>
     </div>
 
     <!-- Stats Summary -->
-    <div class="stats-summary">
-      <div class="stat-box safe">
+    <div class="stats-grid">
+      <div class="stat-card safe">
+        <div class="stat-icon">✅</div>
         <h2 id="countSafe">0</h2>
-        <p>✅ Aman</p>
+        <p>Aman</p>
       </div>
-      <div class="stat-box warning">
+      <div class="stat-card warning">
+        <div class="stat-icon">⚠️</div>
         <h2 id="countWarning">0</h2>
-        <p>⚠️ Waspada</p>
+        <p>Waspada</p>
       </div>
-      <div class="stat-box danger">
+      <div class="stat-card danger">
+        <div class="stat-icon">🔥</div>
         <h2 id="countDanger">0</h2>
-        <p>🔥 Bahaya</p>
+        <p>Bahaya</p>
       </div>
-      <div class="stat-box">
+      <div class="stat-card total">
+        <div class="stat-icon">📊</div>
         <h2 id="countTotal">0</h2>
         <p>Total Teman</p>
       </div>
     </div>
 
     <!-- Filter Buttons -->
-    <div class="filter-buttons">
-      <button class="filter-btn active" data-filter="all">Semua</button>
-      <button class="filter-btn safe" data-filter="safe">✅ Aman</button>
-      <button class="filter-btn warning" data-filter="warning">⚠️ Waspada</button>
-      <button class="filter-btn danger" data-filter="danger">🔥 Bahaya</button>
+    <div class="filter-section">
+      <button class="filter-btn active" data-filter="all">
+        <span>📋</span>
+        <span>Semua</span>
+      </button>
+      <button class="filter-btn" data-filter="safe">
+        <span>✅</span>
+        <span>Aman</span>
+      </button>
+      <button class="filter-btn" data-filter="warning">
+        <span>⚠️</span>
+        <span>Waspada</span>
+      </button>
+      <button class="filter-btn" data-filter="danger">
+        <span>🔥</span>
+        <span>Bahaya</span>
+      </button>
     </div>
 
     <!-- Friends Grid -->
@@ -520,46 +93,55 @@
   </div>
 
   <!-- Add Friend Button -->
-  <button class="btn-add-friend" onclick="addFriend()" title="Tambah Teman">+</button>
+  <button class="btn-add-friend" onclick="addFriend()" title="Tambah Teman">
+    <span>+</span>
+  </button>
 
+  <script src="/socket.io/socket.io.js"></script>
   <script>
-    // Storage utility
-    const Storage = {
-      data: {},
-      set(key, value) {
-        this.data[key] = JSON.stringify(value);
-      },
-      get(key) {
-        const item = this.data[key];
-        return item ? JSON.parse(item) : null;
-      }
-    };
+    // Check if socket.io is loaded
+    let socket;
+    try {
+      socket = io();
+    } catch (e) {
+      console.warn('Socket.IO not available, running in offline mode');
+    }
 
     // Toast notification
     function showToast(message, type = 'info') {
       const toast = document.createElement('div');
       toast.textContent = message;
-      const colors = { success: '#2e7d32', error: '#e63946', info: '#2962ff', warning: '#ff9800' };
+      const colors = { 
+        success: '#10B981', 
+        error: '#EF4444', 
+        info: '#3B82F6', 
+        warning: '#F59E0B' 
+      };
       toast.style.cssText = `
-        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-        background: ${colors[type]}; color: white; padding: 15px 30px;
-        border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        z-index: 10000; font-weight: 500;
+        position: fixed; bottom: 30px; right: 30px; 
+        background: ${colors[type]}; color: white; 
+        padding: 16px 24px; border-radius: 12px; 
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        z-index: 10000; font-weight: 600; font-size: 0.95rem;
+        animation: slideInRight 0.3s ease;
       `;
       document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
+      setTimeout(() => {
+        toast.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
     }
 
     // Friends data with sensor info
     let friends = [
-      { name: 'Andi Wijaya', location: 'Semarang Utara', status: 'safe', temp: 28, smoke: 0.12 },
-      { name: 'Budi Santoso', location: 'Semarang Tengah', status: 'safe', temp: 26, smoke: 0.09 },
-      { name: 'Citra Dewi', location: 'Semarang Selatan', status: 'warning', temp: 45, smoke: 0.35 },
-      { name: 'Dedi Kurniawan', location: 'Semarang Barat', status: 'safe', temp: 27, smoke: 0.10 },
-      { name: 'Eka Putri', location: 'Semarang Timur', status: 'danger', temp: 68, smoke: 0.78 },
-      { name: 'Fajar Ahmad', location: 'Semarang Utara', status: 'safe', temp: 29, smoke: 0.14 },
-      { name: 'Gita Maharani', location: 'Semarang Tengah', status: 'safe', temp: 25, smoke: 0.08 },
-      { name: 'Hendra Wijaya', location: 'Semarang Selatan', status: 'warning', temp: 42, smoke: 0.32 }
+      { name: 'Andi Wijaya', location: 'Semarang Utara', status: 'safe', temp: 28, smoke: 0.12, co: 0.05 },
+      { name: 'Budi Santoso', location: 'Semarang Tengah', status: 'safe', temp: 26, smoke: 0.09, co: 0.03 },
+      { name: 'Citra Dewi', location: 'Semarang Selatan', status: 'warning', temp: 45, smoke: 0.35, co: 0.15 },
+      { name: 'Dedi Kurniawan', location: 'Semarang Barat', status: 'safe', temp: 27, smoke: 0.10, co: 0.04 },
+      { name: 'Eka Putri', location: 'Semarang Timur', status: 'danger', temp: 68, smoke: 0.78, co: 0.45 },
+      { name: 'Fajar Ahmad', location: 'Semarang Utara', status: 'safe', temp: 29, smoke: 0.14, co: 0.06 },
+      { name: 'Gita Maharani', location: 'Semarang Tengah', status: 'safe', temp: 25, smoke: 0.08, co: 0.02 },
+      { name: 'Hendra Wijaya', location: 'Semarang Selatan', status: 'warning', temp: 42, smoke: 0.32, co: 0.12 }
     ];
 
     let currentFilter = 'all';
@@ -573,39 +155,69 @@
 
       if (filteredFriends.length === 0) {
         friendsGrid.innerHTML = `
-          <div class="empty-state" style="grid-column: 1 / -1;">
-            <div class="icon">😔</div>
+          <div class="empty-state">
+            <div class="empty-icon">😔</div>
             <h3>Tidak ada teman dengan status ini</h3>
-            <p>Coba filter lainnya</p>
+            <p>Coba filter lainnya untuk melihat status teman</p>
           </div>
         `;
         return;
       }
 
       friendsGrid.innerHTML = '';
-      filteredFriends.forEach(friend => {
+      filteredFriends.forEach((friend, index) => {
         const initial = friend.name.charAt(0).toUpperCase();
-        const statusText = {
-          'safe': '✅ Aman',
-          'warning': '⚠️ Waspada',
-          'danger': '🔥 Bahaya'
+        const statusConfig = {
+          'safe': { icon: '✅', text: 'Aman', class: 'safe' },
+          'warning': { icon: '⚠️', text: 'Waspada', class: 'warning' },
+          'danger': { icon: '🔥', text: 'Bahaya', class: 'danger' }
         }[friend.status];
 
         const card = document.createElement('div');
         card.className = `friend-card ${friend.status}`;
+        card.style.animationDelay = `${index * 0.05}s`;
         card.innerHTML = `
-          <div class="friend-avatar">${initial}</div>
-          <h3>${friend.name}</h3>
-          <div class="friend-location">📍 ${friend.location}</div>
-          <span class="status-badge ${friend.status}">${statusText}</span>
-          <div class="sensor-data">
+          <div class="friend-header">
+            <div class="friend-avatar ${friend.status}">${initial}</div>
+            <div class="friend-info">
+              <h3>${friend.name}</h3>
+              <div class="friend-location">📍 ${friend.location}</div>
+            </div>
+          </div>
+          
+          <div class="status-badge ${statusConfig.class}">
+            <span>${statusConfig.icon}</span>
+            <span>${statusConfig.text}</span>
+          </div>
+
+          <div class="sensor-data-grid">
             <div class="sensor-item temp">
-              <strong>${friend.temp}°C</strong>
-              <span>Suhu</span>
+              <div class="sensor-icon">🌡️</div>
+              <div class="sensor-details">
+                <strong>${friend.temp}°C</strong>
+                <span>Suhu</span>
+              </div>
             </div>
             <div class="sensor-item smoke">
-              <strong>${friend.smoke.toFixed(2)}</strong>
-              <span>Asap</span>
+              <div class="sensor-icon">💨</div>
+              <div class="sensor-details">
+                <strong>${friend.smoke.toFixed(2)}</strong>
+                <span>Asap</span>
+              </div>
+            </div>
+            <div class="sensor-item co">
+              <div class="sensor-icon">☠️</div>
+              <div class="sensor-details">
+                <strong>${friend.co.toFixed(2)}</strong>
+                <span>CO</span>
+              </div>
+            </div>
+            <div class="sensor-item time">
+              <div class="sensor-icon">⏰</div>
+              <div class="sensor-details">
+                <strong>${new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'})}</strong>
+                <span>Update</span>
+              </div>
             </div>
           </div>
         `;
@@ -646,7 +258,8 @@
           location: 'Semarang',
           status: 'safe',
           temp: 27,
-          smoke: 0.10
+          smoke: 0.10,
+          co: 0.04
         });
         renderFriends();
         showToast('✅ Teman berhasil ditambahkan!', 'success');
@@ -656,11 +269,11 @@
     // Logout
     function handleLogout() {
       if (confirm('Apakah Anda yakin ingin keluar?')) {
-        Storage.data = {};
-        showToast('✅ Anda telah keluar. Terima kasih!', 'success');
+        localStorage.removeItem('sipadam_user');
+        showToast('✅ Berhasil logout!', 'success');
         setTimeout(() => {
           window.location.href = 'index.html';
-        }, 1500);
+        }, 1000);
       }
     }
 
@@ -671,16 +284,6 @@
     if (mobileToggle && navMenu) {
       mobileToggle.addEventListener('click', () => {
         navMenu.classList.toggle('active');
-        const spans = mobileToggle.querySelectorAll('span');
-        if (navMenu.classList.contains('active')) {
-          spans[0].style.transform = 'rotate(45deg) translateY(8px)';
-          spans[1].style.opacity = '0';
-          spans[2].style.transform = 'rotate(-45deg) translateY(-8px)';
-        } else {
-          spans[0].style.transform = 'none';
-          spans[1].style.opacity = '1';
-          spans[2].style.transform = 'none';
-        }
       });
     }
 
@@ -697,17 +300,18 @@
     // Initialize
     renderFriends();
 
-    // Simulate real-time updates
+    // Simulate real-time updates from sensor
     setInterval(() => {
       friends.forEach(friend => {
         const rand = Math.random();
-        if (rand < 0.1) { // 10% chance to change status
-          friend.temp = 20 + Math.random() * 50;
-          friend.smoke = Math.random() * 0.8;
+        if (rand < 0.15) { // 15% chance to change
+          friend.temp = 20 + Math.random() * 55;
+          friend.smoke = Math.random() * 0.9;
+          friend.co = Math.random() * 0.5;
           
-          if (friend.temp > 60 || friend.smoke > 0.6) {
+          if (friend.temp > 60 || friend.smoke > 0.6 || friend.co > 0.3) {
             friend.status = 'danger';
-          } else if (friend.temp > 40 || friend.smoke > 0.3) {
+          } else if (friend.temp > 40 || friend.smoke > 0.3 || friend.co > 0.15) {
             friend.status = 'warning';
           } else {
             friend.status = 'safe';
@@ -718,7 +322,21 @@
       if (currentFilter === 'all' || friends.some(f => f.status === currentFilter)) {
         renderFriends();
       }
-    }, 5000);
+    }, 6000); // Update every 6 seconds
+
+    // Add CSS animation keyframes
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideInRight {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      @keyframes slideOutRight {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
   </script>
 </body>
 </html>
