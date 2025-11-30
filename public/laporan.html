@@ -6,12 +6,29 @@
   <title>Laporan Kebakaran - SIPADAM</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+        crossorigin=""/>
   
   <link rel="stylesheet" href="base.css">
   <link rel="stylesheet" href="navbar.css">
   <link rel="stylesheet" href="components.css">
   <link rel="stylesheet" href="laporan.css">
+  
+  <style>
+    /* Fix untuk Leaflet map */
+    #map {
+      width: 100%;
+      height: 400px;
+      border-radius: var(--radius-lg);
+      z-index: 1;
+    }
+    
+    .leaflet-container {
+      height: 100%;
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
   <!-- Navbar -->
@@ -63,11 +80,11 @@
           <div class="info-box">
             <div class="info-box-icon">💡</div>
             <div class="info-box-text">
-              Klik pada peta untuk menandai lokasi kebakaran, atau gunakan tombol "Deteksi Lokasi" untuk menggunakan GPS Anda
+              Lokasi diambil dari modul GPS IoT (fixed). Anda tetap bisa menggeser marker atau klik peta untuk ubah lokasi manual.
             </div>
           </div>
 
-          <div class="map-container" style="position: relative;">
+          <div class="map-container">
             <div id="map"></div>
           </div>
         </div>
@@ -82,13 +99,13 @@
           </div>
           
           <div class="location-input-group">
-            <input type="text" id="inputLokasi" readonly placeholder="Klik peta atau deteksi lokasi">
+            <input type="text" id="inputLokasi" readonly placeholder="Menunggu GPS IoT...">
             <button class="btn-detect-location" onclick="detectLocation()">
-              📡 Deteksi Lokasi
+              📱 Fallback GPS
             </button>
           </div>
           <div class="gps-status" id="statusGPS">
-            ⏳ Menunggu lokasi...
+            ⏳ Menunggu GPS dari modul IoT...
           </div>
         </div>
 
@@ -248,68 +265,170 @@
     </div>
   </div>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+          crossorigin=""></script>
   <script src="/socket.io/socket.io.js"></script>
   
   <script>
+    // ============================================
+    // LAPORAN.HTML - GPS dari IoT Module NEO-6M
+    // ============================================
 
     // Socket.IO connection
     let socket;
     try {
       socket = io();
       console.log('✅ Socket.IO connected');
-      
-      // Listen for sensor data
-      socket.on('data-sensor', (data) => {
-        updateSensorData(data);
-      });
     } catch (e) {
       console.warn('⚠️ Socket.IO not available');
     }
 
-    // Map initialization
+    // ===== VARIABLES =====
     let map, marker;
-    let selectedLat = -6.9820;
+    let selectedLat = -6.9820; // Semarang default
     let selectedLng = 110.4153;
+    let photoBase64 = null;
+    
+    // GPS Source Tracking
+    let gpsSource = 'none';
+    let iotGpsValid = false;
+    let lastIotGpsUpdate = 0;
+    const GPS_TIMEOUT = 10000;
+    
+    // Auto Report Tracking
+    let lastAutoReportTime = 0;
+    let hasAutoReported = false;
+    const AUTO_REPORT_COOLDOWN = 300000;
+    let userHasInteracted = false;
 
-    function initMap() {
-      map = L.map('map').setView([selectedLat, selectedLng], 13);
+    // ===== GPS STATUS UPDATE =====
+    function updateGPSStatus(source, isValid, message) {
+      gpsSource = source;
+      const statusEl = document.getElementById('statusGPS');
       
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-      }).addTo(map);
-
-      marker = L.marker([selectedLat, selectedLng], { draggable: true }).addTo(map);
-      
-      document.getElementById('inputLokasi').value = `${selectedLat.toFixed(6)}, ${selectedLng.toFixed(6)}`;
-
-      // Click on map
-      map.on('click', function(e) {
-        selectedLat = e.latlng.lat;
-        selectedLng = e.latlng.lng;
-        marker.setLatLng([selectedLat, selectedLng]);
-        document.getElementById('inputLokasi').value = `${selectedLat.toFixed(6)}, ${selectedLng.toFixed(6)}`;
-        document.getElementById('statusGPS').textContent = '✅ Lokasi dipilih dari peta';
-        document.getElementById('statusGPS').className = 'gps-status active';
-      });
-
-      // Drag marker
-      marker.on('dragend', function(e) {
-        selectedLat = e.target.getLatLng().lat;
-        selectedLng = e.target.getLatLng().lng;
-        document.getElementById('inputLokasi').value = `${selectedLat.toFixed(6)}, ${selectedLng.toFixed(6)}`;
-      });
+      if (source === 'iot' && isValid) {
+        statusEl.innerHTML = `
+          <span style="color: #2e7d32; font-weight: 600;">🛰️ GPS IoT Module Active</span><br>
+          <span style="color: #666; font-size: 0.85em;">Koordinat dari modul NEO-6M</span>
+        `;
+        statusEl.style.backgroundColor = '#e8f5e9';
+        statusEl.style.padding = '12px';
+        statusEl.style.borderRadius = '8px';
+      } else if (source === 'device' && isValid) {
+        statusEl.innerHTML = `
+          <span style="color: #ff9800; font-weight: 600;">📱 GPS Device (Fallback)</span><br>
+          <span style="color: #666; font-size: 0.85em;">Menggunakan GPS perangkat</span>
+        `;
+        statusEl.style.backgroundColor = '#fff3e0';
+      } else if (source === 'manual') {
+        statusEl.innerHTML = `
+          <span style="color: #2196f3; font-weight: 600;">📍 Manual Location</span><br>
+          <span style="color: #666; font-size: 0.85em;">Lokasi dipilih dari peta</span>
+        `;
+        statusEl.style.backgroundColor = '#e3f2fd';
+      } else {
+        statusEl.innerHTML = `
+          <span style="color: #e63946; font-weight: 600;">❌ GPS Tidak Tersedia</span><br>
+          <span style="color: #666; font-size: 0.85em;">Klik peta untuk menandai lokasi manual</span>
+        `;
+        statusEl.style.backgroundColor = '#ffebee';
+      }
     }
 
-    // Detect location
+    // ===== TRACK USER INTERACTIONS =====
+    function markUserInteraction() {
+      userHasInteracted = true;
+      hasAutoReported = false;
+    }
+
+    // ===== MAP INITIALIZATION =====
+    function initMap() {
+      console.log('🗺️ Initializing map...');
+      
+      try {
+        // Create map
+        map = L.map('map', {
+          center: [selectedLat, selectedLng],
+          zoom: 13,
+          zoomControl: true,
+          attributionControl: true
+        });
+        
+        console.log('✅ Map created');
+
+        // Add tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors',
+          maxZoom: 19
+        }).addTo(map);
+        
+        console.log('✅ Tile layer added');
+
+        // Add marker
+        marker = L.marker([selectedLat, selectedLng], { 
+          draggable: true 
+        }).addTo(map);
+        
+        console.log('✅ Marker added');
+        
+        // Update input
+        document.getElementById('inputLokasi').value = `${selectedLat.toFixed(6)}, ${selectedLng.toFixed(6)}`;
+
+        // Force map to render
+        setTimeout(() => {
+          map.invalidateSize();
+          console.log('✅ Map size invalidated');
+        }, 250);
+
+        // ===== EVENT LISTENERS =====
+        
+        // Zoom
+        map.on('zoomstart', function() {
+          markUserInteraction();
+        });
+        
+        // Pan/Drag map
+        map.on('dragstart', function() {
+          markUserInteraction();
+        });
+        
+        // Click on map
+        map.on('click', function(e) {
+          selectedLat = e.latlng.lat;
+          selectedLng = e.latlng.lng;
+          marker.setLatLng([selectedLat, selectedLng]);
+          document.getElementById('inputLokasi').value = `${selectedLat.toFixed(6)}, ${selectedLng.toFixed(6)}`;
+          updateGPSStatus('manual', true);
+          markUserInteraction();
+        });
+
+        // Drag marker
+        marker.on('dragstart', function() {
+          markUserInteraction();
+        });
+        
+        marker.on('dragend', function(e) {
+          selectedLat = e.target.getLatLng().lat;
+          selectedLng = e.target.getLatLng().lng;
+          document.getElementById('inputLokasi').value = `${selectedLat.toFixed(6)}, ${selectedLng.toFixed(6)}`;
+          updateGPSStatus('manual', true);
+        });
+
+        console.log('✅ Map fully initialized');
+        
+      } catch (error) {
+        console.error('❌ Map initialization error:', error);
+      }
+    }
+
+    // ===== DETECT DEVICE LOCATION (FALLBACK) =====
     function detectLocation() {
       const statusEl = document.getElementById('statusGPS');
-      statusEl.textContent = '⏳ Mendeteksi lokasi...';
-      statusEl.className = 'gps-status';
+      statusEl.textContent = '⏳ Mendeteksi lokasi dari device...';
 
       if (!navigator.geolocation) {
-        statusEl.textContent = '❌ GPS tidak didukung browser';
-        statusEl.className = 'gps-status error';
+        updateGPSStatus('none', false);
         return;
       }
 
@@ -322,32 +441,136 @@
           map.setView([selectedLat, selectedLng], 15);
           
           document.getElementById('inputLokasi').value = `${selectedLat.toFixed(6)}, ${selectedLng.toFixed(6)}`;
-          statusEl.textContent = '✅ Lokasi terdeteksi';
-          statusEl.className = 'gps-status active';
+          updateGPSStatus('device', true);
+          markUserInteraction();
         },
         (error) => {
-          statusEl.textContent = '❌ Gagal mendeteksi lokasi';
-          statusEl.className = 'gps-status error';
+          updateGPSStatus('none', false);
           console.error('GPS Error:', error);
         }
       );
     }
 
-    // Update sensor data
-    function updateSensorData(data) {
-      document.getElementById('suhu').value = data.temperature ? `${data.temperature}°C` : '--°C';
-      document.getElementById('kelembaban').value = data.humidity ? `${data.humidity}%` : '--%';
-      document.getElementById('intensitas').value = data.smoke_ppm ? `${data.smoke_ppm.toFixed(2)} ppm` : '-- ppm';
-      document.getElementById('co').value = data.co_ppm ? `${data.co_ppm.toFixed(2)} ppm` : '-- ppm';
-      document.getElementById('tempRate').value = data.tempRate ? `${data.tempRate.toFixed(1)}°C/s` : '--°C/s';
-      document.getElementById('smokeRate').value = data.smokeRate ? `${data.smokeRate.toFixed(2)} ppm/s` : '-- ppm/s';
-      document.getElementById('coRate').value = data.coRate ? `${data.coRate.toFixed(2)} ppm/s` : '-- ppm/s';
-      document.getElementById('riskLevel').value = data.riskLevel || 'NORMAL';
+    // ===== RECEIVE DATA FROM IoT =====
+    if (socket) {
+      socket.on('data-sensor', (data) => {
+        console.log('📡 Data sensor:', data);
+
+        // ===== GPS dari IoT Module =====
+        if (data.gpsValid && data.latitude !== 0 && data.longitude !== 0 && !userHasInteracted) {
+          const latDiff = Math.abs(selectedLat - data.latitude);
+          const lngDiff = Math.abs(selectedLng - data.longitude);
+                
+          if (latDiff > 0.0001 || lngDiff > 0.0001 || gpsSource === 'none') {
+            selectedLat = data.latitude;
+            selectedLng = data.longitude;
+            document.getElementById('inputLokasi').value = `${selectedLat.toFixed(6)}, ${selectedLng.toFixed(6)}`;
+            
+            iotGpsValid = true;
+            lastIotGpsUpdate = Date.now();
+            updateGPSStatus('iot', true);
+            
+            if (marker) {
+              marker.setLatLng([selectedLat, selectedLng]);
+              map.setView([selectedLat, selectedLng], 16);
+            }
+            
+            console.log('🛰️ GPS IoT Fixed Location:', selectedLat, selectedLng);
+          }
+        }
+
+        // Update sensor readings
+        document.getElementById('suhu').value = data.temperature ? `${data.temperature.toFixed(1)}°C` : '--°C';
+        document.getElementById('kelembaban').value = data.humidity ? `${data.humidity.toFixed(1)}%` : '--%';
+        document.getElementById('intensitas').value = data.smoke_ppm ? `${data.smoke_ppm.toFixed(2)} ppm` : '-- ppm';
+        document.getElementById('co').value = data.co_ppm ? `${data.co_ppm.toFixed(2)} ppm` : '-- ppm';
+        document.getElementById('tempRate').value = data.tempRate ? `${data.tempRate.toFixed(2)}°C/s` : '--°C/s';
+        document.getElementById('smokeRate').value = data.smokeRate ? `${data.smokeRate.toFixed(2)} ppm/s` : '-- ppm/s';
+        document.getElementById('coRate').value = data.coRate ? `${data.coRate.toFixed(2)} ppm/s` : '-- ppm/s';
+        
+        const riskLevelInput = document.getElementById('riskLevel');
+        riskLevelInput.value = data.riskLevel || 'NORMAL';
+        
+        // Styling risk level
+        if (data.riskLevel === 'CRITICAL') {
+          riskLevelInput.style.backgroundColor = '#ffe0e0';
+          riskLevelInput.style.color = '#e63946';
+          riskLevelInput.style.fontWeight = 'bold';
+        } else if (data.riskLevel === 'HIGH') {
+          riskLevelInput.style.backgroundColor = '#fff3cd';
+          riskLevelInput.style.color = '#ff9800';
+          riskLevelInput.style.fontWeight = 'bold';
+        } else if (data.riskLevel === 'MEDIUM') {
+          riskLevelInput.style.backgroundColor = '#fff8e1';
+          riskLevelInput.style.color = '#f57c00';
+          riskLevelInput.style.fontWeight = '600';
+        } else {
+          riskLevelInput.style.backgroundColor = '#e8f5e9';
+          riskLevelInput.style.color = '#2e7d32';
+          riskLevelInput.style.fontWeight = 'normal';
+          hasAutoReported = false;
+        }
+
+        // Auto Report Trigger
+        if (shouldTriggerAutoReport(data.riskLevel) && !hasAutoReported && !userHasInteracted) {
+          sendAutoReport(data);
+        }
+      });
     }
 
-    // Photo upload
-    let photoBase64 = null;
+    // ===== AUTO REPORT FUNCTIONS =====
+    function shouldTriggerAutoReport(riskLevel) {
+      if (riskLevel !== 'HIGH' && riskLevel !== 'CRITICAL') {
+        return false;
+      }
+      
+      const now = Date.now();
+      if (now - lastAutoReportTime < AUTO_REPORT_COOLDOWN) {
+        console.log('⏳ Auto-report cooldown active...');
+        return false;
+      }
+      
+      return true;
+    }
 
+    function sendAutoReport(data) {
+      console.log('🚨 TRIGGERING AUTO REPORT!');
+      
+      if (!selectedLat || !selectedLng) {
+        console.warn('❌ No GPS coordinates, auto-report cancelled');
+        return;
+      }
+      
+      const lokasi = `${selectedLat.toFixed(6)}, ${selectedLng.toFixed(6)}`;
+      const waktu = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      
+      const laporan = {
+        lokasi: lokasi,
+        catatan: `⚠️ LAPORAN OTOMATIS (GPS: ${gpsSource.toUpperCase()}) - Level bahaya ${data.riskLevel} terdeteksi!`,
+        waktu: waktu,
+        image: null,
+        tipeLaporan: 'Auto',
+        suhu: data.temperature ? `${data.temperature.toFixed(1)}°C` : '--°C',
+        kelembaban: data.humidity ? `${data.humidity.toFixed(1)}%` : '--%',
+        intensitas: data.smoke_ppm ? `${data.smoke_ppm.toFixed(2)} ppm` : '-- ppm',
+        co: data.co_ppm ? `${data.co_ppm.toFixed(2)} ppm` : '-- ppm',
+        tempRate: data.tempRate ? `${data.tempRate.toFixed(2)}°C/s` : '--°C/s',
+        smokeRate: data.smokeRate ? `${data.smokeRate.toFixed(2)} ppm/s` : '-- ppm/s',
+        coRate: data.coRate ? `${data.coRate.toFixed(2)} ppm/s` : '-- ppm/s',
+        riskLevel: data.riskLevel
+      };
+      
+      if (socket) {
+        socket.emit('laporan-baru', laporan);
+      }
+      
+      lastAutoReportTime = Date.now();
+      hasAutoReported = true;
+      
+      alert(`🚨 Laporan otomatis terkirim!\nGPS: ${gpsSource.toUpperCase()}\nLevel: ${data.riskLevel}`);
+    }
+
+    // ===== PHOTO UPLOAD =====
     function handleFileSelect(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -379,7 +602,7 @@
       document.getElementById('previewContainer').classList.remove('active');
     }
 
-    // Submit report
+    // ===== SUBMIT REPORT =====
     function submitLaporan() {
       const lokasi = document.getElementById('inputLokasi').value;
       const catatan = document.getElementById('catatan').value;
@@ -391,7 +614,7 @@
 
       const laporan = {
         lokasi: lokasi,
-        catatan: catatan || 'Tidak ada catatan',
+        catatan: catatan || `Laporan dari GPS ${gpsSource.toUpperCase()}`,
         waktu: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
         image: photoBase64 || null,
         tipeLaporan: 'Warga',
@@ -418,14 +641,14 @@
       });
       localStorage.setItem('sipadam_riwayat', JSON.stringify(riwayat));
 
-      alert('✅ Laporan berhasil dikirim!\n\nPertugas pemadam kebakaran akan segera menuju lokasi.');
+      alert(`✅ Laporan berhasil dikirim!\nGPS Source: ${gpsSource.toUpperCase()}\n\nPertugas akan segera menuju lokasi.`);
       
       // Reset form
       document.getElementById('catatan').value = '';
       removePhoto();
     }
 
-    // Logout
+    // ===== LOGOUT =====
     function handleLogout() {
       if (confirm('Apakah Anda yakin ingin keluar?')) {
         localStorage.removeItem('sipadam_user');
@@ -433,7 +656,7 @@
       }
     }
 
-    // Mobile menu
+    // ===== MOBILE MENU =====
     const mobileToggle = document.querySelector('.mobile-toggle');
     const navMenu = document.querySelector('.navbar nav');
 
@@ -443,7 +666,7 @@
       });
     }
 
-    // Navbar scroll
+    // ===== NAVBAR SCROLL =====
     window.addEventListener('scroll', () => {
       const navbar = document.querySelector('.navbar');
       if (window.scrollY > 50) {
@@ -453,10 +676,15 @@
       }
     });
 
-    // Initialize
+    // ===== INITIALIZE =====
     window.addEventListener('load', () => {
-      initMap();
-      detectLocation();
+      console.log('🚀 Page loaded, initializing...');
+      
+      // Wait for DOM to be ready
+      setTimeout(() => {
+        initMap();
+        updateGPSStatus('none', false);
+      }, 100);
     });
   </script>
 </body>

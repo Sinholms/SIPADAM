@@ -1,5 +1,5 @@
 // ============================================
-// LAPORAN.JS - CLIENT VERSION (Auto Report ke Operator)
+// LAPORAN.JS - GPS dari IoT Module NEO-6M
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -26,10 +26,16 @@ document.addEventListener('DOMContentLoaded', function() {
   let userLat, userLng;
   let selectedFile = null;
   
+  // ===== GPS SOURCE TRACKING =====
+  let gpsSource = 'none'; // 'iot', 'device', 'manual', 'none'
+  let iotGpsValid = false;
+  let lastIotGpsUpdate = 0;
+  const GPS_TIMEOUT = 10000; // 10 detik timeout
+  
   // ===== TRACKING AUTO REPORT =====
   let lastAutoReportTime = 0;
   let hasAutoReported = false;
-  const AUTO_REPORT_COOLDOWN = 300000; // 5 menit (300000 ms)
+  const AUTO_REPORT_COOLDOWN = 300000; // 5 menit
 
   const formLaporan = document.getElementById('formLaporan');
   const inputLokasi = document.getElementById('inputLokasi');
@@ -47,7 +53,44 @@ document.addEventListener('DOMContentLoaded', function() {
   const inputCORate = document.getElementById('coRate');
   const inputRiskLevel = document.getElementById('riskLevel');
 
-  // 3. Fungsi Inisialisasi Peta
+  // 3. Fungsi Update Status GPS
+  function updateGPSStatus(source, isValid, message) {
+    gpsSource = source;
+    
+    if (source === 'iot' && isValid) {
+      statusGPS.innerHTML = `
+        <span style="color: #2e7d32; font-weight: 600;">🛰️ GPS IoT Module Active</span><br>
+        <span style="color: #666; font-size: 0.85em;">Koordinat dari modul NEO-6M</span>
+      `;
+      statusGPS.style.color = '#2e7d32';
+      statusGPS.style.backgroundColor = '#e8f5e9';
+      statusGPS.style.padding = '12px';
+      statusGPS.style.borderRadius = '8px';
+    } else if (source === 'device' && isValid) {
+      statusGPS.innerHTML = `
+        <span style="color: #ff9800; font-weight: 600;">📱 GPS Device (Fallback)</span><br>
+        <span style="color: #666; font-size: 0.85em;">Menggunakan GPS perangkat</span>
+      `;
+      statusGPS.style.color = '#ff9800';
+      statusGPS.style.backgroundColor = '#fff3e0';
+    } else if (source === 'manual') {
+      statusGPS.innerHTML = `
+        <span style="color: #2196f3; font-weight: 600;">📍 Manual Location</span><br>
+        <span style="color: #666; font-size: 0.85em;">Lokasi dipilih dari peta</span>
+      `;
+      statusGPS.style.color = '#2196f3';
+      statusGPS.style.backgroundColor = '#e3f2fd';
+    } else {
+      statusGPS.innerHTML = `
+        <span style="color: #e63946; font-weight: 600;">❌ GPS Tidak Tersedia</span><br>
+        <span style="color: #666; font-size: 0.85em;">Klik peta untuk menandai lokasi manual</span>
+      `;
+      statusGPS.style.color = '#e63946';
+      statusGPS.style.backgroundColor = '#ffebee';
+    }
+  }
+
+  // 4. Fungsi Inisialisasi Peta
   function initMap(lat, lng) {
     const mapElement = document.getElementById('map');
     if (!mapElement) return;
@@ -72,13 +115,14 @@ document.addEventListener('DOMContentLoaded', function() {
       })
     }).addTo(map);
 
-    marker.bindPopup('📍 Lokasi Kebakaran').openPopup();
+    marker.bindPopup('🔥 Lokasi Kebakaran').openPopup();
 
     marker.on('dragend', function(e) {
       const pos = marker.getLatLng();
       userLat = pos.lat;
       userLng = pos.lng;
       inputLokasi.value = `${userLat.toFixed(6)}, ${userLng.toFixed(6)}`;
+      updateGPSStatus('manual', true);
     });
 
     map.on('click', function(e) {
@@ -86,10 +130,11 @@ document.addEventListener('DOMContentLoaded', function() {
       userLat = e.latlng.lat;
       userLng = e.latlng.lng;
       inputLokasi.value = `${userLat.toFixed(6)}, ${userLng.toFixed(6)}`;
+      updateGPSStatus('manual', true);
     });
   }
 
-  // 4. Fungsi Validasi & Handler Foto
+  // 5. Fungsi Validasi & Handler Foto
   function validateFile(file) {
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
@@ -131,101 +176,65 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('fileLabel').innerHTML = '<span>📷</span><span>Pilih foto dari perangkat Anda</span>';
   };
 
-  // 5. Deteksi GPS
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      function(position) {
-        userLat = position.coords.latitude;
-        userLng = position.coords.longitude;
-        inputLokasi.value = `${userLat.toFixed(6)}, ${userLng.toFixed(6)}`;
-        statusGPS.textContent = '✅ Lokasi terdeteksi! Anda dapat menggeser marker.';
-        statusGPS.style.color = '#2e7d32';
-        initMap(userLat, userLng);
-      },
-      function(error) {
-        statusGPS.textContent = '⚠️ Gagal deteksi lokasi. Klik peta untuk menandai.';
-        statusGPS.style.color = '#e63946';
-        initMap(-6.9667, 110.4167);
-      }
-    );
-  } else {
-    statusGPS.textContent = '❌ Browser tidak mendukung GPS.';
-    initMap(-6.9667, 110.4167);
-  }
-
-  // ==========================================================
-  // ===== AUTO REPORT SYSTEM (TRIGGER OTOMATIS) =====
-  // ==========================================================
-  
-  function shouldTriggerAutoReport(riskLevel) {
-    // Trigger hanya untuk level HIGH dan CRITICAL
-    if (riskLevel !== 'HIGH' && riskLevel !== 'CRITICAL') {
-      return false;
-    }
-    
-    // Cek cooldown (jangan spam report)
-    const now = Date.now();
-    if (now - lastAutoReportTime < AUTO_REPORT_COOLDOWN) {
-      console.log('⏳ Auto-report masih dalam cooldown...');
-      return false;
-    }
-    
-    return true;
-  }
-
-  function sendAutoReport(dataSensor) {
-    console.log('🚨 TRIGGERING AUTO REPORT!');
-    
-    // Pastikan ada koordinat
-    if (!userLat || !userLng) {
-      console.warn('❌ Tidak ada koordinat GPS, auto-report dibatalkan');
-      return;
-    }
-    
-    const lokasi = `${userLat.toFixed(6)}, ${userLng.toFixed(6)}`;
-    const waktu = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-    
-    // Buat laporan otomatis
-    const laporanOtomatis = {
-      lokasi: lokasi,
-      catatan: `⚠️ LAPORAN OTOMATIS - Sistem mendeteksi level bahaya ${dataSensor.riskLevel}. Harap segera ditindaklanjuti!`,
-      waktu: waktu,
-      image: null,
-      tipeLaporan: 'Auto',
+  // 6. Cek GPS IoT Timeout
+  setInterval(() => {
+    if (gpsSource === 'iot' && (Date.now() - lastIotGpsUpdate > GPS_TIMEOUT)) {
+      console.warn('⚠️ IoT GPS timeout, switching to fallback...');
+      iotGpsValid = false;
       
-      // Data sensor lengkap
-      suhu: dataSensor.suhu || '--°C',
-      kelembaban: dataSensor.kelembaban || '--%',
-      intensitas: dataSensor.intensitas || '-- ppm',
-      co: dataSensor.co || '-- ppm',
-      tempRate: dataSensor.tempRate || '--°C/s',
-      smokeRate: dataSensor.smokeRate || '-- ppm/s',
-      coRate: dataSensor.coRate || '-- ppm/s',
-      riskLevel: dataSensor.riskLevel
-    };
-    
-    // Kirim ke server
-    socket.emit('laporan-baru', laporanOtomatis);
-    
-    // Update tracking
-    lastAutoReportTime = Date.now();
-    hasAutoReported = true;
-    
-    // Tampilkan notifikasi ke user
-    window.SipadamUtils.showToast(
-      `🚨 Laporan darurat otomatis telah dikirim ke operator! (Level: ${dataSensor.riskLevel})`,
-      'warning'
-    );
-    
-    // Simpan ke riwayat lokal
-    simpanKeRiwayatLokal(laporanOtomatis, null);
-  }
+      // Try device GPS as fallback
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function(position) {
+            userLat = position.coords.latitude;
+            userLng = position.coords.longitude;
+            inputLokasi.value = `${userLat.toFixed(6)}, ${userLng.toFixed(6)}`;
+            updateGPSStatus('device', true);
+            if (map && marker) {
+              marker.setLatLng([userLat, userLng]);
+              map.setView([userLat, userLng], 15);
+            }
+          },
+          function(error) {
+            updateGPSStatus('none', false);
+          }
+        );
+      } else {
+        updateGPSStatus('none', false);
+      }
+    }
+  }, 5000);
+
+  // 7. Inisialisasi Peta dengan default location
+  initMap(-6.9820, 110.4153); // Semarang default
+  updateGPSStatus('none', false);
 
   // ==========================================================
-  // ===== AUTO-FILL DATA SENSOR & TRIGGER AUTO REPORT =====
+  // ===== RECEIVE GPS DATA FROM IoT MODULE =====
   // ==========================================================
   socket.on('data-sensor', (data) => {
     console.log('📡 Data sensor diterima:', data); 
+
+    // ===== PRIORITAS 1: GPS dari IoT Module =====
+    if (data.gpsValid && data.latitude !== 0 && data.longitude !== 0) {
+      userLat = data.latitude;
+      userLng = data.longitude;
+      inputLokasi.value = `${userLat.toFixed(6)}, ${userLng.toFixed(6)}`;
+      
+      iotGpsValid = true;
+      lastIotGpsUpdate = Date.now();
+      updateGPSStatus('iot', true);
+      
+      // Update map
+      if (map && marker) {
+        marker.setLatLng([userLat, userLng]);
+        map.setView([userLat, userLng], 16);
+      } else {
+        initMap(userLat, userLng);
+      }
+      
+      console.log('🛰️ GPS IoT Updated:', userLat, userLng);
+    }
 
     // Basic Readings
     if (data.temperature !== undefined && inputSuhu) {
@@ -273,14 +282,11 @@ document.addEventListener('DOMContentLoaded', function() {
         inputRiskLevel.style.backgroundColor = '#e8f5e9';
         inputRiskLevel.style.color = '#2e7d32';
         inputRiskLevel.style.fontWeight = 'normal';
-        
-        // Reset flag jika kembali normal
         hasAutoReported = false;
       }
       
       // ===== CEK AUTO REPORT TRIGGER =====
       if (shouldTriggerAutoReport(data.riskLevel) && !hasAutoReported) {
-        // Prepare data untuk auto report
         const dataSensorForReport = {
           suhu: inputSuhu.value,
           kelembaban: inputKelembaban.value,
@@ -298,7 +304,67 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // ==========================================================
-  // 6. SUBMIT FORM MANUAL (USER TETAP BISA LAPOR MANUAL)
+  // ===== AUTO REPORT SYSTEM =====
+  // ==========================================================
+  
+  function shouldTriggerAutoReport(riskLevel) {
+    if (riskLevel !== 'HIGH' && riskLevel !== 'CRITICAL') {
+      return false;
+    }
+    
+    const now = Date.now();
+    if (now - lastAutoReportTime < AUTO_REPORT_COOLDOWN) {
+      console.log('⏳ Auto-report masih dalam cooldown...');
+      return false;
+    }
+    
+    return true;
+  }
+
+  function sendAutoReport(dataSensor) {
+    console.log('🚨 TRIGGERING AUTO REPORT!');
+    
+    // Pastikan ada koordinat
+    if (!userLat || !userLng) {
+      console.warn('❌ Tidak ada koordinat GPS, auto-report dibatalkan');
+      return;
+    }
+    
+    const lokasi = `${userLat.toFixed(6)}, ${userLng.toFixed(6)}`;
+    const waktu = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    
+    const laporanOtomatis = {
+      lokasi: lokasi,
+      catatan: `⚠️ LAPORAN OTOMATIS (GPS: ${gpsSource.toUpperCase()}) - Sistem mendeteksi level bahaya ${dataSensor.riskLevel}. Harap segera ditindaklanjuti!`,
+      waktu: waktu,
+      image: null,
+      tipeLaporan: 'Auto',
+      
+      suhu: dataSensor.suhu || '--°C',
+      kelembaban: dataSensor.kelembaban || '--%',
+      intensitas: dataSensor.intensitas || '-- ppm',
+      co: dataSensor.co || '-- ppm',
+      tempRate: dataSensor.tempRate || '--°C/s',
+      smokeRate: dataSensor.smokeRate || '-- ppm/s',
+      coRate: dataSensor.coRate || '-- ppm/s',
+      riskLevel: dataSensor.riskLevel
+    };
+    
+    socket.emit('laporan-baru', laporanOtomatis);
+    
+    lastAutoReportTime = Date.now();
+    hasAutoReported = true;
+    
+    window.SipadamUtils.showToast(
+      `🚨 Laporan darurat otomatis dikirim! (GPS: ${gpsSource.toUpperCase()}, Level: ${dataSensor.riskLevel})`,
+      'warning'
+    );
+    
+    simpanKeRiwayatLokal(laporanOtomatis, null);
+  }
+
+  // ==========================================================
+  // ===== SUBMIT FORM MANUAL =====
   // ==========================================================
   if (formLaporan) {
     formLaporan.addEventListener('submit', function(e) {
@@ -316,7 +382,6 @@ document.addEventListener('DOMContentLoaded', function() {
       const catatan = catatanInput.value;
       const file = selectedFile;
       
-      // Ambil semua data sensor
       const suhuValue = inputSuhu.value || '--°C';
       const kelembabanValue = inputKelembaban.value || '--%';
       const intensitasValue = inputIntensitas.value || '-- ppm';
@@ -347,7 +412,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const dataLaporan = {
                 lokasi: lokasi,
-                catatan: catatan || "Tidak ada catatan.",
+                catatan: catatan || `Laporan dari GPS ${gpsSource.toUpperCase()}`,
                 waktu: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
                 image: base64Image,
                 tipeLaporan: 'Warga',
@@ -372,7 +437,7 @@ document.addEventListener('DOMContentLoaded', function() {
       } else {
           const dataLaporan = {
               lokasi: lokasi,
-              catatan: catatan || "Tidak ada catatan.",
+              catatan: catatan || `Laporan dari GPS ${gpsSource.toUpperCase()}`,
               waktu: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
               image: null,
               tipeLaporan: 'Warga',
@@ -390,7 +455,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // 7. Fungsi helper untuk simpan ke riwayat lokal
+  // 8. Fungsi helper
   function simpanKeRiwayatLokal(dataLaporan, file) {
       try {
         const laporan = {
