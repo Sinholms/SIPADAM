@@ -1,159 +1,193 @@
 <!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Daftar - SIPADAM</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="style.css" />
-    <style>
-      .error-message {
-        color: #e63946;
-        font-size: 0.85rem;
-        margin-top: -12px;
-        margin-bottom: 15px;
-        display: none;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daftar - SIPADAM</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="navbar.css">
+  <link rel="stylesheet" href="components.css">
+  <link rel="stylesheet" href="auth.css">
+  <style>
+    .error-message {
+      color: #e63946;
+      font-size: 0.85rem;
+      margin-top: -12px;
+      margin-bottom: 15px;
+      display: none;
+    }
 
-      .error-message.show {
-        display: block;
-      }
+    .error-message.show {
+      display: block;
+    }
 
-      .input-error {
-        border-color: #e63946 !important;
-      }
+    .input-error {
+      border-color: #e63946 !important;
+    }
 
-      .input-success {
-        border-color: #2e7d32 !important;
-      }
+    .input-success {
+      border-color: #2e7d32 !important;
+    }
 
-      .password-strength {
-        margin-top: -12px;
-        margin-bottom: 15px;
-        font-size: 0.85rem;
-      }
+    .password-strength {
+      margin-top: -12px;
+      margin-bottom: 15px;
+      font-size: 0.85rem;
+    }
 
-      .strength-bar {
-        height: 5px;
-        border-radius: 3px;
-        margin-top: 5px;
-        transition: all 0.3s ease;
-      }
+    .strength-bar {
+      height: 5px;
+      border-radius: 3px;
+      margin-top: 5px;
+      transition: all 0.3s ease;
+    }
 
-      .strength-weak { background: #e63946; width: 33%; }
-      .strength-medium { background: #ff9800; width: 66%; }
-      .strength-strong { background: #2e7d32; width: 100%; }
+    .strength-weak { background: #e63946; width: 33%; }
+    .strength-medium { background: #ff9800; width: 66%; }
+    .strength-strong { background: #2e7d32; width: 100%; }
 
-      .password-toggle {
-        position: relative;
-      }
+    .password-toggle {
+      position: relative;
+    }
 
-      .toggle-icon {
-        position: absolute;
-        right: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: pointer;
-        color: #666;
-        font-size: 1.2rem;
-        user-select: none;
-      }
+    .toggle-icon {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #666;
+      font-size: 1.2rem;
+      user-select: none;
+    }
 
-      .toggle-icon:hover {
-        color: #e63946;
-      }
+    .toggle-icon:hover {
+      color: #e63946;
+    }
 
-      label {
-        display: block;
-        margin-bottom: 8px;
-        color: #555;
-        font-weight: 600;
-        font-size: 0.9rem;
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Navbar -->
-    <header class="navbar">
-      <div class="container">
-        <div class="logo">
-          <a href="index.html">🚒 SIPADAM</a>
-        </div>
-        <nav>
-          <ul>
-            <li><a href="index.html">Beranda</a></li>
-            <li><a href="peta.html">Peta</a></li>
-            <li><a href="laporan.html">Laporan</a></li>
-            <li><a href="edukasi.html">Edukasi</a></li>
-            <li><a href="login.html" class="active">Login</a></li>
-            <li><a href="profil.html">Profil</a></li>
-          </ul>
-        </nav>
-        <div class="mobile-toggle">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      </div>
-    </header>
-
-    <div class="login-container">
-      <h2>📝 Daftar Akun SIPADAM</h2>
-      <form id="formDaftar">
-        <label for="nama">Nama Lengkap</label>
-        <input type="text" id="nama" placeholder="Masukkan nama lengkap" required />
-        <div class="error-message" id="errorNama"></div>
-
-        <label for="email">Email</label>
-        <input type="email" id="email" placeholder="contoh@email.com" required />
-        <div class="error-message" id="errorEmail"></div>
-
-        <label for="username">Username</label>
-        <input type="text" id="username" placeholder="Pilih username" required />
-        <div class="error-message" id="errorUsername"></div>
-
-        <label for="telepon">No. Telepon</label>
-        <input type="tel" id="telepon" placeholder="+62 812-3456-7890" required />
-        <div class="error-message" id="errorTelepon"></div>
-
-        <label for="password">Password</label>
-        <div class="password-toggle">
-          <input type="password" id="password" placeholder="Minimal 8 karakter" required />
-          <span class="toggle-icon" onclick="togglePassword('password')">👁️</span>
-        </div>
-        <div class="password-strength" id="passwordStrength"></div>
-        <div class="error-message" id="errorPassword"></div>
-
-        <label for="confirmPassword">Konfirmasi Password</label>
-        <div class="password-toggle">
-          <input type="password" id="confirmPassword" placeholder="Ulangi password" required />
-          <span class="toggle-icon" onclick="togglePassword('confirmPassword')">👁️</span>
-        </div>
-        <div class="error-message" id="errorConfirmPassword"></div>
-
-        <div class="terms">
-          <label>
-            <input type="checkbox" id="agree" required />
-            Saya setuju dengan <a href="#">Syarat & Ketentuan</a> dan <a href="#">Kebijakan Privasi</a>
-          </label>
-        </div>
-        <div class="error-message" id="errorAgree"></div>
-
-        <button type="submit">Daftar Sekarang</button>
-      </form>
-      
-      <p class="register-link">
-        Sudah punya akun? <a href="login.html">Masuk di sini</a>
-      </p>
-      
-      <p class="affirm">🔥 Bergabunglah dalam sistem peringatan dini kebakaran!</p>
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="logo">
+      <h1>🚒 SIPADAM</h1>
+      <p>Daftar akun baru</p>
     </div>
 
-    <script src="main.js"></script>
-    <script src="notification.js"></script>
-    <script src="daftar.js"></script>
-  </body>
+    <form id="formDaftar">
+      <label for="nama">Nama Lengkap</label>
+      <input type="text" id="nama" placeholder="Masukkan nama lengkap" required />
+      <div class="error-message" id="errorNama"></div>
+
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="contoh@email.com" required />
+      <div class="error-message" id="errorEmail"></div>
+
+      <label for="username">Username</label>
+      <input type="text" id="username" placeholder="Pilih username" required />
+      <div class="error-message" id="errorUsername"></div>
+
+      <label for="telepon">No. Telepon</label>
+      <input type="tel" id="telepon" placeholder="+62 812-3456-7890" required />
+      <div class="error-message" id="errorTelepon"></div>
+
+      <label for="password">Password</label>
+      <div class="password-toggle">
+        <input type="password" id="password" placeholder="Minimal 8 karakter" required />
+        <span class="toggle-icon" onclick="togglePassword('password')">👁️</span>
+      </div>
+      <div class="password-strength" id="passwordStrength"></div>
+      <div class="error-message" id="errorPassword"></div>
+
+      <label for="confirmPassword">Konfirmasi Password</label>
+      <div class="password-toggle">
+        <input type="password" id="confirmPassword" placeholder="Ulangi password" required />
+        <span class="toggle-icon" onclick="togglePassword('confirmPassword')">👁️</span>
+      </div>
+      <div class="error-message" id="errorConfirmPassword"></div>
+
+      <div class="terms">
+        <label>
+          <input type="checkbox" id="agree" required />
+          Saya setuju dengan <a href="#">Syarat & Ketentuan</a> dan <a href="#">Kebijakan Privasi</a>
+        </label>
+      </div>
+      <div class="error-message" id="errorAgree"></div>
+
+      <button type="submit">Daftar Sekarang</button>
+    </form>
+      
+    <div class="register-link">
+      Sudah punya akun? <a href="login.html">Masuk di sini</a>
+    </div>
+
+    <div class="back-home">
+      <a href="index.html">← Kembali ke Beranda</a>
+    </div>
+      
+    <p class="affirm">🔥 Bergabunglah dalam sistem peringatan dini kebakaran!</p>
+  </div>
+
+  <script>
+    function togglePassword(fieldId) {
+      const field = document.getElementById(fieldId);
+      const icon = field.nextElementSibling;
+      
+      if (field.type === 'password') {
+        field.type = 'text';
+        icon.textContent = '🙈';
+      } else {
+        field.type = 'password';
+        icon.textContent = '👁️';
+      }
+    }
+
+    // Password strength checker
+    document.getElementById('password').addEventListener('input', function() {
+      const password = this.value;
+      const strengthDiv = document.getElementById('passwordStrength');
+      
+      if (password.length === 0) {
+        strengthDiv.innerHTML = '';
+        return;
+      }
+      
+      let strength = 0;
+      if (password.length >= 8) strength++;
+      if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+      if (password.match(/[0-9]/)) strength++;
+      if (password.match(/[^a-zA-Z0-9]/)) strength++;
+      
+      let strengthText = '';
+      let strengthClass = '';
+      
+      if (strength <= 2) {
+        strengthText = 'Lemah';
+        strengthClass = 'strength-weak';
+      } else if (strength === 3) {
+        strengthText = 'Sedang';
+        strengthClass = 'strength-medium';
+      } else {
+        strengthText = 'Kuat';
+        strengthClass = 'strength-strong';
+      }
+      
+      strengthDiv.innerHTML = `
+        <div style="color: #666; margin-bottom: 4px;">Kekuatan Password: <strong>${strengthText}</strong></div>
+        <div class="strength-bar ${strengthClass}"></div>
+      `;
+    });
+  </script>
+  <script src="main.js"></script>
+  <script src="notification.js"></script>
+  <script src="daftar.js"></script>
+</body>
 </html>

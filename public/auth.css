@@ -1,0 +1,367 @@
+/* =====================================================
+   SIPADAM - AUTHENTICATION STYLES
+   Login & Register Pages
+   ===================================================== */
+
+/* ==================== LOGIN CONTAINER ==================== */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-container .logo {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+  position: relative;
+  z-index: 1;
+}
+
+.login-container .logo h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  color: white;
+  margin-bottom: var(--spacing-xs);
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.login-container .logo p,
+.login-container h2 {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: var(--spacing-xl);
+  text-align: center;
+}
+
+.login-container form {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  padding: var(--spacing-2xl);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  width: 100%;
+  max-width: 450px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 1;
+  animation: fadeInUp 0.6s ease;
+}
+
+/* ==================== FORM INPUTS ==================== */
+.login-container input[type="text"],
+.login-container input[type="email"],
+.login-container input[type="password"],
+.login-container input[type="tel"] {
+  width: 100%;
+  padding: var(--spacing-md);
+  border: 2px solid var(--neutral-200);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  transition: all var(--transition-fast);
+  background: var(--neutral-100);
+  margin-bottom: var(--spacing-md);
+}
+
+.login-container input:focus {
+  border-color: var(--primary);
+  outline: none;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.08);
+}
+
+.login-container input.error {
+  border-color: var(--primary);
+  background: #fef2f2;
+}
+
+.login-container input.input-error {
+  border-color: var(--primary);
+}
+
+.login-container input.input-success {
+  border-color: var(--accent-green);
+}
+
+/* ==================== ERROR MESSAGES ==================== */
+.error-message {
+  color: var(--primary);
+  font-size: 0.85rem;
+  margin-top: -10px;
+  margin-bottom: var(--spacing-sm);
+  display: none;
+}
+
+.error-message.show {
+  display: block;
+}
+
+/* ==================== PASSWORD STRENGTH ==================== */
+.password-strength {
+  margin-top: -10px;
+  margin-bottom: var(--spacing-sm);
+  font-size: 0.85rem;
+}
+
+.strength-bar {
+  height: 4px;
+  border-radius: 2px;
+  margin-top: 6px;
+  transition: all var(--transition-base);
+}
+
+.strength-weak { 
+  background: var(--primary); 
+  width: 33%; 
+}
+
+.strength-medium { 
+  background: var(--accent-orange); 
+  width: 66%; 
+}
+
+.strength-strong { 
+  background: var(--accent-green); 
+  width: 100%; 
+}
+
+/* ==================== PASSWORD TOGGLE ==================== */
+.password-toggle {
+  position: relative;
+}
+
+.toggle-icon {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: var(--neutral-500);
+  font-size: 1.2rem;
+  user-select: none;
+  transition: color var(--transition-fast);
+}
+
+.toggle-icon:hover {
+  color: var(--primary);
+}
+
+/* ==================== REMEMBER & FORGOT ==================== */
+.remember-forgot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+  font-size: 0.9rem;
+}
+
+.remember-forgot label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: var(--neutral-700);
+}
+
+.remember-forgot a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color var(--transition-fast);
+}
+
+.remember-forgot a:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+/* ==================== TERMS CHECKBOX ==================== */
+.terms {
+  margin: var(--spacing-lg) 0;
+  font-size: 0.9rem;
+}
+
+.terms label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--neutral-700);
+  cursor: pointer;
+}
+
+.terms input[type="checkbox"] {
+  margin-top: 4px;
+  cursor: pointer;
+}
+
+.terms a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.terms a:hover {
+  text-decoration: underline;
+}
+
+/* ==================== SUBMIT BUTTON ==================== */
+.btn-login,
+.login-container button[type="submit"] {
+  width: 100%;
+  padding: 14px var(--spacing-lg);
+  background: linear-gradient(135deg, rgba(220, 85, 90, 0.95), rgba(185, 75, 80, 0.95));
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: 0 4px 16px rgba(220, 85, 90, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-login::before,
+.login-container button[type="submit"]::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-login:hover::before,
+.login-container button[type="submit"]:hover::before {
+  left: 100%;
+}
+
+.btn-login:hover,
+.login-container button[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(220, 85, 90, 0.5);
+  background: linear-gradient(135deg, rgba(220, 85, 90, 1), rgba(185, 75, 80, 1));
+}
+
+.btn-login:disabled,
+.login-container button[type="submit"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-login:disabled::before,
+.login-container button[type="submit"]:disabled::before {
+  display: none;
+}
+
+/* ==================== LINKS ==================== */
+.register-link,
+.back-home {
+  text-align: center;
+  margin-top: var(--spacing-lg);
+  position: relative;
+  z-index: 1;
+  background: rgba(221, 180, 180, 0.3);
+  backdrop-filter: blur(10px);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(220, 85, 90, 0.4);
+  transition: all var(--transition-base);
+}
+
+.register-link:hover,
+.back-home:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 85, 90, 0.3);
+}
+
+.register-link {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.register-link a,
+.back-home a {
+  color: white;
+  text-decoration: none;
+  font-weight: 700;
+  transition: all var(--transition-fast);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.register-link a:hover,
+.back-home a:hover {
+  text-decoration: underline;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.back-home a {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 0.95rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ==================== DEMO INFO ==================== */
+.demo-info {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  margin-top: var(--spacing-lg);
+  border: 1px solid rgba(220, 85, 90, 0.35);
+  position: relative;
+  z-index: 1;
+}
+
+.demo-info h4 {
+  color: white;
+  margin-bottom: var(--spacing-sm);
+  font-size: 1rem;
+}
+
+.demo-info p {
+  color: rgba(255, 255, 255, 0.8);
+  margin: 4px 0;
+  font-size: 0.9rem;
+}
+
+.demo-info code {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: white;
+  font-weight: 600;
+}
+
+.affirm {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 0.95rem;
+  margin-top: var(--spacing-lg);
+  font-weight: 600;
+  position: relative;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  border: 2px solid rgba(220, 85, 90, 0.4);
+  box-shadow: 0 4px 16px rgba(220, 85, 90, 0.2);
+  transition: all var(--transition-base);
+  max-width: 450px;
+}

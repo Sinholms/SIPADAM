@@ -1,0 +1,225 @@
+/* =====================================================
+   SIPADAM - SENSOR STATUS STYLES
+   Safe, Warning, Danger States & Data Display
+   ===================================================== */
+
+/* ==================== SENSOR STATUS MAIN ==================== */
+.sensor-status-main {
+  background: white;
+  padding: var(--spacing-2xl);
+  border-radius: var(--radius-xl);
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  border: 2px solid var(--neutral-200);
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.sensor-status-main::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, transparent, currentColor, transparent);
+  opacity: 0.5;
+  transition: all var(--transition-base);
+}
+
+/* ==================== STATUS SAFE ==================== */
+.sensor-status-main.status-safe {
+  border-color: #10B981;
+  background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+  color: #10B981;
+}
+
+.sensor-status-main.status-safe::before {
+  background: linear-gradient(90deg, transparent, #10B981, transparent);
+}
+
+.sensor-status-main.status-safe .status-icon {
+  color: #10B981;
+  filter: drop-shadow(0 4px 12px rgba(16, 185, 129, 0.25));
+}
+
+.sensor-status-main.status-safe h2 {
+  color: #047857;
+  background: linear-gradient(135deg, #10B981, #047857);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sensor-status-main.status-safe #statusDescription {
+  color: #065F46;
+}
+
+.sensor-status-main.status-safe .sensor-data-item .value {
+  color: #047857;
+}
+
+/* ==================== STATUS WARNING ==================== */
+.sensor-status-main.status-warning {
+  border-color: #F59E0B;
+  background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+  color: #F59E0B;
+}
+
+.sensor-status-main.status-warning::before {
+  background: linear-gradient(90deg, transparent, #F59E0B, transparent);
+}
+
+.sensor-status-main.status-warning .status-icon {
+  color: #F59E0B;
+  filter: drop-shadow(0 4px 12px rgba(245, 158, 11, 0.3));
+  animation: pulse 2s ease infinite;
+}
+
+.sensor-status-main.status-warning h2 {
+  color: #D97706;
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sensor-status-main.status-warning #statusDescription {
+  color: #92400E;
+}
+
+.sensor-status-main.status-warning .sensor-data-item .value {
+  color: #D97706;
+}
+
+/* ==================== STATUS DANGER ==================== */
+.sensor-status-main.status-danger {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+  color: var(--primary);
+  animation: dangerPulse 2s ease infinite;
+}
+
+.sensor-status-main.status-danger::before {
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  animation: shimmer 2s ease infinite;
+}
+
+.sensor-status-main.status-danger .status-icon {
+  color: var(--primary);
+  filter: drop-shadow(0 4px 12px rgba(255, 59, 48, 0.4));
+  animation: pulse 1.5s ease infinite;
+}
+
+.sensor-status-main.status-danger h2 {
+  color: var(--primary-dark);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: pulse 1.5s ease infinite;
+}
+
+.sensor-status-main.status-danger #statusDescription {
+  color: #991B1B;
+  font-weight: 600;
+}
+
+.sensor-status-main.status-danger .sensor-data-item .value {
+  color: var(--primary-dark);
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes dangerPulse {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: var(--shadow-md), 0 0 0 0 rgba(255, 59, 48, 0.4);
+  }
+  50% { 
+    transform: scale(1.01);
+    box-shadow: var(--shadow-lg), 0 0 0 8px rgba(255, 59, 48, 0);
+  }
+}
+
+/* ==================== STATUS ELEMENTS ==================== */
+.sensor-status-main .status-icon {
+  font-size: 5rem;
+  margin-bottom: var(--spacing-lg);
+  transition: all var(--transition-base);
+  display: inline-block;
+}
+
+.sensor-status-main h2 {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 800;
+  margin-bottom: var(--spacing-md);
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.sensor-status-main #statusDescription {
+  font-size: 1rem;
+  font-weight: 500;
+  opacity: 0.9;
+  margin-bottom: var(--spacing-xl);
+}
+
+/* ==================== SENSOR DATA GRID ==================== */
+.sensor-data-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xl);
+}
+
+.sensor-data-item {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all var(--transition-base);
+}
+
+.sensor-data-item:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.sensor-data-item h4 {
+  color: var(--neutral-600);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--spacing-xs);
+}
+
+.sensor-data-item .value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  line-height: 1;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .sensor-status-main {
+    padding: var(--spacing-lg);
+  }
+  
+  .sensor-status-main .status-icon {
+    font-size: 4rem;
+  }
+  
+  .sensor-data-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm);
+  }
+}

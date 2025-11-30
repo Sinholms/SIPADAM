@@ -1,0 +1,520 @@
+/* =====================================================
+   SIPADAM - FRIENDLIST PAGE STYLES (UPDATED)
+   Consistent with Dashboard Design
+   ===================================================== */
+
+/* ==================== FRIENDLIST CONTAINER ==================== */
+.friendlist-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: calc(70px + var(--spacing-xl)) var(--spacing-lg) var(--spacing-xl);
+}
+
+/* ==================== WELCOME BANNER ==================== */
+.welcome-banner {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-xl);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.welcome-banner h1 {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  margin-bottom: var(--spacing-xs);
+  position: relative;
+  z-index: 1;
+}
+
+.welcome-banner p {
+  font-size: 1rem;
+  opacity: 0.9;
+  position: relative;
+  z-index: 1;
+  margin: 0;
+}
+
+/* ==================== STATS GRID ==================== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.stat-card {
+  background: white;
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 2px solid var(--neutral-200);
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  transform: scaleX(0);
+  transition: transform var(--transition-base);
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: currentColor;
+}
+
+.stat-card:hover::before {
+  transform: scaleX(1);
+}
+
+.stat-icon {
+  font-size: 2.5rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+.stat-card h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-xs);
+  line-height: 1;
+}
+
+.stat-card p {
+  color: var(--neutral-600);
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Stat Card Variants */
+.stat-card.safe {
+  color: #10B981;
+}
+
+.stat-card.safe::before {
+  background: #10B981;
+}
+
+.stat-card.safe:hover {
+  background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+}
+
+.stat-card.warning {
+  color: #F59E0B;
+}
+
+.stat-card.warning::before {
+  background: #F59E0B;
+}
+
+.stat-card.warning:hover {
+  background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+}
+
+.stat-card.danger {
+  color: var(--primary);
+}
+
+.stat-card.danger::before {
+  background: var(--primary);
+}
+
+.stat-card.danger:hover {
+  background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+}
+
+.stat-card.total {
+  color: #3B82F6;
+}
+
+.stat-card.total::before {
+  background: #3B82F6;
+}
+
+.stat-card.total:hover {
+  background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+}
+
+/* ==================== FILTER SECTION ==================== */
+.filter-section {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xl);
+  flex-wrap: wrap;
+  padding: var(--spacing-md);
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.filter-btn {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: 2px solid var(--neutral-200);
+  background: white;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.filter-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+  border-color: var(--primary);
+}
+
+.filter-btn.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(255, 59, 48, 0.3);
+}
+
+/* ==================== FRIENDS GRID ==================== */
+.friends-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--spacing-lg);
+  animation: fadeInUp 0.5s ease;
+}
+
+/* ==================== FRIEND CARD ==================== */
+.friend-card {
+  background: white;
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 2px solid var(--neutral-200);
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 0.5s ease both;
+}
+
+.friend-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  transform: scaleX(0);
+  transition: transform var(--transition-base);
+}
+
+.friend-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
+}
+
+.friend-card:hover::before {
+  transform: scaleX(1);
+}
+
+/* Friend Header */
+.friend-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--neutral-200);
+}
+
+.friend-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  box-shadow: var(--shadow-md);
+  flex-shrink: 0;
+}
+
+.friend-avatar.safe {
+  background: linear-gradient(135deg, #10B981, #059669);
+}
+
+.friend-avatar.warning {
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+}
+
+.friend-avatar.danger {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  animation: pulse 2s ease infinite;
+}
+
+.friend-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.friend-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: var(--neutral-900);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.friend-location {
+  font-size: 0.85rem;
+  color: var(--neutral-600);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ==================== STATUS BADGE ==================== */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-md);
+}
+
+.status-badge.safe {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.status-badge.warning {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.status-badge.danger {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+
+/* ==================== SENSOR DATA GRID ==================== */
+.sensor-data-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-sm);
+}
+
+.sensor-item {
+  background: var(--neutral-100);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  transition: all var(--transition-base);
+}
+
+.sensor-item:hover {
+  background: var(--neutral-200);
+  transform: scale(1.02);
+}
+
+.sensor-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.sensor-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.sensor-details strong {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sensor-details span {
+  font-size: 0.75rem;
+  color: var(--neutral-600);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ==================== CARD VARIANTS ==================== */
+.friend-card.safe::before {
+  background: #10B981;
+}
+
+.friend-card.warning::before {
+  background: #F59E0B;
+}
+
+.friend-card.danger::before {
+  background: var(--primary);
+}
+
+/* ==================== ADD FRIEND BUTTON ==================== */
+.btn-add-friend {
+  position: fixed;
+  bottom: var(--spacing-xl);
+  right: var(--spacing-xl);
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border: none;
+  font-size: 2rem;
+  font-weight: 300;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(255, 59, 48, 0.4);
+  transition: all var(--transition-base);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-add-friend:hover {
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 12px 32px rgba(255, 59, 48, 0.5);
+}
+
+.btn-add-friend:active {
+  transform: scale(1.05) rotate(90deg);
+}
+
+/* ==================== EMPTY STATE ==================== */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: var(--spacing-2xl) var(--spacing-xl);
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 2px dashed var(--neutral-300);
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: var(--spacing-lg);
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-sm);
+  color: var(--neutral-700);
+}
+
+.empty-state p {
+  font-size: 1rem;
+  color: var(--neutral-500);
+  margin: 0;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 1024px) {
+  .friends-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .friendlist-container {
+    padding: calc(70px + var(--spacing-lg)) var(--spacing-md) var(--spacing-lg);
+  }
+
+  .friends-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+  }
+  
+  .filter-section {
+    padding: var(--spacing-sm);
+    gap: var(--spacing-xs);
+  }
+
+  .filter-btn {
+    flex: 1;
+    min-width: 0;
+    justify-content: center;
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .filter-btn span:last-child {
+    display: none;
+  }
+  
+  .btn-add-friend {
+    bottom: var(--spacing-lg);
+    right: var(--spacing-lg);
+    width: 56px;
+    height: 56px;
+  }
+
+  .sensor-data-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .welcome-banner h1 {
+    font-size: 1.3rem;
+  }
+
+  .welcome-banner p {
+    font-size: 0.9rem;
+  }
+
+  .stat-card {
+    padding: var(--spacing-lg);
+  }
+
+  .stat-icon {
+    font-size: 2rem;
+  }
+
+  .stat-card h2 {
+    font-size: 2rem;
+  }
+}
