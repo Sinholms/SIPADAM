@@ -8,16 +8,13 @@
   <link rel="stylesheet" href="laporan.css" /> 
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <script src="/socket.io/socket.io.js"></script>
-  
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
 </head>
 <body>
@@ -28,21 +25,21 @@
         <span class="icon">🔥</span>
         <div class="logo-text">
           <h2>SIPADAM</h2>
-          <p>Sistem Peringatan Dini</p>
+          <p>Admin Panel</p>
         </div>
       </div>
     </div>
     <ul class="menu">
-      <li id="menu-dashboard">
+      <li>
         <a href="dashboard.html"><span class="icon">📊</span><span class="menu-text">Dashboard</span></a>
       </li>
       <li class="active">
         <a href="#"><span class="icon">📋</span><span class="menu-text">Laporan</span></a>
       </li>
-      <li id="menu-profil">
+      <li>
         <a href="profil.html"><span class="icon">👤</span><span class="menu-text">Profil</span></a>
       </li>
-      <li id="menu-logout">
+      <li>
         <a href="login.html"><span class="icon">🚪</span><span class="menu-text">Keluar</span></a>
       </li>
     </ul>
@@ -52,7 +49,7 @@
     <header>
       <div class="header-left">
         <div class="menu-toggle" id="menu-toggle-btn">☰</div>
-        <h1>Laporan Kebakaran</h1>
+        <h1>Data Laporan</h1>
       </div>
 
       <div class="user-info">
@@ -63,7 +60,7 @@
           <div class="notification-dropdown" id="notificationDropdown">
             <div class="dropdown-header">
               <h3>Notifikasi Terbaru</h3>
-              <span class="clear-all" id="clearAllNotifications">Bersihkan Semua</span>
+              <span class="clear-all" id="clearAllNotifications">Bersihkan</span>
             </div>
             <div class="dropdown-list" id="notificationList"></div>
             <div class="dropdown-footer">
@@ -77,32 +74,39 @@
       </div>
     </header>
 
-    <div class="tab-menu">
-      <button id="tab-laporan" class="tab active">Daftar Laporan</button>
-      <button id="tab-statistik" class="tab">Statistik & Analisis</button>
+    <div class="tab-container">
+      <div class="tab-menu">
+        <button id="tab-laporan" class="tab active"><i class="fa-solid fa-list-ul"></i> Daftar Laporan</button>
+        <button id="tab-statistik" class="tab"><i class="fa-solid fa-chart-pie"></i> Statistik & Analisis</button>
+      </div>
     </div>
 
-    <div id="page-laporan" class="tab-pane active">
-      <div class="filter-bar">
-        <input type="text" placeholder="Cari lokasi atau catatan..." class="search-input" id="searchInput">
-        <select class="filter-select" id="statusFilter">
-          <option value="Semua">Semua Status</option>
-          <option value="Aktif">Aktif</option>
-          <option value="Sedang Ditangani">Sedang Ditangani</option>
-          <option value="Selesai">Selesai</option>
-        </select>
-        <p class="info" id="infoText">Memuat data...</p>
+    <div id="page-laporan" class="tab-pane active fade-in">
+      <div class="filter-card">
+        <div class="search-box">
+            <i class="fa-solid fa-search"></i>
+            <input type="text" placeholder="Cari lokasi, tanggal, atau ID..." id="searchInput">
+        </div>
+        <div class="filter-actions">
+            <select class="filter-select" id="statusFilter">
+            <option value="Semua">Semua Status</option>
+            <option value="Aktif">🔥 Aktif</option>
+            <option value="Sedang Ditangani">⏳ Ditangani</option>
+            <option value="Selesai">✅ Selesai</option>
+            </select>
+            <p class="info" id="infoText">Memuat...</p>
+        </div>
       </div>
 
-      <div class="report-list" id="reportList"></div>
+      <div class="report-list-container" id="reportList"></div>
     </div>
 
-    <div id="page-statistik" class="tab-pane" style="display:none;">
+    <div id="page-statistik" class="tab-pane fade-in" style="display:none;">
       
-      <div id="exportTarget" style="background: #fff; padding: 10px; border-radius: 8px;">
+      <div id="exportTarget" class="stats-wrapper">
           
-          <div class="filter-period">
-              <strong>Analisis Data Laporan</strong>
+          <div class="filter-period-header">
+              <h3><i class="fa-solid fa-chart-line"></i> Analisis Kinerja</h3>
               <div class="time-filters">
                   <span class="filter-btn active" data-period="7">7 Hari</span>
                   <span class="filter-btn" data-period="30">30 Hari</span>
@@ -111,35 +115,43 @@
               </div>
           </div>
 
-          <div id="pdfHeader" style="display: none; text-align: center; margin-bottom: 20px;">
-              <h2 style="color: #d32f2f;">LAPORAN STATISTIK KEBAKARAN</h2>
-              <hr>
-          </div>
-
           <div class="stat-cards-container">
-              <div class="stat-card total">
-                  <p class="stat-label">Total Laporan</p>
-                  <p class="stat-number" id="statTotal">0</p>
+              <div class="stat-card blue">
+                  <div class="stat-content">
+                      <p>Total Laporan</p>
+                      <h3 id="statTotal">0</h3>
+                  </div>
+                  <div class="stat-icon"><i class="fa-regular fa-file-lines"></i></div>
               </div>
-              <div class="stat-card active-report">
-                  <p class="stat-label">Laporan Aktif</p>
-                  <p class="stat-number" id="statActive">0</p>
+              <div class="stat-card red">
+                  <div class="stat-content">
+                      <p>Laporan Aktif</p>
+                      <h3 id="statActive">0</h3>
+                  </div>
+                  <div class="stat-icon"><i class="fa-solid fa-fire"></i></div>
               </div>
-              <div class="stat-card handling">
-                  <p class="stat-label">Dalam Penanganan</p>
-                  <p class="stat-number" id="statHandling">0</p>
+              <div class="stat-card green">
+                  <div class="stat-content">
+                      <p>Selesai</p>
+                      <h3 id="statHandling">0</h3>
+                  </div>
+                  <div class="stat-icon"><i class="fa-solid fa-check"></i></div>
               </div>
           </div>
           
           <div class="charts-section">
-              <div class="chart-card laporan-bulanan">
-                  <h3>Laporan Bulanan</h3>
+              <div class="chart-card">
+                  <div class="chart-header">
+                      <h3>Laporan Bulanan</h3>
+                  </div>
                   <div class="bar-chart-placeholder" id="monthlyBars"></div>
               </div>
               
-              <div class="chart-card peta-area">
-                  <h3>Sumber Laporan</h3>
-                  <div style="position: relative; height: 250px; width: 100%;">
+              <div class="chart-card">
+                   <div class="chart-header">
+                      <h3>Sumber Laporan</h3>
+                  </div>
+                  <div class="chart-canvas-wrapper">
                       <canvas id="sourceChart"></canvas>
                   </div>
               </div>
@@ -147,22 +159,21 @@
 
           <div class="report-table-section">
             <div class="table-header-controls">
-                <h3 style="flex-grow: 1;">Tabel Data Terkini</h3>
+                <h3>Data Terkini</h3>
                 
-                <select id="statTableFilter" class="filter-select" style="margin-right: 10px; padding: 6px 10px; font-size: 0.9rem;">
-                    <option value="Semua">Semua Status</option>
-                    <option value="Aktif">Aktif</option>
-                    <option value="Sedang Ditangani">Sedang Ditangani</option>
-                    <option value="Selesai">Selesai</option>
-                </select>
+                <div class="table-actions">
+                    <select id="statTableFilter" class="filter-select small">
+                        <option value="Semua">Semua</option>
+                        <option value="Aktif">Aktif</option>
+                        <option value="Selesai">Selesai</option>
+                    </select>
 
-                <div class="export-btns">
-                    <button id="btnExportExcel" onclick="window.exportToExcel()" class="export-excel">
-                        <i class="fa-solid fa-file-excel"></i> Export Excel
+                    <button id="btnExportExcel" onclick="window.exportToExcel()" class="btn-export excel">
+                        <i class="fa-solid fa-file-excel"></i> Excel
                     </button>
                     
-                    <button id="btnExportPdf" onclick="window.exportToPDF()" class="export-pdf">
-                        <i class="fa-solid fa-file-pdf"></i> Export PDF
+                    <button id="btnExportPdf" onclick="window.exportToPDF()" class="btn-export pdf">
+                        <i class="fa-solid fa-file-pdf"></i> PDF
                     </button>
                 </div>
             </div>
@@ -170,14 +181,20 @@
             <div class="table-responsive">
                 <table class="data-table" id="dataTable">
                     <thead>
-                        <tr><th>No</th><th>Lokasi</th><th>Status</th><th>Waktu</th></tr>
+                        <tr>
+                            <th width="5%">No</th>
+                            <th>Lokasi</th>
+                            <th>Waktu</th>
+                            <th>Status</th>
+                        </tr>
                     </thead>
                     <tbody></tbody>
                 </table>
             </div>
           </div>
 
-      </div> </div> 
+      </div> 
+    </div> 
   </div> 
   
   <script src="main.js"></script>
@@ -185,43 +202,44 @@
 
   <script>
   document.addEventListener('DOMContentLoaded', () => {
-      
-      // Inisialisasi Socket
       const socket = io();
-      
-      // [PENTING] Bergabung sebagai Admin
       socket.emit('admin-bergabung');
-      console.log('📡 Laporan Page: Bergabung ke ruangan admin...');
 
-      // A. LAPORAN MASUK (REAL-TIME)
+      // 1. Terima Laporan Lama (Saat Load)
+      // Ini yang akan memperbaiki bug badge "gepeng"
+      socket.on('muat-laporan-lama', (laporanLama) => {
+          if (laporanLama && laporanLama.length > 0) {
+              // Hitung laporan aktif untuk badge
+              const aktifCount = laporanLama.filter(l => l.status === 'Aktif').length;
+              const badge = document.getElementById('notificationBadge');
+              
+              if (badge) {
+                  badge.innerText = aktifCount > 0 ? aktifCount : '';
+                  // CSS :empty {display:none} akan otomatis sembunyikan jika kosong
+              }
+              
+              // Jika ada fungsi render di laporan.js, panggil
+              if (typeof addLocalReport === 'function') {
+                  // Looping laporan lama (opsional jika laporan.js sudah handle fetch API)
+                  // laporanLama.forEach(l => addLocalReport(l)); 
+              }
+          }
+      });
+
+      // 2. Laporan Baru Masuk (Realtime)
       socket.on('laporan-masuk', (laporanBaru) => {
-          console.log('⚡ Laporan Masuk:', laporanBaru);
-
-          // 1. Panggil Notifikasi Header & Toast
           if (typeof addNewNotification === 'function') {
               addNewNotification({
-                  id: laporanBaru._id,
-                  location: laporanBaru.lokasi,
-                  time: laporanBaru.waktu
+                  id: laporanBaru._id, location: laporanBaru.lokasi, time: laporanBaru.waktu
               });
           }
-
-          // 2. UPDATE DATA LOKAL & STATISTIK
-          if (typeof addLocalReport === 'function') {
-              addLocalReport(laporanBaru); 
-          }
+          if (typeof addLocalReport === 'function') addLocalReport(laporanBaru); 
       });
 
-      // B. LAPORAN DIPERBARUI (STATUS UBAH)
+      // 3. Update Status
       socket.on('laporan-diperbarui', (laporanUpdate) => {
-           console.log('📝 Status Update:', laporanUpdate);
-           
-           // UPDATE DATA LOKAL
-           if (typeof updateLocalReport === 'function') {
-              updateLocalReport(laporanUpdate);
-          }
+           if (typeof updateLocalReport === 'function') updateLocalReport(laporanUpdate);
       });
-
   });
   </script>
 </body>

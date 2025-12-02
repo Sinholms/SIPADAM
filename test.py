@@ -12,7 +12,7 @@ import platform
 # ===========================
 # CONFIGURATION
 # ===========================
-ESP32_IP = "192.168.90.96"
+ESP32_IP = "192.168.51.96"
 ESP32_URL = f"http://{ESP32_IP}/api/fire"
 SERVER_URL = "http://localhost:3000"
 MODEL_PATH = 'best.pt'

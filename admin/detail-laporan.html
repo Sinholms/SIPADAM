@@ -1,50 +1,64 @@
 <!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Detail Laporan - SIPADAM</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Laporan - SIPADAM Admin</title>
     
-    <link rel="stylesheet" href="detail-laporan.css" />
-
+    <link rel="stylesheet" href="detail-laporan.css">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <script src="/socket.io/socket.io.js"></script>
-  </head>
-  <body>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
+    <style>
+        .detail-container { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; max-width: 1400px; margin: 0 auto; }
+        .detail-card { background: #fff; border-radius: 16px; padding: 25px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); margin-bottom: 25px; }
+        .card-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; color: #2c3e50; border-left: 4px solid #8B0000; padding-left: 12px; }
+        
+        .main-status-banner { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); margin-bottom: 25px; }
+        .report-id-group h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 5px; color: #2c3e50; }
+        
+        .big-status-badge { padding: 10px 20px; border-radius: 30px; font-weight: 700; text-transform: uppercase; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; }
+        .big-status-badge.red { background: #ffebee; color: #d32f2f; }
+        .big-status-badge.yellow { background: #fff8e1; color: #f57c00; }
+        .big-status-badge.green { background: #e8f5e9; color: #388e3c; }
+
+        .sensor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
+        .sensor-card { padding: 20px; border-radius: 16px; text-align: center; transition: 0.2s; }
+        .sensor-card:hover { transform: translateY(-3px); }
+        .sensor-value { font-size: 1.3rem; font-weight: 700; color: #333; }
+
+        #mapFrame { width: 100%; height: 350px; border-radius: 12px; margin-top: 15px; border: none; background: #eee; }
+        
+        .action-sticky { position: sticky; top: 20px; }
+        .action-buttons { display: flex; flex-direction: column; gap: 12px; }
+        .btn-modern { width: 100%; padding: 15px; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.2s; }
+        .btn-modern:hover { transform: translateY(-2px); opacity: 0.9; }
+        .btn-modern:active { transform: scale(0.98); }
+        
+        .btn-handle { background: linear-gradient(135deg, #fbc02d, #f57f17); }
+        .btn-done { background: linear-gradient(135deg, #43a047, #2e7d32); }
+        .btn-activate { background: linear-gradient(135deg, #e53935, #c62828); }
+
+        .risk-badge { background: #ffebee; color: #c62828; padding: 15px; border-radius: 12px; text-align: center; font-weight: 700; border: 2px solid #ef5350; margin-top: 20px; }
+
+        @media (max-width: 992px) { .detail-container { grid-template-columns: 1fr; } .action-sticky { position: static; } }
+    </style>
+</head>
+<body>
+
     <div class="sidebar">
       <div class="sidebar-header">
         <div class="logo">
           <span class="icon">🔥</span>
-          <div class="logo-text">
-            <h2>SIPADAM</h2>
-            <p>Sistem Peringatan Dini</p>
-          </div>
+          <div class="logo-text"><h2>SIPADAM</h2><p>Admin Panel</p></div>
         </div>
       </div>
       <ul class="menu">
-        <li>
-          <a href="dashboard.html">
-            <span>📊</span><span class="menu-text">Dashboard</span>
-          </a>
-        </li>
-        <li class="active">
-          <a href="laporan.html">
-            <span>📋</span><span class="menu-text">Laporan</span>
-          </a>
-        </li>
-        <li>
-          <a href="profil.html">
-            <span>👤</span><span class="menu-text">Profil</span>
-          </a>
-        </li>
-        <li>
-          <a href="login.html">
-            <span>🚪</span><span class="menu-text">Keluar</span>
-          </a>
-        </li>
+        <li><a href="dashboard.html"><span class="icon">📊</span><span class="menu-text">Dashboard</span></a></li>
+        <li class="active"><a href="laporan.html"><span class="icon">📋</span><span class="menu-text">Laporan</span></a></li>
+        <li><a href="profil.html"><span class="icon">👤</span><span class="menu-text">Profil</span></a></li>
+        <li><a href="login.html"><span class="icon">🚪</span><span class="menu-text">Keluar</span></a></li>
       </ul>
     </div>
 
@@ -54,22 +68,13 @@
           <div class="menu-toggle" id="menu-toggle-btn">☰</div>
           <h1>Detail Laporan</h1>
         </div>
-        
         <div class="user-info">
           <div class="notification-area">
-            <a href="#" class="notif" id="notificationBell">
-              🔔<span class="badge" id="notificationBadge"></span>
-            </a>
+            <a href="#" class="notif" id="notificationBell">🔔<span class="badge" id="notificationBadge"></span></a>
             <div class="notification-dropdown" id="notificationDropdown">
-              <div class="dropdown-header">
-                <h3>Notifikasi Terbaru</h3>
-                <span class="clear-all" id="clearAllNotifications">Bersihkan Semua</span>
-              </div>
-              <div class="dropdown-list" id="notificationList">
-                </div>
-              <div class="dropdown-footer">
-                <a href="laporan.html">Lihat Semua Laporan</a>
-              </div>
+              <div class="dropdown-header"><h3>Notifikasi</h3><span class="clear-all" id="clearAllNotifications">Bersihkan</span></div>
+              <div class="dropdown-list" id="notificationList"></div>
+              <div class="dropdown-footer"><a href="laporan.html">Lihat Semua</a></div>
             </div>
           </div>
           <a href="profil.html" class="user"> 👩‍🚒 Petugas Pemadam </a>
@@ -77,328 +82,230 @@
         </div>
       </header>
 
-      <button class="back-btn" onclick="window.location.href='laporan.html'">
-        ⬅ Kembali ke Daftar Laporan
+      <button class="back-btn" onclick="window.location.href='laporan.html'" style="margin-bottom: 20px;">
+        ⬅ Kembali ke Daftar
       </button>
 
-      <div class="content-wrapper">
-        
-        <div class="left-section">
-          <div class="report-summary">
-            <div class="report-header">
-              <h2 id="judulLaporan">Memuat Laporan...</h2>
-              <span class="status-badge" id="statusLaporan">...</span>
+      <div id="error-message" style="display: none; background: #ffebee; color: #c62828; padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center; border: 1px solid #ef5350;"></div>
+
+      <div class="detail-container">
+        <div class="left-column">
+            <div class="main-status-banner">
+                <div class="report-id-group">
+                    <h2 id="judulLaporan">Memuat Data...</h2>
+                    <span class="report-time"><i class="fa-regular fa-clock"></i> <span id="waktuLaporan">--</span></span>
+                </div>
+                <div id="statusBadge" class="big-status-badge red"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</div>
             </div>
-            <p class="time" id="waktuLaporan">--</p>
 
-            <div class="metrics-container" style="display: flex; flex-direction: column; gap: 15px;">
-              
-              <div class="metrics"> 
-                <div class="metric red">
-                  <p>🔥 Suhu</p>
-                  <h3 id="suhu">--°C</h3>
+            <div class="detail-card">
+                <h3 class="card-title">Data Sensor</h3>
+                <div class="sensor-grid">
+                    <div class="sensor-card" style="background: #fff5f5;"><div class="sensor-icon" style="color: #e53935;">🔥</div><h4>Suhu</h4><div class="sensor-value" id="suhu">--°C</div></div>
+                    <div class="sensor-card" style="background: #e3f2fd;"><div class="sensor-icon" style="color: #1976d2;">💧</div><h4>Kelembaban</h4><div class="sensor-value" id="kelembaban">--%</div></div>
+                    <div class="sensor-card" style="background: #fff3e0;"><div class="sensor-icon" style="color: #ef6c00;">💨</div><h4>Asap</h4><div class="sensor-value" id="intensitas">-- ppm</div></div>
+                    <div class="sensor-card" style="background: #e8f5e9;"><div class="sensor-icon" style="color: #2e7d32;">☠️</div><h4>Gas CO</h4><div class="sensor-value" id="co">-- ppm</div></div>
                 </div>
-                <div class="metric blue">
-                  <p>💧 Kelembaban</p>
-                  <h3 id="kelembaban">--%</h3>
-                </div>
-                <div class="metric orange">
-                  <p>💨 Asap</p>
-                  <h3 id="intensitas">--</h3>
-                </div>
-                <div class="metric" style="background: #e8f5e9; color: #2e7d32;">
-                  <p>☠️ CO (Racun)</p>
-                  <h3 id="co">--</h3>
-                </div>
-              </div>
-            
-              <div class="metrics">
-                <div class="metric" style="background: #fff3e0; color: #ef6c00;">
-                  <p>📈 Naik Suhu</p>
-                  <h3 id="tempRate">--</h3>
-                </div>
-                <div class="metric" style="background: #fff3e0; color: #ef6c00;">
-                  <p>📈 Naik Asap</p>
-                  <h3 id="smokeRate">--</h3>
-                </div>
-                <div class="metric" style="background: #ffebee; color: #c62828; border: 2px solid #ef5350;">
-                  <p>⚠️ RISK LEVEL</p>
-                  <h3 id="riskLevel">NORMAL</h3>
-                </div>
-              </div>
-            
             </div>
-          </div>
 
-          <div class="info-card">
-            <h3>Informasi Lokasi</h3>
-            <p><b>Alamat / Koordinat:</b><br /><span id="alamat">Memuat...</span></p>
-            
-            <p><b>Link Peta:</b><br /><span id="koordinat">--</span></p>
-            
-            <iframe
-              id="mapFrame"
-              width="100%"
-              height="250"
-              style="border: 0; border-radius: 8px; margin-top: 10px; display: none;"
-              loading="lazy"
-            ></iframe>
+            <div class="detail-card">
+                <h3 class="card-title">Lokasi & Info</h3>
+                <p><strong>Alamat:</strong> <span id="alamat">Memuat...</span></p>
+                <p><strong>Catatan:</strong> <span id="deskripsi">--</span></p>
+                <div id="koordinatLink" style="margin-top: 10px;"></div>
+                <iframe id="mapFrame" loading="lazy"></iframe>
+            </div>
 
-            <p style="margin-top:15px;"><b>Deskripsi Kejadian:</b><br /><span id="deskripsi">--</span></p>
-            <p><b>Pelapor:</b> <span id="pelapor">--</span></p>
-          </div>
+            <div class="detail-card">
+                <h3 class="card-title">Foto Bukti</h3>
+                <div id="galleryContainer" style="text-align: center; color: #888; padding: 20px;">Memuat foto...</div>
+            </div>
+        </div> 
 
-          <div class="info-card">
-            <h3>Dokumentasi Kejadian</h3>
-            <div class="gallery-container" id="galleryContainer"></div>
-          </div>
-        </div>
-
-        <div class="right-section">
-          <div class="action-card" id="action-card">
-            <h3>Aksi Status</h3>
-            <button class="status-btn yellow" id="btn-handle">🟡 Tandai Sedang Ditangani</button>
-            <button class="status-btn green" id="btn-done">🟢 Tandai Selesai</button>
-            <button class="status-btn red" id="btn-activate">🔥 Aktifkan Kembali Laporan</button>
-          </div>
-          
-          <div class="info-card quick-info">
-            <h3>Informasi Cepat</h3>
-            <p><b>ID Laporan:</b> <span id="idLaporan">--</span></p>
-            <p><b>Waktu Laporan:</b> <span id="jamLaporan">--</span></p>
-            <p><b>Prioritas:</b> <span class="priority low" id="prioritas">Rendah</span></p>
-          </div>
+        <div class="right-column">
+            <div class="detail-card action-sticky">
+                <h3 class="card-title" style="border-color: #f9a825;">Aksi Status</h3>
+                <div class="action-buttons">
+                    <button class="btn-modern btn-handle" id="btn-handle" onclick="updateStatus('Sedang Ditangani')">
+                        <i class="fa-solid fa-helmet-safety"></i> Tandai Sedang Ditangani
+                    </button>
+                    <button class="btn-modern btn-done" id="btn-done" onclick="updateStatus('Selesai')">
+                        <i class="fa-solid fa-circle-check"></i> Tandai Selesai
+                    </button>
+                    <button class="btn-modern btn-activate" id="btn-activate" onclick="updateStatus('Aktif')">
+                        <i class="fa-solid fa-fire"></i> Aktifkan Kembali
+                    </button>
+                </div>
+                <div class="risk-badge">
+                    <p style="font-size: 0.8rem; margin-bottom: 5px;">TINGKAT RISIKO</p>
+                    <span id="riskLevel">NORMAL</span>
+                </div>
+            </div>
         </div>
       </div>
-    </div> 
-    
+    </div>
+
    <script src="main.js"></script>
-
+   
    <script>
+      // Ambil ID Laporan dari URL (Contoh: detail-laporan.html?id=123)
+      const params = new URLSearchParams(window.location.search);
+      const laporanId = params.get("id");
+      let socket; // Definisikan socket di luar agar global
+
       document.addEventListener('DOMContentLoaded', () => {
-        
-        // ============================================
-        // 1. INISIALISASI & KONEKSI SOCKET
-        // ============================================
-        const socket = io();
-        
-        // PENTING: Beritahu server kita adalah ADMIN
-        socket.emit('admin-bergabung'); 
+        console.log("🚀 Halaman Detail Laporan Dimuat...");
 
-        const params = new URLSearchParams(window.location.search);
-        const laporanId = params.get("id");
-
-        // UI Elements
-        const btnHandle = document.getElementById('btn-handle');
-        const btnDone = document.getElementById('btn-done');
-        const btnActivate = document.getElementById('btn-activate');
-
-        // VARIABLE FLAG: Untuk mencegah notifikasi ganda
-        let isMyAction = false; 
-
+        // 1. CEK ID LAPORAN
         if (!laporanId) {
-            document.querySelector('.main-content').innerHTML = "<h1>Error: ID Laporan tidak ditemukan di URL.</h1>";
-            return;
+            showError("ID Laporan tidak ditemukan di URL. Silakan kembali ke halaman Laporan dan klik tombol 'Detail' pada salah satu item.");
+            return; // Hentikan script jika ID tidak ada
         }
 
-        // ============================================
-        // 2. FUNGSI UPDATE TAMPILAN (UI)
-        // ============================================
-        function updateUI(data) {
-            // Header & Status
-            document.getElementById("judulLaporan").textContent = `Laporan #${data._id.slice(-4)} - ${data.lokasi}`;
-            const statusBadge = document.getElementById("statusLaporan");
-            statusBadge.textContent = data.status;
-            statusBadge.className = `status-badge ${getStatusColor(data.status)}`;
+        // 2. INISIALISASI SOCKET (Dengan Error Handling)
+        try {
+            socket = io();
+            socket.emit('admin-bergabung');
+            console.log("✅ Socket terhubung.");
             
-            // Tanggal
-            const tanggalLengkap = formatTanggalDariID(data._id);
-            document.getElementById("waktuLaporan").textContent = tanggalLengkap;
-            document.getElementById("jamLaporan").textContent = tanggalLengkap;
-            document.getElementById("idLaporan").textContent = `#${data._id}`;
-
-            // Data Sensor
-            document.getElementById("suhu").textContent = data.suhu || '--°C';
-            document.getElementById("kelembaban").textContent = data.kelembaban || '--%';
-            document.getElementById("intensitas").textContent = data.intensitas || '-- ppm';
-            document.getElementById("co").textContent = data.co || '-- ppm';
-            document.getElementById("tempRate").textContent = data.tempRate || '--';
-            document.getElementById("smokeRate").textContent = data.smokeRate || '--';
-            
-            // Risk Level & Prioritas
-            updateRiskAndPriority(data.riskLevel);
-
-            // Info Lokasi
-            document.getElementById("alamat").textContent = data.lokasi;
-            document.getElementById("deskripsi").textContent = data.catatan || 'Tidak ada deskripsi.';
-            document.getElementById("pelapor").textContent = data.tipeLaporan === 'Sensor' ? '🤖 Sensor IoT Otomatis' : '👤 Warga';
-
-            // Peta & Gallery
-            updateMap(data.lokasi);
-            updateGallery(data.image);
-
-            // Update Tombol
-            updateButtons(data.status);
-        }
-
-        // ============================================
-        // 3. LOGIKA TOMBOL AKSI (PERBAIKAN NOTIFIKASI GANDA)
-        // ============================================
-        window.changeStatus = async function(newStatus) {
-            // SET FLAG: Ini aksi kita sendiri
-            isMyAction = true;
-
-            // Matikan tombol sementara
-            const allBtns = document.querySelectorAll('.status-btn');
-            allBtns.forEach(btn => btn.disabled = true);
-
-            try {
-                const response = await fetch(`/api/laporan/${laporanId}/status`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status: newStatus }),
-                });
-
-                if(!response.ok) throw new Error("Gagal update status");
-
-                // Langsung ambil data terbaru & Update UI
-                const dataTerbaru = await response.json();
-                updateUI(dataTerbaru);
-                
-                // Tampilkan notifikasi SUKSES (Hanya dari sini)
-                if(typeof showToastNotification === 'function') {
-                    showToastNotification({ title: 'Status Berhasil Diubah', time: 'Baru saja', icon: '✅' });
-                }
-
-                // Reset flag setelah delay aman (2 detik)
-                setTimeout(() => { isMyAction = false; }, 2000);
-
-            } catch (err) {
-                console.error(err);
-                alert("Gagal koneksi ke server.");
-                updateButtons('ERROR'); 
-                isMyAction = false; // Reset kalau gagal
-            }
-        };
-
-        // Pasang Event Listener
-        btnHandle.onclick = () => changeStatus('Sedang Ditangani');
-        btnDone.onclick = () => changeStatus('Selesai');
-        btnActivate.onclick = () => changeStatus('Aktif');
-
-
-        // ============================================
-        // 4. HELPER FUNCTIONS
-        // ============================================
-        function getStatusColor(status) {
-            if (status === 'Aktif') return 'red';
-            if (status === 'Sedang Ditangani') return 'yellow';
-            return 'green';
-        }
-
-        function updateButtons(currentStatus) {
-            const allBtns = document.querySelectorAll('.status-btn');
-            allBtns.forEach(btn => btn.disabled = false);
-            if (currentStatus === 'Aktif') btnActivate.disabled = true;
-            if (currentStatus === 'Sedang Ditangani') btnHandle.disabled = true;
-            if (currentStatus === 'Selesai') btnDone.disabled = true;
-        }
-
-        function updateRiskAndPriority(riskLevel) {
-            const riskEl = document.getElementById("riskLevel");
-            const priorityEl = document.getElementById("prioritas");
-            const currentRisk = (riskLevel || 'NORMAL').toUpperCase();
-
-            riskEl.textContent = currentRisk;
-            if(currentRisk === 'CRITICAL' || currentRisk === 'HIGH') {
-                riskEl.style.color = 'red';
-                riskEl.style.fontWeight = 'bold';
-            } else {
-                riskEl.style.color = '#c62828';
-            }
-
-            let priorityText = "Rendah";       
-            let priorityClass = "priority low"; 
-            if (currentRisk === 'CRITICAL') {
-                priorityText = "Sangat Tinggi (Bahaya)";
-                priorityClass = "priority critical";
-            } else if (currentRisk === 'HIGH') {
-                priorityText = "Tinggi";
-                priorityClass = "priority high";
-            } else if (currentRisk === 'MEDIUM') {
-                priorityText = "Menengah";
-                priorityClass = "priority medium";
-            }
-            priorityEl.textContent = priorityText;
-            priorityEl.className = priorityClass;
-        }
-
-        function updateMap(lokasi) {
-            const rawLoc = lokasi ? lokasi.replace(/\s/g, '') : ''; 
-            const mapFrame = document.getElementById("mapFrame");
-            const coordEl = document.getElementById("koordinat");
-            const mapsLinkUrl = `https://www.google.com/maps?q=${rawLoc}`;
-            
-            coordEl.innerHTML = `<a href="${mapsLinkUrl}" target="_blank" class="maps-link" style="display: inline-flex; align-items: center; gap: 8px; color: #1976d2; text-decoration: none; font-weight: 600; background-color: #e3f2fd; padding: 8px 12px; border-radius: 20px; margin-top: 5px;"><i class="fa-solid fa-location-arrow"></i> ${lokasi} <span style="font-size: 0.8em; color: #666;">(Buka di Google Maps)</span></a>`;
-
-            if (rawLoc && rawLoc.includes(',')) {
-                mapFrame.src = `https://maps.google.com/maps?q=${rawLoc}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
-                mapFrame.style.display = 'block';
-            } else {
-                mapFrame.style.display = 'none';
-            }
-        }
-
-        function updateGallery(image) {
-            const galleryContainer = document.getElementById('galleryContainer');
-            if (image) { 
-              galleryContainer.innerHTML = `<div class="single-photo-container"><img src="${image}" alt="Foto Kejadian"></div>`;
-            } else {
-              galleryContainer.innerHTML = '<p style="color: #777; font-size: 0.9rem;">Tidak ada dokumentasi foto.</p>';
-            }
-        }
-
-        function formatTanggalDariID(hexId) {
-            try {
-                const timestamp = parseInt(hexId.substring(0, 8), 16) * 1000;
-                return new Date(timestamp).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZoneName: 'short' });
-            } catch (e) { return "Tanggal tidak valid"; }
-        }
-
-        function fetchDetail() {
-            fetch(`/api/laporan/${laporanId}`)
-              .then(res => {
-                  if(!res.ok) throw new Error("Laporan tidak ditemukan");
-                  return res.json();
-              })
-              .then(data => updateUI(data))
-              .catch(err => { console.error(err); alert("Gagal memuat data laporan."); });
-        }
-
-        // ============================================
-        // 5. SOCKET LISTENERS (REAL-TIME BACKUP)
-        // ============================================
-        socket.on('laporan-diperbarui', (updatedData) => {
-            if (updatedData._id === laporanId) {
-                updateUI(updatedData);
-                
-                // LOGIKA PENTING: Hanya muncul notif jika BUKAN kita yang pencet
-                if (!isMyAction) { 
-                    if(typeof showToastNotification === 'function') {
-                        showToastNotification({ title: 'Status Diperbarui Admin Lain', time: 'Baru saja', icon: '📝' });
+            // Listener Update Realtime
+            socket.on('laporan-diperbarui', (updatedData) => {
+                if (updatedData._id === laporanId) {
+                    console.log("🔄 Mendapat update realtime:", updatedData);
+                    renderUI(updatedData);
+                    if (typeof showToastNotification === 'function') {
+                        showToastNotification({ title: 'Update Data', message: 'Data diperbarui otomatis', icon: '🔄' });
                     }
                 }
-            }
-        });
+            });
+        } catch (e) {
+            console.warn("⚠️ Socket.io tidak terhubung (Mungkin server mati), tapi tombol harus tetap jalan via API.", e);
+        }
 
-        socket.on('laporan-masuk', (laporanBaru) => {
-             if(typeof addNewNotification === 'function') {
-                 addNewNotification({ id: laporanBaru._id, location: laporanBaru.lokasi, time: laporanBaru.waktu });
-             }
-        });
-
+        // 3. AMBIL DATA DARI SERVER
         fetchDetail();
       });
+
+      // --- FUNGSI AMBIL DATA ---
+      async function fetchDetail() {
+          try {
+              console.log(`📡 Mengambil data laporan ID: ${laporanId}...`);
+              const response = await fetch(`/api/laporan/${laporanId}`);
+              
+              if (!response.ok) throw new Error("Gagal mengambil data (404/500)");
+              
+              const data = await response.json();
+              console.log("✅ Data diterima:", data);
+              renderUI(data);
+
+          } catch (err) {
+              console.error("❌ Error Fetch:", err);
+              showError(`Gagal memuat data: ${err.message}. Pastikan server berjalan.`);
+          }
+      }
+
+      // --- FUNGSI UPDATE TAMPILAN (RENDER) ---
+      function renderUI(data) {
+          // Header
+          setText('judulLaporan', `Laporan #${data._id.substring(0, 6)}`);
+          setText('waktuLaporan', data.waktu);
+          
+          // Badge Status
+          const badge = document.getElementById('statusBadge');
+          let badgeClass = 'red', badgeIcon = 'fa-fire', badgeText = data.status;
+          
+          if(data.status === 'Sedang Ditangani') { badgeClass = 'yellow'; badgeIcon = 'fa-helmet-safety'; }
+          if(data.status === 'Selesai') { badgeClass = 'green'; badgeIcon = 'fa-check'; }
+          
+          badge.className = `big-status-badge ${badgeClass}`;
+          badge.innerHTML = `<i class="fa-solid ${badgeIcon}"></i> ${badgeText}`;
+
+          // Sensor
+          setText('suhu', data.suhu ? `${data.suhu}°C` : '--');
+          setText('kelembaban', data.kelembaban ? `${data.kelembaban}%` : '--');
+          setText('intensitas', data.intensitas ? `${data.intensitas} ppm` : '--');
+          setText('co', data.co ? `${data.co} ppm` : '--');
+          
+          // Lokasi & Info
+          setText('alamat', data.lokasi);
+          setText('deskripsi', data.catatan || '-');
+          setText('riskLevel', (data.riskLevel || 'NORMAL').toUpperCase());
+
+          // Peta (Google Maps Embed)
+          const mapFrame = document.getElementById('mapFrame');
+          const linkDiv = document.getElementById('koordinatLink');
+          if (data.lokasi) {
+              const cleanLoc = data.lokasi.replace(/\s/g, ''); // Hapus spasi
+              const mapUrl = `https://maps.google.com/maps?q=${cleanLoc}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+              mapFrame.src = mapUrl;
+              linkDiv.innerHTML = `<a href="https://maps.google.com/?q=${cleanLoc}" target="_blank" style="color:#1976d2;text-decoration:none;font-weight:600;">📍 Buka di Google Maps</a>`;
+          }
+
+          // Foto
+          const gallery = document.getElementById('galleryContainer');
+          if (data.image) {
+              gallery.innerHTML = `<img src="${data.image}" style="width:100%; border-radius:8px; border:1px solid #ddd;" alt="Bukti Foto">`;
+          } else {
+              gallery.innerHTML = `<div style="padding:30px;background:#f9f9f9;border-radius:8px;">📷 Tidak ada foto.</div>`;
+          }
+      }
+
+      // --- FUNGSI UPDATE STATUS (TOMBOL) ---
+      async function updateStatus(newStatus) {
+          console.log(`🖱️ Tombol ditekan: Ubah ke ${newStatus}`);
+          
+          // Animasi Loading Tombol (Feedback ke User)
+          const btnId = newStatus === 'Selesai' ? 'btn-done' : (newStatus === 'Aktif' ? 'btn-activate' : 'btn-handle');
+          const btn = document.getElementById(btnId);
+          const originalText = btn.innerHTML;
+          btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Proses...`;
+          btn.disabled = true;
+
+          try {
+              const response = await fetch(`/api/laporan/${laporanId}/status`, {
+                  method: 'PATCH',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ status: newStatus }),
+              });
+
+              if (!response.ok) throw new Error("Gagal update status di server");
+
+              const dataBaru = await response.json();
+              console.log("✅ Status berhasil diubah:", dataBaru);
+              
+              // Update Tampilan
+              renderUI(dataBaru);
+              
+              // Notifikasi Sukses
+              if(typeof showToastNotification === 'function') {
+                  showToastNotification({ title: 'Berhasil', message: `Status diubah ke ${newStatus}`, icon: '✅' });
+              } else {
+                  alert(`Status berhasil diubah ke: ${newStatus}`);
+              }
+
+          } catch (err) {
+              console.error("❌ Gagal update status:", err);
+              alert("Gagal mengubah status. Periksa koneksi server.");
+          } finally {
+              // Kembalikan tombol
+              btn.innerHTML = originalText;
+              btn.disabled = false;
+          }
+      }
+
+      // Helper Text Setter (Biar gak error kalau elemen null)
+      function setText(id, text) {
+          const el = document.getElementById(id);
+          if (el) el.textContent = text;
+      }
+
+      // Helper Tampilkan Error
+      function showError(msg) {
+          const errBox = document.getElementById('error-message');
+          errBox.style.display = 'block';
+          errBox.textContent = `❌ ERROR: ${msg}`;
+          document.querySelector('.detail-container').style.display = 'none'; // Sembunyikan konten jika error fatal
+      }
    </script>
-  </body>
+</body>
 </html>

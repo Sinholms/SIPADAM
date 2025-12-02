@@ -1,8 +1,7 @@
-
 {
   "name": "sipadam",
   "version": "1.0.0",
-  "description": "",
+  "description": "Projek IoT yang terintegrasi dengan website. Website yang pertama yaitu user, user sendiri adalah orang yang memiliki alat IoT nya dengan fitur pelaporan manual dan otomatis. Website kedua yaitu admin, admin sendiri adalah pemadam kebakaran yang mendapat laporan dari user tentang terjadi nya kebakaran",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -19,5 +18,14 @@
     "node-fetch": "^2.7.0",
     "serialport": "^13.0.0",
     "socket.io": "^4.8.1"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sinholms/SIPADAM.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Sinholms/SIPADAM/issues"
+  },
+  "homepage": "https://github.com/Sinholms/SIPADAM#readme"
 }

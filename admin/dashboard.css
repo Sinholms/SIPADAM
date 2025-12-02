@@ -1,6 +1,19 @@
 /* ===========================
    RESET & GLOBAL STYLE
+   (Style SIPADAM Modern - Final)
 =========================== */
+:root {
+  --primary-color: #8B0000; /* Merah Maroon Gelap */
+  --primary-light: #a50000; /* Merah sedikit terang untuk hover */
+  --accent-red: #ffebee;    /* Merah sangat muda untuk bg icon */
+  --text-dark: #2c3e50;
+  --text-grey: #7f8c8d;
+  --bg-body: #f4f6f9;
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --radius-std: 16px;
+  --sidebar-width: 260px;   
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -10,538 +23,457 @@
 
 body {
   display: flex;
-  background-color: #f9fafc;
-  color: #333;
+  background-color: var(--bg-body);
+  color: var(--text-dark);
   min-height: 100vh;
-  transition: padding-left 0.3s ease;
+  overflow-x: hidden; 
 }
 
 /* ===========================
-   SIDEBAR
+   SIDEBAR (THEME: DARK RED)
 =========================== */
 .sidebar {
-  width: 240px;
-  background: #fff;
+  width: var(--sidebar-width);
+  background: var(--primary-color);
   height: 100vh;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 4px 0 15px rgba(139, 0, 0, 0.2);
   overflow-y: auto;
   position: fixed;
   left: 0;
   top: 0;
-  z-index: 100;
-  margin-left: -240px; /* Sembunyikan sidebar secara default */
-  transition: margin-left 0.3s ease;
-}
-
-body.sidebar-open .sidebar {
-  margin-left: 0; /* Munculkan sidebar saat kelas sidebar-open aktif */
+  z-index: 1000;
+  /* DEFAULT: Sidebar MUNCUL di Desktop */
+  margin-left: 0; 
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #fff;
 }
 
 .sidebar-header {
   display: flex;
   align-items: center;
-  padding: 1rem;
+  padding: 1.5rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 10px;
 }
 
 .logo {
   display: flex;
   align-items: center;
+  gap: 12px;
 }
 .logo .icon {
   font-size: 1.5rem;
-  color: #e53935;
-  margin-right: 8px;
-}
-.logo-text h2 {
-  font-size: 1rem;
-  font-weight: 600;
-}
-.logo-text p {
-  font-size: 0.75rem;
-  color: #777;
-}
-.sidebar ul {
-  list-style: none;
-  margin-top: 20px;
-}
-.sidebar ul li {
+  background: rgba(255,255,255,0.2);
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
-  transition: 0.2s;
+  justify-content: center;
+  border-radius: 10px;
+}
+.logo-text h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+.logo-text p {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 300;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0 10px;
+}
+.sidebar ul li {
+  margin-bottom: 5px;
 }
 .sidebar ul li a {
   display: flex;
   align-items: center;
-  padding: 12px 20px;
-  width: 100%;
+  padding: 12px 15px;
+  border-radius: 10px;
   text-decoration: none;
-  color: inherit;
-  cursor: pointer;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
 }
-.sidebar ul li:hover a,
+
+/* Efek Hover & Active Sidebar */
+.sidebar ul li:hover a {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  transform: translateX(5px);
+}
 .sidebar ul li.active a {
-  color: #e53935;
+  background: #fff;
+  color: var(--primary-color);
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
-.sidebar ul li:hover,
-.sidebar ul li.active {
-  background: #fdecea;
-  color: #e53935;
-  border-left: 4px solid #e53935;
-}
+
 .menu-text {
   margin-left: 15px;
 }
 
 /* ===========================
-   MAIN CONTENT & HEADER
+   MAIN CONTENT
 =========================== */
 .main-content {
   flex: 1;
-  margin-left: 0;
-  padding: 25px 35px;
-  transition: margin-left 0.3s ease;
+  /* DEFAULT: Konten geser ke kanan memberi ruang sidebar */
+  margin-left: var(--sidebar-width); 
+  padding: 30px;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: calc(100% - var(--sidebar-width));
 }
 
-body.sidebar-open .main-content {
-  margin-left: 240px; /* Dorong konten saat sidebar terbuka */
-}
-
+/* HEADER */
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
+  margin-bottom: 35px;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 15px;
 }
+.header-left h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
 .menu-toggle {
   font-size: 1.5rem;
   cursor: pointer;
-  padding: 5px;
-  border-radius: 6px;
+  padding: 8px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  margin-right: 15px;
+  color: var(--primary-color);
   transition: 0.2s;
 }
 .menu-toggle:hover {
   background: #eee;
 }
 
+/* User Info & Notif */
 .user-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
+  background: #fff;
+  padding: 8px 20px;
+  border-radius: 30px;
+  box-shadow: var(--shadow-soft);
+  position: relative;
 }
+
+.notification-area {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 .notif {
   position: relative;
   font-size: 1.2rem;
+  padding: 5px;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
 }
 .badge {
   position: absolute;
-  top: -6px;
-  right: -8px;
-  background: #e53935;
+  top: 0;
+  right: 0;
+  background: #ff3d00;
+  border: 2px solid #fff;
   color: #fff;
   font-size: 0.6rem;
   border-radius: 50%;
   padding: 2px 5px;
 }
-.status {
-  color: #43a047;
-  font-weight: 500;
-}
-.user-info .notif,
-.user-info .user {
+
+.user {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-dark);
   text-decoration: none;
-  color: inherit;
-  cursor: pointer;
-  transition: 0.2s;
 }
-.user-info .notif:hover,
-.user-info .user:hover {
-  opacity: 0.7;
+.status {
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
 }
 
 /* ===========================
-   CARDS (Informasi Umum)
+   MODERN STATISTIC CARDS (REVISI)
 =========================== */
 .cards {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-bottom: 25px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  margin-bottom: 35px;
 }
 
 .card {
+  position: relative;
   background: #fff;
-  flex: 1;
-  min-width: 180px;
-  border-radius: 12px;
-  padding: 15px 20px;
+  border-radius: 20px;
+  padding: 25px 30px;
   display: flex;
-  align-items: center;
-  gap: 15px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  transition: 0.2s;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none;
+  min-height: 140px;
 }
 
 .card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
 }
 
-.card-icon {
-  font-size: 1.8rem;
+.card-content {
+  z-index: 2;
 }
 
 .card-content h3 {
-  font-size: 0.95rem;
-  color: #777;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+  opacity: 0.9;
 }
 
 .card-content .number {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: #333;
+  font-size: 2.8rem;
+  font-weight: 700;
+  line-height: 1.1;
 }
 
-.card.active {
-  border-left: 5px solid #e53935;
+/* Watermark Icon (Ikon Besar Transparan) */
+.card-icon-overlay {
+  position: absolute;
+  right: -20px;
+  bottom: -20px;
+  font-size: 8rem;
+  opacity: 0.15;
+  transform: rotate(-15deg);
+  pointer-events: none;
+  z-index: 1;
 }
 
-.card.process {
-  border-left: 5px solid #f9a825;
+/* --- Variasi Warna Kartu --- */
+.card.blue {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: #fff;
 }
+.card.blue .card-icon-overlay { color: #fff; }
+
+.card.red {
+  background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+  color: #fff;
+}
+.card.red .card-icon-overlay { color: #fff; }
+
+.card.orange {
+  background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+  color: #fff;
+}
+.card.orange .card-content h3, 
+.card.orange .card-content .number {
+  color: #fff; 
+  text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.card.orange .card-icon-overlay { color: #fff; }
+
 
 /* ===========================
-   CONTENT GRID
+   CONTENT GRID & LIST
 =========================== */
 .content-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 20px;
+  gap: 30px;
 }
-
-/* ===========================
-   MAP CARD (BENAR)
-=========================== */
-.map-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 15px 20px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+.map-card, .report-card {
+  background: #fff; border-radius: 20px;
+  padding: 25px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
 }
-
-.map-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
+.map-header, .report-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
 }
-
+.map-header h3, .report-header h3 {
+  font-size: 1.1rem; font-weight: 700; color: #2c3e50;
+  border-left: 4px solid #e53935; padding-left: 10px;
+}
 #map {
-  height: 350px; /* Tinggi map */
-  border-radius: 12px; /* Sudut membulat */
-  overflow: hidden;
+  border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 .btn-secondary {
-  background: #f3f4f6;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: 0.2s;
-  font-size: 0.85rem;
+  background: #fff; border: 1px solid #eee; padding: 6px 15px;
+  border-radius: 30px; color: #666; font-size: 0.8rem; font-weight: 500;
+  cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
-
 .btn-secondary:hover {
-  background: #e5e7eb;
+  background: #e53935; color: #fff; border-color: #e53935;
+  transform: translateY(-2px);
 }
 
-/* ===========================
-   REPORT CARD (STYLE ASLI ANDA DIKEMBALIKAN)
-=========================== */
-.report-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 15px 20px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-}
-
-.report-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.report-header h3 {
-  font-size: 1rem;
-  color: #333;
-}
-
+/* MODERN REPORT LIST */
 .report-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  display: flex; flex-direction: column; gap: 15px;
+  max-height: 400px; overflow-y: auto; padding-right: 5px;
 }
+.report-list::-webkit-scrollbar { width: 5px; }
+.report-list::-webkit-scrollbar-thumb { background: #ddd; border-radius: 10px; }
 
 .report-item {
-  background: #fafafa;
-  border-radius: 8px;
-  padding: 10px 12px;
-  transition: 0.2s;
-  cursor: pointer;
+  background: #fff; border-radius: 12px; padding: 15px;
+  border: 1px solid #f0f0f0; transition: all 0.2s ease;
+  position: relative; cursor: pointer; display: flex; flex-direction: column; gap: 8px;
 }
-
 .report-item:hover {
-  background: #fdecea;
+  transform: translateY(-3px) translateX(3px);
+  border-color: #ffdbee; box-shadow: 5px 5px 15px rgba(0,0,0,0.05);
 }
+.report-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.report-item h4 { font-size: 0.95rem; color: #333; font-weight: 600; margin: 0; }
+.report-item p { font-size: 0.85rem; color: #888; margin: 0; font-style: italic; }
 
-.report-item:active {
-  transform: scale(0.98);
-  background: #fbe6e3;
+.status-badge {
+  font-size: 0.7rem; padding: 4px 10px; border-radius: 20px;
+  font-weight: 600; text-transform: uppercase;
 }
-
-.report-item h4 {
-  font-size: 0.95rem;
-  color: #333;
-  margin-bottom: 3px;
-}
-
-.report-item p {
-  font-size: 0.85rem;
-  color: #555;
-}
+.status-badge.aktif { background: #ffebee; color: #d32f2f; }
+.status-badge.penanganan { background: #fff8e1; color: #f57c00; }
+.status-badge.selesai { background: #e8f5e9; color: #388e3c; }
 
 .report-meta {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.8rem;
-  color: #e53935;
-  margin-top: 4px;
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 5px; padding-top: 10px; border-top: 1px solid #f9f9f9;
 }
+.report-time { font-size: 0.75rem; color: #aaa; }
+.report-link { font-size: 0.75rem; color: #e53935; font-weight: 600; text-decoration: none;}
 
-.report-meta.yellow {
-  color: #f9a825;
-}
-
-.report-meta.green {
-  color: #43a047;
-}
 
 /* ===========================
-   RESPONSIVE
+   DROPDOWN NOTIFIKASI
 =========================== */
-@media (max-width: 992px) {
-  .content-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .main-content {
-    padding: 15px 20px;
-  }
-  .cards {
-    flex-direction: column;
-  }
-  body.sidebar-open .main-content {
-    margin-left: 200px;
-  }
-}
-
-@media (max-width: 480px) {
-  header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-  .user-info {
-    width: 100%;
-    justify-content: space-between;
-  }
-}
-/* --- NOTIFIKASI POP-UP BARU --- */
-.notification-area {
-  position: relative; /* Penting untuk positioning dropdown */
-  display: inline-block; /* Agar notif dan profil tidak menumpuk */
-}
-
 .notification-dropdown {
-  display: none; /* Sembunyikan secara default */
+  display: none;
   position: absolute;
-  top: 100%; /* Muncul di bawah bel */
+  top: 130%; /* Sedikit di bawah user info */
   right: 0;
-  width: 300px;
+  width: 320px;
   background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 200; /* Pastikan di atas konten lain */
-  overflow: hidden; /* Agar konten tidak keluar dari border-radius */
-  margin-top: 10px; /* Jarak dari bel */
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  z-index: 2000;
+  border: 1px solid #f0f0f0;
 }
 
 .notification-dropdown.show {
-  display: block; /* Tampilkan saat ada kelas .show */
+  display: block;
 }
 
 .dropdown-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 15px;
-  border-bottom: 1px solid #eee;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 15px; border-bottom: 1px solid #f0f0f0;
+  background: #fafafa; border-radius: 16px 16px 0 0;
 }
-
-.dropdown-header h3 {
-  font-size: 1rem;
-  color: #333;
-}
-
-.clear-all {
-  font-size: 0.85rem;
-  color: #e53935;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-
-.clear-all:hover {
-  opacity: 0.8;
-}
-
-.dropdown-list {
-  max-height: 300px; /* Batasi tinggi, tambahkan scroll jika perlu */
-  overflow-y: auto;
-}
-
-.dropdown-item:last-child {
-  border-bottom: none;
-}
-
-.dropdown-item:hover {
-  background-color: #f5f5f5;
-}
-
-/* ===== REVISI DROPDOWN ITEM ===== */
+.dropdown-header h3 { font-size: 0.95rem; color: #333; margin:0; }
+.clear-all { font-size: 0.8rem; color: #e53935; cursor: pointer; }
+.dropdown-list { max-height: 300px; overflow-y: auto; padding: 0; }
 .dropdown-item {
-  display: flex;
-  align-items: center; 
-  padding: 10px 15px;
-  width: 100%; 
-  box-sizing: border-box; 
-  text-decoration: none; /* 1. HAPUS GARIS BAWAH */
-  color: #333; /* 2. SET WARNA TEKS DEFAULT */
+  display: flex; align-items: flex-start; padding: 12px 15px; width: 100%;
+  text-decoration: none; color: #333; border-bottom: 1px solid #f9f9f9;
 }
-
-.item-icon {
-  font-size: 1.2rem;
-  margin-right: 10px;
-  flex-shrink: 0;
-}
-
-.dropdown-item.new .item-icon {
-  color: #e53935; /* Warna untuk ikon notif baru */
-}
-
-.dropdown-item.new .item-content h4 {
-  font-weight: 600; /* Tebal untuk notif baru */
-}
-
-.item-content {
-  flex: 1; 
-  min-width: 0; 
-}
-
-.item-content h4 {
-  font-size: 0.9rem;
-  margin-bottom: 3px;
-  white-space: normal;
-  overflow-wrap: break-word;
-  word-break: break-all;
-  color: inherit; /* 3. HAPUS WARNA BIRU LINK */
-}
-
-/* 4. TAMBAHKAN INI UNTUK PARAGRAF */
-.item-content p {
-  font-size: 0.75rem;
-  color: #777; /* Pastikan warna p tidak biru */
-}
-/* ===== BATAS REVISI DROPDOWN ===== */
-
+.dropdown-item:hover { background: #f9f9f9; }
 .dropdown-footer {
-  padding: 10px 15px;
-  text-align: center;
-  border-top: 1px solid #eee;
+  padding: 12px; text-align: center; border-top: 1px solid #f0f0f0;
 }
 
-.dropdown-footer a {
-  font-size: 0.85rem;
-  color: #1976d2;
-  text-decoration: none;
-}
-
-.dropdown-footer a:hover {
-  text-decoration: underline;
-}
-
-/* ===== TAMBAHKAN STYLE UNTUK TOAST NOTIFICATION ===== */
+/* ===========================
+   TOAST NOTIFICATION (POP-UP)
+=========================== */
 .toast-notification {
   position: fixed;
-  top: 20px;
-  right: -350px;
-  width: 300px;
-  /* UBAH BARIS INI: */
-  background-color: #fff; /* <-- JADIKAN PUTIH */
-  color: #333; /* <-- DAN UBAH WARNA TEKS JADI LEBIH GELAP AGAR KONTRAST */
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
+  top: 30px;
+  right: -400px; /* Start di luar layar kanan */
+  background: #fff;
+  width: 320px;
+  padding: 15px 20px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
   display: flex;
   align-items: center;
-  gap: 10px;
-  transition: right 0.5s ease-out, opacity 0.5s ease-out;
-  opacity: 0;
-  border: 1px solid #eee; /* OPSIONAL: Tambah border tipis agar lebih jelas */
+  gap: 15px;
+  z-index: 9999;
+  border-left: 6px solid #e53935;
+  transition: right 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
 .toast-notification.show {
-  right: 20px; /* Masuk ke layar */
-  opacity: 1;
+  right: 30px; /* Muncul ke dalam layar */
 }
 
-.toast-notification .toast-icon {
+.toast-icon {
   font-size: 1.5rem;
+  background: #ffebee;
+  color: #e53935;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
   flex-shrink: 0;
 }
 
-.toast-content {
-  flex: 1; /* Biarkan teks mengisi sisa ruang */
-  min-width: 0; /* Hack flexbox agar bisa wrap */
-}
-
 .toast-content h4 {
-  font-size: 0.95rem;
-  margin-bottom: 3px;
-  font-weight: 600;
-  white-space: normal; /* Paksa teks untuk wrap/turun */
-  overflow-wrap: break-word;
+  font-size: 0.95rem; font-weight: 700; color: #333; margin-bottom: 2px;
 }
-
 .toast-content p {
-  font-size: 0.8rem;
-  color: #ccc;
+  font-size: 0.8rem; color: #666; line-height: 1.2;
 }
-/* ===== BATAS TAMBAHAN STYLE TOAST ===== */
 
 /* ===========================
-   STYLE IKON PETA BARU
+   CLASS KHUSUS JS (SIDEBAR CLOSED)
 =========================== */
-.custom-fire-icon {
-  font-size: 1.8rem; /* Ukuran emoji api */
-  text-shadow: 0 0 5px rgba(0, 0, 0, 0.7); /* Bayangan agar terlihat jelas */
-  line-height: 1;
+body.sidebar-closed .sidebar {
+  margin-left: calc(var(--sidebar-width) * -1); 
+}
+body.sidebar-closed .main-content {
+  margin-left: 0; 
+  width: 100%;
+}
+
+/* ===========================
+   RESPONSIVE (MOBILE)
+=========================== */
+@media (max-width: 768px) {
+  .sidebar { margin-left: -260px; }
+  .main-content { margin-left: 0; width: 100%; padding: 20px; }
+
+  body.sidebar-open .sidebar { margin-left: 0; }
+  body.sidebar-open .main-content { opacity: 0.3; pointer-events: none; }
+  
+  .cards { grid-template-columns: 1fr; }
+  .content-grid { grid-template-columns: 1fr; }
 }

@@ -13,9 +13,9 @@
 
 :root {
   /* Primary Colors - Modern Red Palette */
-  --primary: #FF3B30;
-  --primary-dark: #E32D21;
-  --primary-light: #FF6B63;
+  --primary: #b91616;
+   --primary-dark: #e9094c;
+  --primary-light: #790000; 
   
   /* Neutral Colors - Clean Grays */
   --neutral-100: #F8F9FA;

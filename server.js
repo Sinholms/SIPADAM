@@ -232,7 +232,7 @@ server.listen(PORT, () => {
 // == ESP32 SENSOR BRIDGE ==
 // ==========================================================
 // Sesuaikan IP ini dengan IP ESP32 kamu yang muncul di Serial Monitor Arduino
-const ESP32_IP_ADDRESS = "http://192.168.90.96"; 
+const ESP32_IP_ADDRESS = "http://192.168.51.96"; 
 
 async function ambilDataSensor() {
   try {
