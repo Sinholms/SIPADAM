@@ -1,18 +1,78 @@
 /* =====================================================
    SIPADAM - INDEX PAGE STYLES
-   Hero, About, Features, Safety Guide
+   Modern Box Layout with Red Gradient Background
    ===================================================== */
+
+/* ==================== PAGE GRADIENT BACKGROUND ==================== */
+body {
+  background: linear-gradient(
+    to bottom,
+    #b91616 0%,
+    #c62828 25%,
+    #d32f2f 50%,
+    #e53935 75%,
+    #ef5350 100%
+  );
+  min-height: 100vh;
+}
 
 /* ==================== HERO SECTION ==================== */
 .hero {
   position: relative;
   min-height: 100vh;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--spacing-2xl) var(--spacing-lg);
   overflow: hidden;
+}
+
+/* Geometric Shapes Background */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 10%;
+  left: 5%;
+  width: 300px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.1);
+  opacity: 0.5;
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: float 8s ease-in-out infinite;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 10%;
+  right: 8%;
+  width: 400px;
+  height: 400px;
+  background: rgba(0, 0, 0, 0.1);
+  opacity: 0.3;
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  filter: blur(60px);
+  animation: morph 10s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+}
+
+@keyframes morph {
+  0%, 100% {
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  }
+  50% {
+    border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%;
+  }
 }
 
 .hero-content {
@@ -24,75 +84,152 @@
 }
 
 .hero-content h1 {
-  font-size: clamp(2.5rem, 6vw, 4rem);
-  font-weight: 800;
+  font-size: clamp(3rem, 8vw, 5rem);
+  font-weight: 900;
   color: white;
   margin-bottom: var(--spacing-lg);
-  line-height: 1.1;
-  letter-spacing: -1px;
+  line-height: 1;
+  letter-spacing: -2px;
+  position: relative;
+  text-transform: uppercase;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .hero-content p {
   font-size: clamp(1rem, 2vw, 1.25rem);
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.95);
   margin-bottom: var(--spacing-xl);
   line-height: 1.7;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ==================== HERO DECORATION ==================== */
+.hero-decorations {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.circle-decoration {
+  position: absolute;
+  top: 20%;
+  right: 15%;
+  width: 150px;
+  height: 150px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  opacity: 0.4;
+  animation: rotate 15s linear infinite;
+}
+
+.square-decoration {
+  position: absolute;
+  bottom: 20%;
+  left: 10%;
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.2);
+  opacity: 0.3;
+  border-radius: 20px;
+  transform: rotate(45deg);
+  animation: float 6s ease-in-out infinite;
+}
+
+.circle2-decoration {
+  position: absolute;
+  bottom: 30%;
+  right: 20%;
+  width: 80px;
+  height: 80px;
+  border: 3px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  opacity: 0.5;
+  animation: rotate 12s linear infinite reverse;
+}
+
+.square2-decoration {
+  position: absolute;
+  top: 40%;
+  left: 20%;
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.15);
+  opacity: 0.4;
+  border-radius: 15px;
+  transform: rotate(30deg);
+  animation: float 8s ease-in-out infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ==================== HERO CTA BUTTON ==================== */
 .hero .btn-primary {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
   color: white;
-  padding: 14px 32px;
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  font-size: 1rem;
+  padding: 16px 40px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 1.1rem;
   text-decoration: none;
-  border: none;
+  border: 2px solid rgba(255, 255, 255, 0.4);
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(255, 59, 48, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   transition: all var(--transition-base);
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   position: relative;
   overflow: hidden;
+  z-index: 10;
 }
 
 .hero .btn-primary::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s ease;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
 }
 
 .hero .btn-primary:hover::before {
-  left: 100%;
+  width: 300px;
+  height: 300px;
 }
 
 .hero .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(255, 59, 48, 0.4);
-}
-
-.hero .btn-primary:active {
-  transform: translateY(0);
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.6);
 }
 
 .hero .btn-primary::after {
   content: '→';
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   transition: transform var(--transition-base);
   position: relative;
   z-index: 1;
 }
 
 .hero .btn-primary:hover::after {
-  transform: translateX(3px);
+  transform: translateX(5px);
 }
 
 .hero .btn-primary span {
@@ -100,49 +237,78 @@
   z-index: 1;
 }
 
-/* ==================== ABOUT SECTION ==================== */
-.about-section {
-  padding: var(--spacing-2xl) var(--spacing-xl);
-  max-width: 1280px;
+/* ==================== CONTENT CONTAINER ==================== */
+.content-container {
+  max-width: 1200px;
   margin: 0 auto;
+  padding: var(--spacing-xl) var(--spacing-lg);
 }
 
-.about-section h2 {
+/* ==================== PAGE HEADER ==================== */
+.page-header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-xl);
+  box-shadow: var(--shadow-lg);
+  border: 2px solid rgba(255, 255, 255, 0.8);
   text-align: center;
-  font-size: 2.5rem;
+}
+
+.page-header h2 {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
   font-weight: 800;
-  margin-bottom: var(--spacing-lg);
-  color: var(--neutral-900);
+  color: var(--primary);
+  margin-bottom: var(--spacing-sm);
 }
 
-.about-section > p {
-  text-align: center;
+.page-header p {
   font-size: 1.1rem;
-  color: var(--neutral-600);
-  max-width: 800px;
-  margin: 0 auto var(--spacing-2xl);
-  line-height: 1.8;
+  color: var(--neutral-700);
+  margin: 0;
 }
 
-/* ==================== FEATURES GRID ==================== */
+/* ==================== FEATURES GRID (BOX LAYOUT) ==================== */
 .features {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: var(--spacing-xl);
-  margin-top: var(--spacing-2xl);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-2xl);
 }
 
 .feature-card {
-  background: white;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
   padding: var(--spacing-xl);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
-  border: 1px solid var(--neutral-200);
+  border: 2px solid rgba(255, 255, 255, 0.8);
   text-align: center;
   transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition-slow);
+}
+
+.feature-card:hover::before {
+  transform: scaleX(1);
 }
 
 .feature-card:hover {
+  background: white;
   box-shadow: var(--shadow-md);
   transform: translateY(-8px);
   border-color: var(--primary);
@@ -151,6 +317,13 @@
 .feature-card .icon {
   font-size: 3rem;
   margin-bottom: var(--spacing-md);
+  filter: drop-shadow(0 4px 8px rgba(185, 22, 22, 0.2));
+  transition: transform var(--transition-base);
+  display: inline-block;
+}
+
+.feature-card:hover .icon {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .feature-card h3 {
@@ -164,37 +337,72 @@
   color: var(--neutral-600);
   line-height: 1.6;
   font-size: 0.95rem;
+  margin: 0;
 }
 
-/* ==================== SAFETY GUIDE ==================== */
-.safety-guide {
-  padding: var(--spacing-2xl) var(--spacing-xl);
-  background: var(--neutral-100);
+/* ==================== SAFETY GUIDE SECTION ==================== */
+#panduan {
   margin-top: var(--spacing-2xl);
 }
 
-.safety-guide h2 {
+.safety-guide-header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+  border: 2px solid rgba(255, 255, 255, 0.8);
   text-align: center;
-  font-size: 2.5rem;
+}
+
+.safety-guide-header h2 {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
   font-weight: 800;
-  margin-bottom: var(--spacing-2xl);
-  color: var(--neutral-900);
+  color: var(--primary);
+  margin: 0;
 }
 
 .guide-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--spacing-xl);
-  max-width: 1280px;
-  margin: 0 auto;
+  gap: var(--spacing-lg);
 }
 
 .guide-item {
-  background: white;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
   padding: var(--spacing-xl);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
-  border: 1px solid var(--neutral-200);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.guide-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition-slow);
+}
+
+.guide-item:hover::before {
+  transform: scaleX(1);
+}
+
+.guide-item:hover {
+  background: white;
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+  border-color: var(--primary);
 }
 
 .guide-item h3 {
@@ -207,6 +415,7 @@
 .guide-item ul {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 .guide-item ul li {
@@ -215,6 +424,12 @@
   position: relative;
   color: var(--neutral-700);
   line-height: 1.6;
+  transition: all var(--transition-fast);
+}
+
+.guide-item ul li:hover {
+  color: var(--neutral-900);
+  transform: translateX(4px);
 }
 
 .guide-item ul li::before {
@@ -225,17 +440,62 @@
   font-weight: 700;
 }
 
+/* ==================== FOOTER ==================== */
+.footer {
+  background: rgba(33, 37, 41, 0.95);
+  backdrop-filter: blur(20px);
+  color: var(--neutral-400);
+  padding: var(--spacing-2xl) var(--spacing-xl);
+  margin-top: var(--spacing-2xl);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  text-align: center;
+}
+
+.footer .logo h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: var(--spacing-md);
+}
+
+.footer p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
 /* ==================== RESPONSIVE ==================== */
 @media (max-width: 768px) {
   .hero {
     padding: var(--spacing-xl) var(--spacing-md);
   }
   
-  .features {
+  .content-container {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+  
+  .features,
+  .guide-grid {
     grid-template-columns: 1fr;
   }
   
-  .guide-grid {
-    grid-template-columns: 1fr;
+  .circle-decoration {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .square-decoration {
+    width: 80px;
+    height: 80px;
+  }
+
+  .page-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .page-header p {
+    font-size: 0.95rem;
   }
 }

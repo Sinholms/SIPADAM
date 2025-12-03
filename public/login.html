@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - SIPADAM</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="base.css">
   <link rel="stylesheet" href="navbar.css">
   <link rel="stylesheet" href="components.css">
@@ -12,47 +12,76 @@
 </head>
 <body>
   <div class="login-container">
-    <div class="logo">
-      <h1>🚒 SIPADAM</h1>
-      <p>Masuk ke akun Anda</p>
-    </div>
-
-    <form id="loginForm">
-      <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" id="username" placeholder="Masukkan username Anda" required>
-        <div class="error-message" id="errorUsername"></div>
+    <div class="split-container">
+      <!-- Left Panel - Gradient -->
+      <div class="left-panel">
+        <div class="left-content">
+          <div class="logo">
+            <h1>🚒 SIPADAM</h1>
+            <p>Sistem Informasi Peringatan Dini Api Terintegrasi Pemadam</p>
+          </div>
+          
+          <div class="illustration">
+            🔥
+          </div>
+          
+          <p style="text-align: center; font-size: 1.1rem; line-height: 1.6; color: rgba(255, 255, 255, 0.95);">
+            Lindungi diri Anda dan keluarga dari bahaya kebakaran dengan teknologi sensor real-time
+          </p>
+        </div>
+        
+        <div class="left-footer">
+          <a href="index.html">Beranda</a> • 
+          <a href="#tentang">Tentang</a> • 
+          <a href="#panduan">Panduan</a>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" placeholder="Masukkan password Anda" required>
-        <div class="error-message" id="errorPassword"></div>
+      <!-- Right Panel - Form -->
+      <div class="right-panel">
+        <div class="logo">
+          <h1>Selamat Datang</h1>
+          <p>Masuk ke akun SIPADAM Anda</p>
+        </div>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Masukkan username Anda" required>
+            <div class="error-message" id="errorUsername"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Masukkan password Anda" required>
+            <div class="error-message" id="errorPassword"></div>
+          </div>
+
+          <div class="remember-forgot">
+            <label>
+              <input type="checkbox" id="remember">
+              <span>Ingat saya</span>
+            </label>
+            <a href="#">Lupa password?</a>
+          </div>
+
+          <button type="submit" class="btn-login">Masuk</button>
+        </form>
+
+        <div class="register-link">
+          Belum punya akun? <a href="daftar.html">Daftar di sini</a>
+        </div>
+
+        <div class="back-home">
+          <a href="index.html">← Kembali ke Beranda</a>
+        </div>
+
+        <div class="demo-info">
+          <h4>🔑 Demo Login:</h4>
+          <p>Username: <code>bigmuy</code></p>
+          <p>Password: <code>mpruyy123</code></p>
+        </div>
       </div>
-
-      <div class="remember-forgot">
-        <label>
-          <input type="checkbox" id="remember">
-          <span>Ingat saya</span>
-        </label>
-        <a href="#">Lupa password?</a>
-      </div>
-
-      <button type="submit" class="btn-login">Masuk</button>
-    </form>
-
-    <div class="register-link">
-      Belum punya akun? <a href="daftar.html">Daftar di sini</a>
-    </div>
-
-    <div class="back-home">
-      <a href="index.html">← Kembali ke Beranda</a>
-    </div>
-
-    <div class="demo-info">
-      <h4>🔑 Demo Login:</h4>
-      <p>Username: <code>bigmuy</code></p>
-      <p>Password: <code>mpruyy123</code></p>
     </div>
   </div>
 

@@ -4,139 +4,172 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Daftar - SIPADAM</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="base.css">
   <link rel="stylesheet" href="navbar.css">
   <link rel="stylesheet" href="components.css">
   <link rel="stylesheet" href="auth.css">
-  <style>
-    .error-message {
-      color: #e63946;
-      font-size: 0.85rem;
-      margin-top: -12px;
-      margin-bottom: 15px;
-      display: none;
-    }
-
-    .error-message.show {
-      display: block;
-    }
-
-    .input-error {
-      border-color: #e63946 !important;
-    }
-
-    .input-success {
-      border-color: #2e7d32 !important;
-    }
-
-    .password-strength {
-      margin-top: -12px;
-      margin-bottom: 15px;
-      font-size: 0.85rem;
-    }
-
-    .strength-bar {
-      height: 5px;
-      border-radius: 3px;
-      margin-top: 5px;
-      transition: all 0.3s ease;
-    }
-
-    .strength-weak { background: #e63946; width: 33%; }
-    .strength-medium { background: #ff9800; width: 66%; }
-    .strength-strong { background: #2e7d32; width: 100%; }
-
-    .password-toggle {
-      position: relative;
-    }
-
-    .toggle-icon {
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: #666;
-      font-size: 1.2rem;
-      user-select: none;
-    }
-
-    .toggle-icon:hover {
-      color: #e63946;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      color: #555;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-  </style>
 </head>
 <body>
   <div class="login-container">
-    <div class="logo">
-      <h1>🚒 SIPADAM</h1>
-      <p>Daftar akun baru</p>
-    </div>
-
-    <form id="formDaftar">
-      <label for="nama">Nama Lengkap</label>
-      <input type="text" id="nama" placeholder="Masukkan nama lengkap" required />
-      <div class="error-message" id="errorNama"></div>
-
-      <label for="email">Email</label>
-      <input type="email" id="email" placeholder="contoh@email.com" required />
-      <div class="error-message" id="errorEmail"></div>
-
-      <label for="username">Username</label>
-      <input type="text" id="username" placeholder="Pilih username" required />
-      <div class="error-message" id="errorUsername"></div>
-
-      <label for="telepon">No. Telepon</label>
-      <input type="tel" id="telepon" placeholder="+62 812-3456-7890" required />
-      <div class="error-message" id="errorTelepon"></div>
-
-      <label for="password">Password</label>
-      <div class="password-toggle">
-        <input type="password" id="password" placeholder="Minimal 8 karakter" required />
-        <span class="toggle-icon" onclick="togglePassword('password')">👁️</span>
+    <div class="split-container">
+      <!-- Left Panel - Gradient -->
+      <div class="left-panel">
+        <div class="left-content">
+          <div class="logo">
+            <h1>🚒 SIPADAM</h1>
+            <p>Sistem Informasi Peringatan Dini Api Terintegrasi Pemadam</p>
+          </div>
+          
+          <div class="illustration">
+            🔥
+          </div>
+          
+          <p style="text-align: center; font-size: 1.1rem; line-height: 1.6; color: rgba(255, 255, 255, 0.95);">
+            Bergabunglah dalam sistem peringatan dini kebakaran untuk melindungi komunitas Anda
+          </p>
+        </div>
+        
+        <div class="left-footer">
+          <a href="index.html">Beranda</a> • 
+          <a href="#tentang">Tentang</a> • 
+          <a href="#panduan">Panduan</a>
+        </div>
       </div>
-      <div class="password-strength" id="passwordStrength"></div>
-      <div class="error-message" id="errorPassword"></div>
 
-      <label for="confirmPassword">Konfirmasi Password</label>
-      <div class="password-toggle">
-        <input type="password" id="confirmPassword" placeholder="Ulangi password" required />
-        <span class="toggle-icon" onclick="togglePassword('confirmPassword')">👁️</span>
+      <!-- Right Panel - Form -->
+      <div class="right-panel">
+        <div class="logo">
+          <h1>Daftar Akun Baru</h1>
+          <p>Buat akun SIPADAM untuk memulai</p>
+        </div>
+
+        <form id="formDaftar">
+          <div class="form-group">
+            <label for="nama">Nama Lengkap</label>
+            <input type="text" id="nama" placeholder="Masukkan nama lengkap" required />
+            <div class="error-message" id="errorNama"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="contoh@email.com" required />
+            <div class="error-message" id="errorEmail"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Pilih username" required />
+            <div class="error-message" id="errorUsername"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="telepon">No. Telepon</label>
+            <input type="tel" id="telepon" placeholder="+62 812-3456-7890" required />
+            <div class="error-message" id="errorTelepon"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="password-toggle">
+              <input type="password" id="password" placeholder="Minimal 8 karakter" required />
+              <span class="toggle-icon" onclick="togglePassword('password')">👁️</span>
+            </div>
+            <div class="password-strength" id="passwordStrength"></div>
+            <div class="error-message" id="errorPassword"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Konfirmasi Password</label>
+            <div class="password-toggle">
+              <input type="password" id="confirmPassword" placeholder="Ulangi password" required />
+              <span class="toggle-icon" onclick="togglePassword('confirmPassword')">👁️</span>
+            </div>
+            <div class="error-message" id="errorConfirmPassword"></div>
+          </div>
+
+          <div class="terms">
+            <label>
+              <input type="checkbox" id="agree" required />
+              Saya setuju dengan <a href="#">Syarat & Ketentuan</a> dan <a href="#">Kebijakan Privasi</a>
+            </label>
+          </div>
+          <div class="error-message" id="errorAgree"></div>
+
+          <button type="submit">Daftar Sekarang</button>
+        </form>
+          
+        <div class="register-link">
+          Sudah punya akun? <a href="login.html">Masuk di sini</a>
+        </div>
+
+        <div class="back-home">
+          <a href="index.html">← Kembali ke Beranda</a>
+        </div>
+          
+        <div class="affirm">
+          🔥 Bergabunglah dalam sistem peringatan dini kebakaran!
+        </div>
       </div>
-      <div class="error-message" id="errorConfirmPassword"></div>
-
-      <div class="terms">
-        <label>
-          <input type="checkbox" id="agree" required />
-          Saya setuju dengan <a href="#">Syarat & Ketentuan</a> dan <a href="#">Kebijakan Privasi</a>
-        </label>
-      </div>
-      <div class="error-message" id="errorAgree"></div>
-
-      <button type="submit">Daftar Sekarang</button>
-    </form>
-      
-    <div class="register-link">
-      Sudah punya akun? <a href="login.html">Masuk di sini</a>
     </div>
-
-    <div class="back-home">
-      <a href="index.html">← Kembali ke Beranda</a>
-    </div>
-      
-    <p class="affirm">🔥 Bergabunglah dalam sistem peringatan dini kebakaran!</p>
   </div>
 
   <script>
+    // Storage utility
+    const Storage = {
+      data: {},
+      set(key, value) {
+        this.data[key] = JSON.stringify(value);
+      },
+      get(key) {
+        const item = this.data[key];
+        return item ? JSON.parse(item) : null;
+      }
+    };
+
+    // Toast notification
+    function showToast(message, type = 'error') {
+      const toast = document.createElement('div');
+      toast.textContent = message;
+      const colors = { success: '#2e7d32', error: '#e63946' };
+      toast.style.cssText = `
+        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+        background: ${colors[type]}; color: white; padding: 15px 30px;
+        border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        z-index: 10000; font-weight: 500;
+      `;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // Show error
+    function showError(field, message) {
+      const errorDiv = document.getElementById(`error${field.charAt(0).toUpperCase() + field.slice(1)}`);
+      const input = document.getElementById(field);
+      
+      if (input) input.classList.add('input-error');
+      if (errorDiv) {
+        errorDiv.textContent = message;
+        errorDiv.classList.add('show');
+      }
+
+      setTimeout(() => {
+        if (input) input.classList.remove('input-error');
+        if (errorDiv) errorDiv.classList.remove('show');
+      }, 3000);
+    }
+
+    // Clear errors
+    function clearErrors() {
+      document.querySelectorAll('.error-message').forEach(el => {
+        el.classList.remove('show');
+      });
+      document.querySelectorAll('input').forEach(el => {
+        el.classList.remove('input-error');
+      });
+    }
+
+    // Toggle password visibility
     function togglePassword(fieldId) {
       const field = document.getElementById(fieldId);
       const icon = field.nextElementSibling;
@@ -168,26 +201,119 @@
       
       let strengthText = '';
       let strengthClass = '';
+      let strengthColor = '';
       
       if (strength <= 2) {
         strengthText = 'Lemah';
         strengthClass = 'strength-weak';
+        strengthColor = '#e63946';
       } else if (strength === 3) {
         strengthText = 'Sedang';
         strengthClass = 'strength-medium';
+        strengthColor = '#ff9800';
       } else {
         strengthText = 'Kuat';
         strengthClass = 'strength-strong';
+        strengthColor = '#2e7d32';
       }
       
       strengthDiv.innerHTML = `
-        <div style="color: #666; margin-bottom: 4px;">Kekuatan Password: <strong>${strengthText}</strong></div>
+        <div style="color: ${strengthColor}; margin-bottom: 4px; font-weight: 600;">Kekuatan Password: ${strengthText}</div>
         <div class="strength-bar ${strengthClass}"></div>
       `;
     });
+
+    // Form validation
+    document.getElementById('formDaftar').addEventListener('submit', function(e) {
+      e.preventDefault();
+      clearErrors();
+
+      const nama = document.getElementById('nama').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const username = document.getElementById('username').value.trim();
+      const telepon = document.getElementById('telepon').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const agree = document.getElementById('agree').checked;
+
+      let hasError = false;
+
+      // Validate nama
+      if (nama.length < 3) {
+        showError('nama', 'Nama minimal 3 karakter');
+        hasError = true;
+      }
+
+      // Validate email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showError('email', 'Email tidak valid');
+        hasError = true;
+      }
+
+      // Validate username
+      if (username.length < 3) {
+        showError('username', 'Username minimal 3 karakter');
+        hasError = true;
+      }
+
+      // Validate telepon
+      if (telepon.length < 10) {
+        showError('telepon', 'Nomor telepon tidak valid');
+        hasError = true;
+      }
+
+      // Validate password
+      if (password.length < 8) {
+        showError('password', 'Password minimal 8 karakter');
+        hasError = true;
+      }
+
+      // Validate confirm password
+      if (password !== confirmPassword) {
+        showError('confirmPassword', 'Password tidak cocok');
+        hasError = true;
+      }
+
+      // Validate agreement
+      if (!agree) {
+        showError('agree', 'Anda harus menyetujui syarat & ketentuan');
+        hasError = true;
+      }
+
+      if (hasError) {
+        showToast('❌ Mohon perbaiki kesalahan pada form!', 'error');
+        return;
+      }
+
+      // Success
+      const btn = this.querySelector('button[type="submit"]');
+      btn.textContent = '⏳ Memproses...';
+      btn.disabled = true;
+
+      setTimeout(() => {
+        const userData = { nama, email, username, telepon };
+        Storage.set('sipadam_user_data', userData);
+        
+        showToast('✅ Pendaftaran berhasil! Mengalihkan...', 'success');
+        
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 1000);
+      }, 800);
+    });
+
+    // Clear error on input
+    ['nama', 'email', 'username', 'telepon', 'password', 'confirmPassword'].forEach(field => {
+      const input = document.getElementById(field);
+      if (input) {
+        input.addEventListener('input', function() {
+          this.classList.remove('input-error');
+          const errorDiv = document.getElementById(`error${this.id.charAt(0).toUpperCase() + this.id.slice(1)}`);
+          if (errorDiv) errorDiv.classList.remove('show');
+        });
+      }
+    });
   </script>
-  <script src="main.js"></script>
-  <script src="notification.js"></script>
-  <script src="daftar.js"></script>
 </body>
 </html>

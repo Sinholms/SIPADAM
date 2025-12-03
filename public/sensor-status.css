@@ -7,9 +7,9 @@
 .sensor-status-main {
   background: white;
   padding: var(--spacing-2xl);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
   text-align: center;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   border: 2px solid var(--neutral-200);
   transition: all var(--transition-base);
   position: relative;
@@ -22,127 +22,120 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 6px;
-  background: linear-gradient(90deg, transparent, currentColor, transparent);
-  opacity: 0.5;
+  height: 4px;
+  background: currentColor;
   transition: all var(--transition-base);
 }
 
 /* ==================== STATUS SAFE ==================== */
 .sensor-status-main.status-safe {
   border-color: #10B981;
-  background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
-  color: #10B981;
+  background: linear-gradient(135deg, #10b98160 0%, #05966854 100%);
+  
+  color: white;
 }
 
 .sensor-status-main.status-safe::before {
-  background: linear-gradient(90deg, transparent, #10B981, transparent);
+  background: #10B981;
 }
 
 .sensor-status-main.status-safe .status-icon {
-  color: #10B981;
-  filter: drop-shadow(0 4px 12px rgba(16, 185, 129, 0.25));
+  color: white;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
 }
 
 .sensor-status-main.status-safe h2 {
-  color: #047857;
-  background: linear-gradient(135deg, #10B981, #047857);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: white;
+  font-weight: 800;
 }
 
 .sensor-status-main.status-safe #statusDescription {
-  color: #065F46;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
 }
 
 .sensor-status-main.status-safe .sensor-data-item .value {
-  color: #047857;
+  color: #065F46;
 }
 
 /* ==================== STATUS WARNING ==================== */
 .sensor-status-main.status-warning {
   border-color: #F59E0B;
-  background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
-  color: #F59E0B;
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  color: white;
 }
 
 .sensor-status-main.status-warning::before {
-  background: linear-gradient(90deg, transparent, #F59E0B, transparent);
+  background: #F59E0B;
 }
 
 .sensor-status-main.status-warning .status-icon {
-  color: #F59E0B;
-  filter: drop-shadow(0 4px 12px rgba(245, 158, 11, 0.3));
+  color: white;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
   animation: pulse 2s ease infinite;
 }
 
 .sensor-status-main.status-warning h2 {
-  color: #D97706;
-  background: linear-gradient(135deg, #F59E0B, #D97706);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: white;
+  font-weight: 800;
 }
 
 .sensor-status-main.status-warning #statusDescription {
-  color: #92400E;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
 }
 
 .sensor-status-main.status-warning .sensor-data-item .value {
-  color: #D97706;
+  color: #92400E;
 }
 
 /* ==================== STATUS DANGER ==================== */
 .sensor-status-main.status-danger {
-  border-color: var(--primary);
-  background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
-  color: var(--primary);
+  border-color: #EF4444;
+  background: linear-gradient(135deg, #DC2626 0%, #B91616 100%);
+  color: white;
   animation: dangerPulse 2s ease infinite;
 }
 
 .sensor-status-main.status-danger::before {
-  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  background: #EF4444;
   animation: shimmer 2s ease infinite;
 }
 
 .sensor-status-main.status-danger .status-icon {
-  color: var(--primary);
-  filter: drop-shadow(0 4px 12px rgba(255, 59, 48, 0.4));
+  color: white;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
   animation: pulse 1.5s ease infinite;
 }
 
 .sensor-status-main.status-danger h2 {
-  color: var(--primary-dark);
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: white;
+  font-weight: 800;
   animation: pulse 1.5s ease infinite;
 }
 
 .sensor-status-main.status-danger #statusDescription {
-  color: #991B1B;
+  color: rgba(255, 255, 255, 0.9);
   font-weight: 600;
 }
 
 .sensor-status-main.status-danger .sensor-data-item .value {
-  color: var(--primary-dark);
+  color: #7F1D1D;
 }
 
 @keyframes shimmer {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.8; }
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
 }
 
 @keyframes dangerPulse {
   0%, 100% { 
     transform: scale(1);
-    box-shadow: var(--shadow-md), 0 0 0 0 rgba(255, 59, 48, 0.4);
+    box-shadow: var(--shadow-sm), 0 0 0 0 rgba(185, 22, 22, 0.3);
   }
   50% { 
-    transform: scale(1.01);
-    box-shadow: var(--shadow-lg), 0 0 0 8px rgba(255, 59, 48, 0);
+    transform: scale(1.005);
+    box-shadow: var(--shadow-md), 0 0 0 6px rgba(185, 22, 22, 0);
   }
 }
 

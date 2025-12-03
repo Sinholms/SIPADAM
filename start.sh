@@ -25,7 +25,7 @@ select_venv() {
             VENV_NAME="py313"
             ;;
         3)
-            VENV_PATH="$HOME/Downloads/CODE/venv/"
+            VENV_PATH="$HOME/venvs/py314"
             VENV_NAME="py314"
             ;;
         *)
