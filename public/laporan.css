@@ -12,39 +12,41 @@
 
 /* ==================== WELCOME BANNER ==================== */
 .page-header {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-  color: white;
+  background: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(10px);
+  color: var(--neutral-900);
   padding: var(--spacing-xl);
   border-radius: var(--radius-lg);
   margin-bottom: var(--spacing-xl);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-sm);
+  border: 2px solid var(--neutral-200);
   position: relative;
   overflow: hidden;
-  text-align: center;
 }
 
 .page-header::before {
   content: '';
   position: absolute;
-  top: -50%;
-  right: -10%;
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-  border-radius: 50%;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  z-index: 1;
 }
 
 .page-header h1 {
   font-size: clamp(1.5rem, 4vw, 2rem);
-  font-weight: 700;
+  font-weight: 800;
   margin-bottom: var(--spacing-xs);
   position: relative;
   z-index: 1;
+  color: var(--neutral-900);
 }
 
 .page-header p {
   font-size: 1rem;
-  opacity: 0.9;
+  color: var(--neutral-700);
   position: relative;
   z-index: 1;
   margin: 0;

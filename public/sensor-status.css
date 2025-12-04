@@ -30,7 +30,7 @@
 /* ==================== STATUS SAFE ==================== */
 .sensor-status-main.status-safe {
   border-color: #10B981;
-  background: linear-gradient(135deg, #10b98160 0%, #05966854 100%);
+  background: linear-gradient(135deg, #8cddc260 0%, #8cddc260 100%);
   
   color: white;
 }

@@ -17,12 +17,12 @@ from collections import deque
 ESP32_IP = "10.144.219.96"
 ESP32_URL = f"http://{ESP32_IP}/api/fire"
 SERVER_URL = "http://localhost:3000"
-MODEL_PATH = 'best.pt'
+MODEL_PATH = 'best11.pt'
 CONFIDENCE_THRESHOLD = 0.5
 
 # ⚡ FPS OPTIMIZATION SETTINGS
 SEND_INTERVAL = 1.0
-FRAME_SEND_INTERVAL = 0.05  # 20 FPS to web (adjust: 0.033 = 30fps, 0.016 = 60fps)
+FRAME_SEND_INTERVAL = 0.016  # 20 FPS to web (adjust: 0.033 = 30fps, 0.016 = 60fps)
 INFERENCE_SKIP = 4  # Process every 2nd frame (doubles FPS)
 JPEG_QUALITY = 65  # Lower = faster encoding (70-85 recommended)
 DRAW_BOXES = True  # Set False to skip drawing (huge speed boost)

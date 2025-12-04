@@ -78,6 +78,7 @@ body {
   overflow: hidden;
   color: white;
   border-right: 1px solid rgba(255, 255, 255, 0.1);
+  animation: fadeInLeft 0.6s ease;
 }
 
 .left-content {
@@ -98,6 +99,7 @@ body {
   margin-bottom: var(--spacing-sm);
   text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
   letter-spacing: -1px;
+  animation: fadeInUp 0.6s ease 0.2s both;
 }
 
 .left-panel .logo p {
@@ -115,6 +117,18 @@ body {
   margin: var(--spacing-2xl) 0;
   opacity: 0.95;
   filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+  animation: scaleIn 0.6s ease 0.4s both;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 0.95;
+    transform: scale(1);
+  }
 }
 
 .left-panel > p {
@@ -159,6 +173,7 @@ body {
   background: white;
   overflow-y: auto;
   position: relative;
+  animation: fadeInRight 0.6s ease;
 }
 
 .right-panel::-webkit-scrollbar {
@@ -177,6 +192,7 @@ body {
 .right-panel .logo {
   text-align: center;
   margin-bottom: var(--spacing-2xl);
+  animation: fadeInUp 0.6s ease 0.3s both;
 }
 
 .right-panel .logo h1 {
@@ -201,6 +217,7 @@ body {
   max-width: 500px;
   margin: 0 auto;
   border: none;
+  animation: fadeInUp 0.6s ease 0.5s both;
 }
 
 /* ==================== FORM GROUPS ==================== */
@@ -442,6 +459,7 @@ body {
   color: var(--neutral-600);
   font-size: 0.95rem;
   font-weight: 500;
+  animation: fadeInUp 0.6s ease 0.3s both;
 }
 
 .register-link a,
@@ -480,6 +498,7 @@ body {
   border-radius: var(--radius-md);
   margin-top: var(--spacing-xl);
   border: 2px solid var(--neutral-200);
+  animation: fadeInUp 0.4s ease 0.3s both;
 }
 
 .demo-info h4 {
@@ -517,6 +536,41 @@ body {
   padding: var(--spacing-lg);
   border-radius: var(--radius-md);
   border: 2px solid var(--neutral-200);
+  animation: fadeInUp 0.6s ease 0.3s both;
+}
+
+/* ==================== ANIMATIONS ==================== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* ==================== RESPONSIVE ==================== */

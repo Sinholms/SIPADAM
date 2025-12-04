@@ -13,14 +13,14 @@
 /* ==================== WELCOME BANNER ==================== */
 /* ==================== WELCOME BANNER ==================== */
 .welcome-banner {
-  background: rgba(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0);
   backdrop-filter: blur(10px);
   color: var(--neutral-900);
   padding: var(--spacing-xl);
   border-radius: var(--radius-lg);
   margin-bottom: var(--spacing-xl);
   box-shadow: var(--shadow-sm);
-  border: 2px solid rgba(185, 22, 22, 0.15);
+  border: 2px solid var(--neutral-200);
   position: relative;
   overflow: hidden;
 }

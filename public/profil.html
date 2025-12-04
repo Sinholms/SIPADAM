@@ -21,7 +21,7 @@
         <ul>
           <li><a href="dashboard.html">Dashboard</a></li>
           <li><a href="friendlist.html">👥 Teman</a></li>
-          <li><a href="laporan.html">📝 Laporan</a></li>
+          <li><a href="laporan.html">📋 Laporan</a></li>
           <li><a href="profil.html" class="active">👤 Profil</a></li>
           <li><a href="#" onclick="handleLogout()">🚪 Keluar</a></li>
         </ul>
@@ -34,62 +34,165 @@
     </div>
   </header>
 
+  <!-- Content -->
   <div class="profil-container">
-    <h2>👤 Profil Pengguna</h2>
-    
-    <div class="profil-avatar">
-      <div class="avatar-circle" id="avatarCircle">
-        <span id="avatarInitial">B</span>
-      </div>
-      <button class="btn-change-avatar" onclick="openAvatarModal()">Ubah Foto</button>
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1>👤 Profil Pengguna</h1>
+      <p>Kelola informasi dan pengaturan akun Anda</p>
     </div>
 
-    <div class="profil-box">
-      <div class="profil-item">
-        <strong>Nama:</strong> 
-        <span id="nama">Bigmuyyy</span>
-      </div>
-      <div class="profil-item">
-        <strong>Email:</strong> 
-        <span id="email">CaluyNarapidanuyyy@Uhuyyy.uy</span>
-      </div>
-      <div class="profil-item">
-        <strong>Username:</strong> 
-        <span id="username">bigmuy</span>
-      </div>
-      <div class="profil-item">
-        <strong>No. Telepon:</strong> 
-        <span id="telepon">+62 812-3456-7890</span>
-      </div>
-      <div class="profil-item">
-        <strong>Peran:</strong> 
-        <span id="peran">Pengguna Terdaftar</span>
-      </div>
-      <div class="profil-item">
-        <strong>Terdaftar sejak:</strong> 
-        <span id="tanggalDaftar">1 Januari 2025</span>
-      </div>
-    </div>
+    <!-- Grid Layout -->
+    <div class="profil-grid">
+      
+      <!-- Main Content (Left Side) -->
+      <div class="profil-main">
+        
+        <!-- Info Card -->
+        <div class="profil-card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>📝</span>
+              <span>Informasi Pribadi</span>
+            </div>
+          </div>
+          
+          <div class="info-box">
+            <div class="info-box-icon">💡</div>
+            <div class="info-box-text">
+              Data pribadi Anda digunakan untuk mengidentifikasi laporan yang Anda kirim dan mempermudah komunikasi dengan tim pemadam kebakaran.
+            </div>
+          </div>
 
-    <div class="profil-stats">
-      <div class="stat-card">
-        <h3 id="statTotal">0</h3>
-        <p>Laporan Terkirim</p>
-      </div>
-      <div class="stat-card">
-        <h3 id="statSelesai">0</h3>
-        <p>Laporan Selesai</p>
-      </div>
-      <div class="stat-card">
-        <h3 id="statProses">0</h3>
-        <p>Dalam Proses</p>
-      </div>
-    </div>
+          <div class="info-card">
+            <div class="profil-item">
+              <strong>👤 Nama:</strong> 
+              <span id="nama">Bigmuyyy</span>
+            </div>
+            <div class="profil-item">
+              <strong>📧 Email:</strong> 
+              <span id="email">CaluyNarapidanuyyy@Uhuyyy.uy</span>
+            </div>
+            <div class="profil-item">
+              <strong>🔑 Username:</strong> 
+              <span id="username">bigmuy</span>
+            </div>
+            <div class="profil-item">
+              <strong>📱 No. Telepon:</strong> 
+              <span id="telepon">+62 812-3456-7890</span>
+            </div>
+            <div class="profil-item">
+              <strong>⭐ Peran:</strong> 
+              <span id="peran">Pengguna Terdaftar</span>
+            </div>
+            <div class="profil-item">
+              <strong>📅 Terdaftar sejak:</strong> 
+              <span id="tanggalDaftar">1 Januari 2025</span>
+            </div>
+          </div>
+        </div>
 
-    <div class="profil-actions">
-      <button class="btn-edit" onclick="openEditModal()">✏️ Edit Profil</button>
-      <button class="btn-history" onclick="openHistoryModal()">📋 Riwayat Laporan</button>
-      <button class="btn-lapor" onclick="handleLogout()">🚪 Keluar</button>
+        <!-- Stats Card -->
+        <div class="stats-card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>📊</span>
+              <span>Statistik Laporan</span>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-item">
+              <h3 id="statTotal">0</h3>
+              <p>Total Laporan</p>
+            </div>
+            <div class="stat-item">
+              <h3 id="statSelesai">0</h3>
+              <p>Selesai</p>
+            </div>
+            <div class="stat-item">
+              <h3 id="statProses">0</h3>
+              <p>Dalam Proses</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Sidebar (Right Side) -->
+      <div class="profil-sidebar">
+        
+        <!-- Avatar Card -->
+        <div class="profil-card avatar-card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>📸</span>
+              <span>Foto Profil</span>
+            </div>
+          </div>
+
+          <div class="avatar-circle" id="avatarCircle">
+            <span id="avatarInitial">B</span>
+          </div>
+          <button class="btn-change-avatar" onclick="openAvatarModal()">📷 Ubah Foto</button>
+        </div>
+
+        <!-- Actions Card -->
+        <div class="profil-card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>⚙️</span>
+              <span>Tindakan</span>
+            </div>
+          </div>
+
+          <div class="actions-card">
+            <button class="action-btn btn-edit" onclick="openEditModal()">
+              <span>✏️</span>
+              <span>Edit Profil</span>
+            </button>
+            <button class="action-btn btn-history" onclick="openHistoryModal()">
+              <span>📋</span>
+              <span>Riwayat Laporan</span>
+            </button>
+            <button class="action-btn btn-logout" onclick="handleLogout()">
+              <span>🚪</span>
+              <span>Keluar</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tips Card -->
+        <div class="profil-card" style="background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); border-color: #F59E0B;">
+          <div class="card-header" style="border-bottom-color: #F59E0B;">
+            <div class="card-title" style="color: #92400E;">
+              <span>💡</span>
+              <span>Tips Keamanan</span>
+            </div>
+          </div>
+
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="padding: 8px 0; padding-left: 24px; position: relative; font-size: 0.85rem; color: #78350F; line-height: 1.5;">
+              <span style="position: absolute; left: 0; font-weight: 700; color: #F59E0B;">✓</span>
+              Jangan bagikan password Anda
+            </li>
+            <li style="padding: 8px 0; padding-left: 24px; position: relative; font-size: 0.85rem; color: #78350F; line-height: 1.5;">
+              <span style="position: absolute; left: 0; font-weight: 700; color: #F59E0B;">✓</span>
+              Perbarui nomor telepon secara berkala
+            </li>
+            <li style="padding: 8px 0; padding-left: 24px; position: relative; font-size: 0.85rem; color: #78350F; line-height: 1.5;">
+              <span style="position: absolute; left: 0; font-weight: 700; color: #F59E0B;">✓</span>
+              Logout setelah menggunakan perangkat umum
+            </li>
+            <li style="padding: 8px 0; padding-left: 24px; position: relative; font-size: 0.85rem; color: #78350F; line-height: 1.5;">
+              <span style="position: absolute; left: 0; font-weight: 700; color: #F59E0B;">✓</span>
+              Verifikasi email untuk keamanan akun
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
     </div>
   </div>
 
@@ -150,7 +253,7 @@
           📷 Pilih Foto
         </label>
       </div>
-      <div class="modal-actions">
+      <div class="modal-actions" style="padding: 0 var(--spacing-xl) var(--spacing-xl);">
         <button type="button" class="btn-cancel" onclick="closeModal('modalAvatar')">Batal</button>
         <button type="button" class="btn-save" onclick="saveAvatar()">💾 Simpan Foto</button>
       </div>
@@ -183,16 +286,6 @@
     if (mobileToggle && navMenu) {
       mobileToggle.addEventListener('click', () => {
         navMenu.classList.toggle('active');
-        const spans = mobileToggle.querySelectorAll('span');
-        if (navMenu.classList.contains('active')) {
-          spans[0].style.transform = 'rotate(45deg) translateY(8px)';
-          spans[1].style.opacity = '0';
-          spans[2].style.transform = 'rotate(-45deg) translateY(-8px)';
-        } else {
-          spans[0].style.transform = 'none';
-          spans[1].style.opacity = '1';
-          spans[2].style.transform = 'none';
-        }
       });
     }
 
@@ -222,7 +315,8 @@
       if (riwayat.length === 0) {
         historyList.innerHTML = `
           <div class="empty-state">
-            <p>📋 Belum ada riwayat laporan</p>
+            <div class="icon">📋</div>
+            <p>Belum ada riwayat laporan</p>
             <p style="font-size: 0.9rem; margin-top: 10px;">Laporan Anda akan muncul di sini setelah mengirim laporan kebakaran</p>
           </div>
         `;
@@ -237,7 +331,6 @@
             <h4>📍 ${item.lokasi}</h4>
             <p>📅 ${item.tanggal} - ${item.waktu}</p>
             <p>📝 ${item.catatan}</p>
-            ${item.foto !== 'Tidak ada foto' ? `<p>📸 ${item.foto}</p>` : ''}
             <span class="status-badge ${statusClass}">${item.status}</span>
           </div>
         `;
@@ -279,7 +372,7 @@
     function openAvatarModal() {
       const preview = document.getElementById('avatarPreview');
       const currentStyle = document.getElementById('avatarCircle').style.backgroundImage;
-      preview.style.backgroundImage = currentStyle || 'linear-gradient(135deg, #e63946, #ff4d4d)';
+      preview.style.backgroundImage = currentStyle || 'linear-gradient(135deg, #b91616, #790000)';
       openModal('modalAvatar');
     }
 
